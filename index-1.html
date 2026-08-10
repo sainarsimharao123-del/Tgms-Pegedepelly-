@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TGMS Student Hub</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#172033}
+  header{background:linear-gradient(135deg,#173b8f,#2563eb);color:white;padding:24px 18px;border-radius:0 0 24px 24px}
+  header h1{margin:0;font-size:25px}
+  header p{margin:7px 0 0;opacity:.9}
+  main{max-width:850px;margin:auto;padding:18px}
+  .card{background:white;border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 5px 18px #00000012}
+  .title{font-size:20px;font-weight:700;margin-bottom:8px}
+  .date{font-size:13px;color:#667085}
+  .empty{color:#667085;text-align:center;padding:25px}
+  button{border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
+  .primary{background:#2563eb;color:white}
+  .danger{background:#fee2e2;color:#991b1b}
+  input,textarea{width:100%;padding:12px;border:1px solid #ccd3df;border-radius:10px;margin:7px 0 12px;font:inherit}
+  textarea{min-height:100px;resize:vertical}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .hidden{display:none}
+  .status{padding:10px;border-radius:10px;background:#eef4ff;margin:10px 0}
+  footer{text-align:center;color:#667085;font-size:12px;padding:25px}
+</style>
+</head>
+<body>
+<header>
+  <h1>TGMS STUDENT HUB</h1>
+  <p>TGMS Pegedepelly • Online Student Portal</p>
+</header>
+
+<main>
+  <section class="card">
+    <div class="title">📚 Student Hub</div>
+    <div class="row">
+      <button class="primary" onclick="document.getElementById('chemistry').scrollIntoView({behavior:'smooth'})">🧪 Chemistry</button>
+      <button onclick="document.getElementById('practicals').scrollIntoView({behavior:'smooth'})">🔬 Practical Manuals</button>
+      <button onclick="document.getElementById('materials').scrollIntoView({behavior:'smooth'})">📚 Study Materials</button>
+      <button onclick="document.getElementById('notes').scrollIntoView({behavior:'smooth'})">📝 Notes</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="title">📰 Today's School News</div>
+    <div id="news" class="empty">Loading online update...</div>
+  </section>
+
+  <section class="card">
+    <div class="title">📅 Important Day</div>
+    <div id="importantDay" class="empty">Loading...</div>
+  </section>
+
+  <section class="card">
+    <div class="title">📢 Announcement</div>
+    <div id="announcement" class="empty">Loading...</div>
+  </section>
+
+  <section class="card">
+    <div class="title">⚙️ Admin</div>
+    <div id="loginBox">
+      <p class="date">Only the administrator can publish updates.</p>
+      <input id="email" type="email" placeholder="Admin email">
+      <input id="password" type="password" placeholder="Password">
+      <button class="primary" id="loginBtn">Admin Login</button>
+      <div id="loginStatus" class="status hidden"></div>
+    </div>
+
+    <div id="adminBox" class="hidden">
+      <div class="status">Admin signed in. Changes will be published online.</div>
+      <label>Today's School News</label>
+      <textarea id="newsInput" placeholder="Enter today's school news"></textarea>
+      <label>Important Day</label>
+      <input id="dayInput" placeholder="Enter today's important day">
+      <label>Announcement</label>
+      <textarea id="announcementInput" placeholder="Enter an announcement"></textarea>
+      <div class="row">
+        <button class="primary" id="publishBtn">Publish Update</button>
+        <button class="danger" id="logoutBtn">Logout</button>
+      </div>
+      <div id="publishStatus" class="status hidden"></div>
+    </div>
+  </section>
+</main>
+
+
+<section id="chemistry" class="card">
+  <div class="title">🧪 Chemistry</div>
+  <div class="card"><b>HCl — Hydrochloric Acid</b><p>Formula: HCl</p><div class="status">Reaction: HCl + NaOH → NaCl + H2O</div><p>Practical connection and viva questions can be added here.</p></div>
+  <div class="card"><b>NaOH — Sodium Hydroxide</b><p>Formula: NaOH</p><div class="status">Used as a base in acid-base practicals.</div></div>
+  <div class="card"><b>CuSO4 — Copper Sulfate</b><p>Formula: CuSO4</p><div class="status">Practical observations and viva questions can be added here.</div></div>
+</section>
+
+<section id="practicals" class="card">
+  <div class="title">🔬 Practical Manuals</div>
+  <div class="card"><b>Chemistry</b><p>Aim → Apparatus → Chemicals → Procedure → Observation → Reaction → Result → Precautions → Viva</p></div>
+  <div class="card"><b>Physics</b><p>Practical experiments can be added here.</p></div>
+  <div class="card"><b>Biology</b><p>Practical experiments can be added here.</p></div>
+</section>
+
+<section id="materials" class="card">
+  <div class="title">📚 Study Materials</div>
+  <div class="card">Physics</div>
+  <div class="card">Chemistry</div>
+  <div class="card">Mathematics</div>
+  <div class="card">JEE Preparation</div>
+  <div class="card">Important Questions</div>
+</section>
+
+<section id="notes" class="card">
+  <div class="title">📝 Notes</div>
+  <div class="card">Chapter-wise notes and quick revision material can be added here.</div>
+</section>
+
+<footer>TGMS Pegedepelly • Online Student Hub</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut }
+  from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD68Rg-d4poC7ViGIF40sJHaC_JV0aQWTc",
+  authDomain: "tgms-pegedepelly-hub.firebaseapp.com",
+  databaseURL: "https://tgms-pegedepelly-hub-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "tgms-pegedepelly-hub",
+  storageBucket: "tgms-pegedepelly-hub.firebasestorage.app",
+  messagingSenderId: "665938484871",
+  appId: "1:665938484871:web:07f5c5544909c6940ae222",
+  measurementId: "G-VNVEVZ61S8"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+const newsEl = document.getElementById("news");
+const dayEl = document.getElementById("importantDay");
+const announcementEl = document.getElementById("announcement");
+
+function show(value, fallback="No update published yet.") {
+  return value && String(value).trim() ? String(value) : fallback;
+}
+
+onValue(ref(db, "dailyUpdate"), (snapshot) => {
+  const data = snapshot.val() || {};
+  newsEl.textContent = show(data.news);
+  dayEl.textContent = show(data.importantDay);
+  announcementEl.textContent = show(data.announcement);
+}, (error) => {
+  newsEl.textContent = "Unable to load the online update.";
+  dayEl.textContent = "Unable to load.";
+  announcementEl.textContent = "Unable to load.";
+  console.error(error);
+});
+
+const loginBox = document.getElementById("loginBox");
+const adminBox = document.getElementById("adminBox");
+const loginStatus = document.getElementById("loginStatus");
+const publishStatus = document.getElementById("publishStatus");
+
+document.getElementById("loginBtn").onclick = async () => {
+  loginStatus.classList.remove("hidden");
+  loginStatus.textContent = "Signing in...";
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      document.getElementById("email").value.trim(),
+      document.getElementById("password").value
+    );
+    loginStatus.textContent = "Signed in.";
+  } catch (e) {
+    loginStatus.textContent = "Login failed. Check the email and password.";
+    console.error(e);
+  }
+};
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    loginBox.classList.add("hidden");
+    adminBox.classList.remove("hidden");
+  } else {
+    loginBox.classList.remove("hidden");
+    adminBox.classList.add("hidden");
+  }
+});
+
+document.getElementById("publishBtn").onclick = async () => {
+  publishStatus.classList.remove("hidden");
+  publishStatus.textContent = "Publishing...";
+  try {
+    await set(ref(db, "dailyUpdate"), {
+      news: document.getElementById("newsInput").value.trim(),
+      importantDay: document.getElementById("dayInput").value.trim(),
+      announcement: document.getElementById("announcementInput").value.trim(),
+      updatedAt: new Date().toISOString()
+    });
+    publishStatus.textContent = "✅ Published online. Student devices connected to this database can receive the update.";
+  } catch (e) {
+    publishStatus.textContent = "❌ Publish failed. Check Firebase Authentication and Database Rules.";
+    console.error(e);
+  }
+};
+
+document.getElementById("logoutBtn").onclick = () => signOut(auth);
+</script>
+</body>
+</html>
