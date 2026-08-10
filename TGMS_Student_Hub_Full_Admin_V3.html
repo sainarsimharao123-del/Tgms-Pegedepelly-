@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#173b6c">
+<title>TGMS Student Hub</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#172033}
+header{background:linear-gradient(135deg,#173b6c,#2868ad);color:#fff;padding:25px 18px;border-radius:0 0 24px 24px}
+header h1{margin:0;font-size:27px}header p{margin:7px 0 0;opacity:.9}
+main{max-width:850px;margin:auto;padding:16px}.card{background:#fff;border-radius:17px;padding:16px;margin:11px 0;box-shadow:0 3px 12px #0001}
+.title{font-size:20px;font-weight:700;margin-bottom:10px}.muted{color:#667085;font-size:13px}
+button{border:0;border-radius:11px;padding:11px 14px;font-weight:700;font-size:14px;background:#e9eef7;color:#172033;margin:4px;cursor:pointer}
+.primary{background:#173b6c;color:#fff}.danger{background:#fee2e2;color:#991b1b}
+input,textarea{width:100%;padding:12px;border:1px solid #ccd3df;border-radius:10px;margin:6px 0 12px;font:inherit}
+textarea{min-height:85px;resize:vertical}label{font-weight:700;font-size:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid button{margin:0;min-height:85px;text-align:left}
+section{display:none}section.active{display:block}.status{padding:11px;border-radius:10px;background:#eef5ff;margin:10px 0}
+.item{padding:12px;border:1px solid #e4e8ef;border-radius:12px;margin:8px 0}.reaction{background:#eef5ff;padding:10px;border-radius:9px}
+.hidden{display:none}.tabs{position:sticky;top:0;background:#f4f7fb;padding:7px 0;z-index:2;overflow:auto;white-space:nowrap}
+footer{text-align:center;color:#667085;font-size:12px;padding:25px}
+@media(max-width:450px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><h1>TGMS STUDENT HUB</h1><p>TGMS Pegedepelly • Online Student Portal</p></header>
+<main>
+
+<section id="home" class="active">
+<div class="card"><div class="title">🏠 Student Hub</div><p class="muted">Online content is loaded from Firebase.</p></div>
+<div class="grid">
+<button onclick="show('news')">📰<br>School News</button>
+<button onclick="show('days')">📅<br>Important Days</button>
+<button onclick="show('chemistry')">🧪<br>Chemistry</button>
+<button onclick="show('practicals')">🔬<br>Practical Manuals</button>
+<button onclick="show('materials')">📚<br>Study Materials</button>
+<button onclick="show('notes')">📝<br>Notes</button>
+<button onclick="show('admin')">⚙️<br>Admin Dashboard</button>
+</div>
+</section>
+
+<section id="news"><button onclick="show('home')">← Home</button><h2>📰 School News</h2><div id="newsView" class="card">Loading...</div><div id="announcementView" class="card"></div></section>
+<section id="days"><button onclick="show('home')">← Home</button><h2>📅 Important Days</h2><div id="daysView" class="card">Loading...</div></section>
+
+<section id="chemistry"><button onclick="show('home')">← Home</button><h2>🧪 Chemistry</h2><div id="chemView"><div class="card">Loading...</div></div></section>
+<section id="practicals"><button onclick="show('home')">← Home</button><h2>🔬 Practical Manuals</h2><div id="practicalView"><div class="card">Loading...</div></div></section>
+<section id="materials"><button onclick="show('home')">← Home</button><h2>📚 Study Materials</h2><div id="materialView"><div class="card">Loading...</div></div></section>
+<section id="notes"><button onclick="show('home')">← Home</button><h2>📝 Notes</h2><div id="notesView"><div class="card">Loading...</div></div></section>
+
+<section id="admin">
+<button onclick="show('home')">← Home</button><h2>⚙️ Admin Dashboard</h2>
+<div id="loginBox" class="card">
+<p class="muted">Sign in to edit all sections.</p>
+<input id="email" type="email" placeholder="Admin email">
+<input id="password" type="password" placeholder="Password">
+<button class="primary" onclick="login()">Admin Login</button>
+<div id="loginStatus" class="status hidden"></div>
+</div>
+
+<div id="adminBox" class="hidden">
+<div class="card"><b>🔐 Admin mode</b><p class="muted">Edit any section below, then press Publish All Changes.</p></div>
+
+<div class="card">
+<div class="title">📰 School News</div>
+<label>Today's News</label><textarea id="aNews" placeholder="Enter today's school news"></textarea>
+<label>Announcement</label><textarea id="aAnnouncement" placeholder="Enter announcement"></textarea>
+</div>
+
+<div class="card">
+<div class="title">📅 Important Days</div>
+<label>Important Day</label><textarea id="aDay" placeholder="Enter today's important day"></textarea>
+</div>
+
+<div class="card">
+<div class="title">🧪 Chemistry</div>
+<label>HCl — Hydrochloric Acid</label>
+<input id="hclFormula" placeholder="Formula">
+<textarea id="hclReaction" placeholder="Important reaction"></textarea>
+<textarea id="hclInfo" placeholder="Properties / practical connection / viva"></textarea>
+<label>NaOH — Sodium Hydroxide</label>
+<input id="naohFormula" placeholder="Formula">
+<textarea id="naohReaction" placeholder="Important reaction"></textarea>
+<textarea id="naohInfo" placeholder="Properties / practical connection / viva"></textarea>
+<label>CuSO4 — Copper Sulfate</label>
+<input id="cuso4Formula" placeholder="Formula">
+<textarea id="cuso4Reaction" placeholder="Important reaction"></textarea>
+<textarea id="cuso4Info" placeholder="Properties / practical connection / viva"></textarea>
+</div>
+
+<div class="card">
+<div class="title">🔬 Practical Manuals</div>
+<label>Chemistry Manual</label><textarea id="pChem" placeholder="Aim, apparatus, chemicals, procedure, observation, result, precautions, viva..."></textarea>
+<label>Physics Manual</label><textarea id="pPhysics" placeholder="Physics practical content..."></textarea>
+<label>Biology Manual</label><textarea id="pBiology" placeholder="Biology practical content..."></textarea>
+</div>
+
+<div class="card">
+<div class="title">📚 Study Materials</div>
+<label>Physics</label><textarea id="mPhysics"></textarea>
+<label>Chemistry</label><textarea id="mChemistry"></textarea>
+<label>Mathematics</label><textarea id="mMaths"></textarea>
+<label>JEE Preparation</label><textarea id="mJee"></textarea>
+</div>
+
+<div class="card">
+<div class="title">📝 Notes</div>
+<label>Notes / Quick Revision</label><textarea id="aNotes" placeholder="Chapter-wise notes and revision content..."></textarea>
+</div>
+
+<div class="card">
+<button class="primary" onclick="publishAll()">☁️ Publish All Changes</button>
+<button class="danger" onclick="logout()">Logout</button>
+<div id="publishStatus" class="status hidden"></div>
+</div>
+</div>
+</section>
+
+<footer>TGMS Student Hub • Firebase Online Edition</footer>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyD68Rg-d4poC7ViGIF40sJHaC_JV0aQWTc",
+authDomain:"tgms-pegedepelly-hub.firebaseapp.com",
+databaseURL:"https://tgms-pegedepelly-hub-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"tgms-pegedepelly-hub",
+storageBucket:"tgms-pegedepelly-hub.firebasestorage.app",
+messagingSenderId:"665938484871",
+appId:"1:665938484871:web:07f5c5544909c6940ae222",
+measurementId:"G-VNVEVZ61S8"
+};
+
+const app=initializeApp(firebaseConfig),db=getDatabase(app),auth=getAuth(app);
+const dailyRef=ref(db,"dailyUpdate");
+let current={};
+
+const $=id=>document.getElementById(id);
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function show(id){document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");scrollTo(0,0)}
+window.show=show;
+
+function render(d){
+current=d||{};
+$("newsView").innerHTML="<p>"+esc(d.news||"No news published yet.")+"</p>";
+$("announcementView").innerHTML="<div class='title'>📢 Announcement</div><p>"+esc(d.announcement||"No announcement.")+"</p>";
+$("daysView").innerHTML="<p>"+esc(d.importantDay||"No important day published yet.")+"</p>";
+
+const c=d.chemistry||{};
+$("chemView").innerHTML=
+card("HCl — Hydrochloric Acid",c.hcl)+card("NaOH — Sodium Hydroxide",c.naoh)+card("CuSO4 — Copper Sulfate",c.cuso4);
+
+const p=d.practicals||{};
+$("practicalView").innerHTML=card("Chemistry",p.chemistry)+card("Physics",p.physics)+card("Biology",p.biology);
+const m=d.materials||{};
+$("materialView").innerHTML=card("Physics",m.physics)+card("Chemistry",m.chemistry)+card("Mathematics",m.maths)+card("JEE Preparation",m.jee);
+$("notesView").innerHTML=card("Quick Revision Notes",d.notes);
+
+fill("aNews",d.news);fill("aAnnouncement",d.announcement);fill("aDay",d.importantDay);
+fill("hclFormula",c.hcl?.formula);fill("hclReaction",c.hcl?.reaction);fill("hclInfo",c.hcl?.info);
+fill("naohFormula",c.naoh?.formula);fill("naohReaction",c.naoh?.reaction);fill("naohInfo",c.naoh?.info);
+fill("cuso4Formula",c.cuso4?.formula);fill("cuso4Reaction",c.cuso4?.reaction);fill("cuso4Info",c.cuso4?.info);
+fill("pChem",p.chemistry);fill("pPhysics",p.physics);fill("pBiology",p.biology);
+fill("mPhysics",m.physics);fill("mChemistry",m.chemistry);fill("mMaths",m.maths);fill("mJee",m.jee);
+fill("aNotes",d.notes);
+}
+function card(title,data){
+let x=data||{};
+let body=typeof data==="string"?data:((x.formula?"<b>Formula:</b> "+esc(x.formula)+"<br>":"")+(x.reaction?"<div class='reaction'><b>Reaction:</b> "+esc(x.reaction)+"</div>":"")+(x.info?"<p>"+esc(x.info).replace(/\n/g,"<br>")+"</p>":""));
+return "<div class='card'><b>"+title+"</b>"+(body||"<p class='muted'>No content published yet.</p>")+"</div>";
+}
+function fill(id,v){$(id).value=v||""}
+
+onValue(dailyRef,s=>render(s.val()||{}),e=>console.error(e));
+
+function login(){
+signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)
+.then(()=>{$("loginStatus").textContent="Signed in successfully."; $("loginStatus").classList.remove("hidden")})
+.catch(()=>{$("loginStatus").textContent="Login failed. Check your email and password."; $("loginStatus").classList.remove("hidden")});
+}
+window.login=login;
+
+onAuthStateChanged(auth,u=>{
+$("loginBox").classList.toggle("hidden",!!u);
+$("adminBox").classList.toggle("hidden",!u);
+});
+
+async function publishAll(){
+const data={
+news:$("aNews").value.trim(),importantDay:$("aDay").value.trim(),announcement:$("aAnnouncement").value.trim(),
+chemistry:{
+hcl:{formula:$("hclFormula").value.trim(),reaction:$("hclReaction").value.trim(),info:$("hclInfo").value.trim()},
+naoh:{formula:$("naohFormula").value.trim(),reaction:$("naohReaction").value.trim(),info:$("naohInfo").value.trim()},
+cuso4:{formula:$("cuso4Formula").value.trim(),reaction:$("cuso4Reaction").value.trim(),info:$("cuso4Info").value.trim()}
+},
+practicals:{chemistry:$("pChem").value.trim(),physics:$("pPhysics").value.trim(),biology:$("pBiology").value.trim()},
+materials:{physics:$("mPhysics").value.trim(),chemistry:$("mChemistry").value.trim(),maths:$("mMaths").value.trim(),jee:$("mJee").value.trim()},
+notes:$("aNotes").value.trim(),updatedAt:new Date().toISOString()
+};
+$("publishStatus").classList.remove("hidden");$("publishStatus").textContent="Publishing...";
+try{await set(dailyRef,data);$("publishStatus").textContent="✅ All sections published online. Student apps will receive the new data.";show("home")}
+catch(e){$("publishStatus").textContent="❌ Publish failed. Check Firebase rules.";console.error(e)}
+}
+window.publishAll=publishAll;
+function logout(){signOut(auth)}
+window.logout=logout;
+</script>
+</body>
+</html>
