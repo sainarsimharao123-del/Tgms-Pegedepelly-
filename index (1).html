@@ -1,211 +1,166 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TGMS Student Hub</title>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#123e72"><title>TGMS Student Hub Mega</title>
 <style>
-  *{box-sizing:border-box}
-  body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#172033}
-  header{background:linear-gradient(135deg,#173b8f,#2563eb);color:white;padding:24px 18px;border-radius:0 0 24px 24px}
-  header h1{margin:0;font-size:25px}
-  header p{margin:7px 0 0;opacity:.9}
-  main{max-width:850px;margin:auto;padding:18px}
-  .card{background:white;border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 5px 18px #00000012}
-  .title{font-size:20px;font-weight:700;margin-bottom:8px}
-  .date{font-size:13px;color:#667085}
-  .empty{color:#667085;text-align:center;padding:25px}
-  button{border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
-  .primary{background:#2563eb;color:white}
-  .danger{background:#fee2e2;color:#991b1b}
-  input,textarea{width:100%;padding:12px;border:1px solid #ccd3df;border-radius:10px;margin:7px 0 12px;font:inherit}
-  textarea{min-height:100px;resize:vertical}
-  .row{display:flex;gap:10px;flex-wrap:wrap}
-  .hidden{display:none}
-  .status{padding:10px;border-radius:10px;background:#eef4ff;margin:10px 0}
-  footer{text-align:center;color:#667085;font-size:12px;padding:25px}
-</style>
-</head>
-<body>
-<header>
-  <h1>TGMS STUDENT HUB</h1>
-  <p>TGMS Pegedepelly • Online Student Portal</p>
-</header>
+*{box-sizing:border-box}body{margin:0;background:#f3f6fb;color:#172033;font-family:Arial,sans-serif;line-height:1.5}
+header{background:linear-gradient(135deg,#123e72,#2a73b8);color:white;padding:28px 18px;border-radius:0 0 26px 26px}header h1{margin:0;font-size:28px}header p{margin:6px 0;opacity:.92}
+main{max-width:1000px;margin:auto;padding:16px}section{display:none}section.active{display:block}.card{background:#fff;border-radius:17px;padding:17px;margin:12px 0;box-shadow:0 3px 14px #0001}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}button{border:0;border-radius:11px;padding:12px 15px;background:#e8eef7;color:#172033;font-weight:700;font-size:14px;margin:4px}.grid button{margin:0;min-height:78px;text-align:left}.primary{background:#123e72;color:white}
+input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10px;font:inherit;margin:6px 0 12px}textarea{min-height:100px}
+.chapter,.question,.experiment{background:#fff;border:1px solid #dce3ec;border-radius:13px;margin:8px 0;padding:12px}summary{cursor:pointer;font-weight:700}summary span{float:right;font-size:12px;color:#64748b;font-weight:400}.chapter-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.answer{background:#eef6ff;padding:10px;border-radius:9px}.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.exp-body{padding-top:10px}.diagram{background:#f8fbff;border-radius:12px;padding:5px;margin-bottom:10px}.diagram svg{width:100%;max-height:190px}.notice{background:#fff8e8;border-left:5px solid #d08a00;padding:12px;border-radius:8px}footer{text-align:center;color:#667085;padding:28px;font-size:12px}
+@media(max-width:650px){.grid,.chapter-grid,.qgrid,.exp-grid{grid-template-columns:1fr}summary span{float:none;display:block}
+</style></head><body>
+<header><h1>TGMS STUDENT HUB</h1><p>TGMS Pegedepelly • Mega Learning Edition</p></header><main>
+<section id="home" class="active"><div class="card"><h2>🎓 Complete Student Hub</h2><p>Chapter maps, practice banks, practical manuals and JEE-oriented preparation in one place.</p><div class="notice">The academic map is based on published Telangana Intermediate 1st-year 2025–26 syllabus information. Always cross-check the latest college/board notice before an examination.</div></div>
+<div class="grid">
+<button onclick="show('news')">📰<br>School News</button><button onclick="show('days')">📅<br>Important Days</button><button onclick="show('chem')">🧪<br>Chemistry</button><button onclick="show('physics')">⚛️<br>Physics</button><button onclick="show('maths')">📐<br>Mathematics</button><button onclick="show('practical')">🔬<br>40 Practicals</button><button onclick="show('jee')">🎯<br>JEE Preparation</button><button onclick="show('questions')">📝<br>225 Questions</button><button onclick="show('study')">📚<br>Study Plan</button><button onclick="show('admin')">⚙️<br>Admin</button>
+</div></section>
 
-<main>
-  <section class="card">
-    <div class="title">📚 Student Hub</div>
-    <div class="row">
-      <button class="primary" onclick="document.getElementById('chemistry').scrollIntoView({behavior:'smooth'})">🧪 Chemistry</button>
-      <button onclick="document.getElementById('practicals').scrollIntoView({behavior:'smooth'})">🔬 Practical Manuals</button>
-      <button onclick="document.getElementById('materials').scrollIntoView({behavior:'smooth'})">📚 Study Materials</button>
-      <button onclick="document.getElementById('notes').scrollIntoView({behavior:'smooth'})">📝 Notes</button>
-    </div>
-  </section>
+<section id="news"><button onclick="show('home')">← Home</button><h2>📰 School News</h2><div id="newsBox" class="card">Loading...</div><div id="annBox" class="card"></div></section>
+<section id="days"><button onclick="show('home')">← Home</button><h2>📅 Important Day</h2><div id="dayBox" class="card">Loading...</div></section>
 
-  <section class="card">
-    <div class="title">📰 Today's School News</div>
-    <div id="news" class="empty">Loading online update...</div>
-  </section>
+<section id="chem"><button onclick="show('home')">← Home</button><h2>🧪 Chemistry — First Year</h2><div class="card"><p>Chapter-by-chapter syllabus map and revision checklist.</p><div class="chapter-grid"><details class="chapter"><summary>1. Atomic Structure</summary>
+        <p><b>Coverage:</b> subatomic particles, Rutherford, Bohr model, quantum numbers, orbitals, electronic configuration.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>2. Classification of Elements and Periodicity</summary>
+        <p><b>Coverage:</b> modern periodic law, blocks, atomic size, ionisation enthalpy, electron gain enthalpy, electronegativity.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>3. Chemical Bonding and Molecular Structure</summary>
+        <p><b>Coverage:</b> Lewis structures, ionic/covalent bonds, VSEPR, hybridisation, molecular orbital basics, hydrogen bonding.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>4. States of Matter: Gases and Liquids</summary>
+        <p><b>Coverage:</b> gas laws, ideal gas equation, kinetic theory, real gases, vapour pressure, viscosity, surface tension.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>5. Stoichiometry</summary>
+        <p><b>Coverage:</b> mole concept, molar mass, limiting reagent, concentration, empirical and molecular formula.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>6. Thermodynamics</summary>
+        <p><b>Coverage:</b> system, surroundings, enthalpy, Hess law, entropy, Gibbs energy.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>7. Chemical Equilibrium</summary>
+        <p><b>Coverage:</b> law of mass action, equilibrium constant, Le Chatelier principle.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>8. Ionic Equilibrium</summary>
+        <p><b>Coverage:</b> acids, bases, pH, buffers, hydrolysis, solubility product.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>9. Redox Reactions</summary>
+        <p><b>Coverage:</b> oxidation number, balancing, oxidising/reducing agents.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>10. Hydrogen</summary>
+        <p><b>Coverage:</b> isotopes, hydrides, water, hydrogen peroxide, hydrogen as energy carrier.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>11. s-Block Elements</summary>
+        <p><b>Coverage:</b> alkali and alkaline earth metals, trends, important compounds.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>12. p-Block Elements</summary>
+        <p><b>Coverage:</b> selected groups, trends, important compounds and reactions.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>13. Organic Chemistry: Basic Principles</summary>
+        <p><b>Coverage:</b> classification, nomenclature, isomerism, electronic effects, reaction types.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>14. Hydrocarbons</summary>
+        <p><b>Coverage:</b> alkanes, alkenes, alkynes, aromatic hydrocarbons, reactions.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>15. Environmental Chemistry</summary>
+        <p><b>Coverage:</b> air/water pollution, greenhouse effect, ozone, acid rain, control measures.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details></div></div>
+<div class="card"><h3>Interactive concept</h3><p>Use the interactive learning block below for stoichiometric mole ratios.</p></div>
+<div class="card"><h3>High-yield reaction bank</h3><p>Neutralisation, precipitation, carbonate-acid reaction, redox and common organic reaction patterns should be revised with conditions and observations.</p></div></section>
 
-  <section class="card">
-    <div class="title">📅 Important Day</div>
-    <div id="importantDay" class="empty">Loading...</div>
-  </section>
+<section id="physics"><button onclick="show('home')">← Home</button><h2>⚛️ Physics — First Year</h2><div class="card"><div class="chapter-grid"><details class="chapter"><summary>1. Physical World</summary>
+        <p><b>Coverage:</b> scope of physics, fundamental forces, physical laws.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>2. Units and Measurements</summary>
+        <p><b>Coverage:</b> SI units, errors, significant figures, dimensions, dimensional analysis.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>3. Motion in a Straight Line</summary>
+        <p><b>Coverage:</b> position, displacement, velocity, acceleration, kinematic equations, relative motion.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>4. Motion in a Plane</summary>
+        <p><b>Coverage:</b> vectors, projectile motion, relative velocity, circular motion.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>5. Laws of Motion</summary>
+        <p><b>Coverage:</b> Newton&#x27;s laws, friction, momentum, impulse, connected bodies.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>6. Work, Energy and Power</summary>
+        <p><b>Coverage:</b> work, kinetic energy, potential energy, power, conservation of energy.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>7. System of Particles and Rotational Motion</summary>
+        <p><b>Coverage:</b> centre of mass, torque, angular momentum, moment of inertia.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>8. Oscillations</summary>
+        <p><b>Coverage:</b> SHM, energy in SHM, time period, simple pendulum.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>9. Gravitation</summary>
+        <p><b>Coverage:</b> Kepler laws, gravitational field, potential, satellites, escape velocity.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>10. Mechanical Properties of Solids</summary>
+        <p><b>Coverage:</b> stress, strain, Hooke&#x27;s law, elasticity.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>11. Mechanical Properties of Fluids</summary>
+        <p><b>Coverage:</b> pressure, viscosity, Bernoulli principle, surface tension.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>12. Thermal Properties of Matter</summary>
+        <p><b>Coverage:</b> temperature, expansion, calorimetry, heat transfer.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>13. Thermodynamics</summary>
+        <p><b>Coverage:</b> zeroth/first/second laws, internal energy, work, heat engines.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>14. Kinetic Theory</summary>
+        <p><b>Coverage:</b> ideal gas model, molecular speeds, degrees of freedom, mean free path.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details></div></div><div class="card"><h3>Formula revision</h3><p>Keep a separate one-page formula sheet for kinematics, Newton's laws, work-energy, gravitation, oscillations, thermal physics and thermodynamics.</p></div></section>
 
-  <section class="card">
-    <div class="title">📢 Announcement</div>
-    <div id="announcement" class="empty">Loading...</div>
-  </section>
+<section id="maths"><button onclick="show('home')">← Home</button><h2>📐 Mathematics — 1A & 1B</h2><div class="card"><div class="chapter-grid"><details class="chapter"><summary>1. Sets</summary>
+        <p><b>Coverage:</b> representation, subsets, intervals, operations, Venn diagrams.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>2. Relations and Functions</summary>
+        <p><b>Coverage:</b> ordered pairs, domain, range, types, composition.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>3. Trigonometric Functions</summary>
+        <p><b>Coverage:</b> angles, identities, graphs, equations.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>4. Mathematical Induction</summary>
+        <p><b>Coverage:</b> principle and standard applications.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>5. Complex Numbers and Quadratic Equations</summary>
+        <p><b>Coverage:</b> complex plane, algebra, roots, nature of roots.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>6. Linear Inequalities</summary>
+        <p><b>Coverage:</b> solution sets, graphical representation.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>7. Permutations and Combinations</summary>
+        <p><b>Coverage:</b> fundamental principle, factorials, arrangements, selections.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>8. Binomial Theorem</summary>
+        <p><b>Coverage:</b> expansion, general term, middle terms.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>9. Sequences and Series</summary>
+        <p><b>Coverage:</b> AP, GP, means, sums.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>10. Straight Lines</summary>
+        <p><b>Coverage:</b> slope, equations, angle between lines, distance.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>11. Conic Sections</summary>
+        <p><b>Coverage:</b> circle, parabola, ellipse, hyperbola.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>12. Introduction to Three-Dimensional Geometry</summary>
+        <p><b>Coverage:</b> coordinates, distance, section formula.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>13. Limits and Derivatives</summary>
+        <p><b>Coverage:</b> limits, continuity ideas, derivative as rate of change.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>14. Mathematical Reasoning</summary>
+        <p><b>Coverage:</b> statements, connectives, implications, quantifiers.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>15. Probability</summary>
+        <p><b>Coverage:</b> sample space, events, conditional probability, Bayes basics.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details><details class="chapter"><summary>16. Statistics</summary>
+        <p><b>Coverage:</b> measures of dispersion, variance, standard deviation.</p>
+        <p><b>Study checklist:</b> definitions → key formulas/concepts → solved examples → board questions → JEE practice → revision.</p>
+        </details></div></div><div class="card"><h3>Practice method</h3><p>For every chapter: learn the result → solve examples → attempt without notes → review errors → revisit after a few days.</p></div></section>
 
-  <section class="card">
-    <div class="title">⚙️ Admin</div>
-    <div id="loginBox">
-      <p class="date">Only the administrator can publish updates.</p>
-      <input id="email" type="email" placeholder="Admin email">
-      <input id="password" type="password" placeholder="Password">
-      <button class="primary" id="loginBtn">Admin Login</button>
-      <div id="loginStatus" class="status hidden"></div>
-    </div>
-
-    <div id="adminBox" class="hidden">
-      <div class="status">Admin signed in. Changes will be published online.</div>
-      <label>Today's School News</label>
-      <textarea id="newsInput" placeholder="Enter today's school news"></textarea>
-      <label>Important Day</label>
-      <input id="dayInput" placeholder="Enter today's important day">
-      <label>Announcement</label>
-      <textarea id="announcementInput" placeholder="Enter an announcement"></textarea>
-      <div class="row">
-        <button class="primary" id="publishBtn">Publish Update</button>
-        <button class="danger" id="logoutBtn">Logout</button>
-      </div>
-      <div id="publishStatus" class="status hidden"></div>
-    </div>
-  </section>
-</main>
-
-
-<section id="chemistry" class="card">
-  <div class="title">🧪 Chemistry</div>
-  <div class="card"><b>HCl — Hydrochloric Acid</b><p>Formula: HCl</p><div class="status">Reaction: HCl + NaOH → NaCl + H2O</div><p>Practical connection and viva questions can be added here.</p></div>
-  <div class="card"><b>NaOH — Sodium Hydroxide</b><p>Formula: NaOH</p><div class="status">Used as a base in acid-base practicals.</div></div>
-  <div class="card"><b>CuSO4 — Copper Sulfate</b><p>Formula: CuSO4</p><div class="status">Practical observations and viva questions can be added here.</div></div>
-</section>
-
-<section id="practicals" class="card">
-  <div class="title">🔬 Practical Manuals</div>
-  <div class="card"><b>Chemistry</b><p>Aim → Apparatus → Chemicals → Procedure → Observation → Reaction → Result → Precautions → Viva</p></div>
-  <div class="card"><b>Physics</b><p>Practical experiments can be added here.</p></div>
-  <div class="card"><b>Biology</b><p>Practical experiments can be added here.</p></div>
-</section>
-
-<section id="materials" class="card">
-  <div class="title">📚 Study Materials</div>
-  <div class="card">Physics</div>
-  <div class="card">Chemistry</div>
-  <div class="card">Mathematics</div>
-  <div class="card">JEE Preparation</div>
-  <div class="card">Important Questions</div>
-</section>
-
-<section id="notes" class="card">
-  <div class="title">📝 Notes</div>
-  <div class="card">Chapter-wise notes and quick revision material can be added here.</div>
-</section>
-
-<footer>TGMS Pegedepelly • Online Student Hub</footer>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut }
-  from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyD68Rg-d4poC7ViGIF40sJHaC_JV0aQWTc",
-  authDomain: "tgms-pegedepelly-hub.firebaseapp.com",
-  databaseURL: "https://tgms-pegedepelly-hub-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "tgms-pegedepelly-hub",
-  storageBucket: "tgms-pegedepelly-hub.firebasestorage.app",
-  messagingSenderId: "665938484871",
-  appId: "1:665938484871:web:07f5c5544909c6940ae222",
-  measurementId: "G-VNVEVZ61S8"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
-
-const newsEl = document.getElementById("news");
-const dayEl = document.getElementById("importantDay");
-const announcementEl = document.getElementById("announcement");
-
-function show(value, fallback="No update published yet.") {
-  return value && String(value).trim() ? String(value) : fallback;
-}
-
-onValue(ref(db, "dailyUpdate"), (snapshot) => {
-  const data = snapshot.val() || {};
-  newsEl.textContent = show(data.news);
-  dayEl.textContent = show(data.importantDay);
-  announcementEl.textContent = show(data.announcement);
-}, (error) => {
-  newsEl.textContent = "Unable to load the online update.";
-  dayEl.textContent = "Unable to load.";
-  announcementEl.textContent = "Unable to load.";
-  console.error(error);
-});
-
-const loginBox = document.getElementById("loginBox");
-const adminBox = document.getElementById("adminBox");
-const loginStatus = document.getElementById("loginStatus");
-const publishStatus = document.getElementById("publishStatus");
-
-document.getElementById("loginBtn").onclick = async () => {
-  loginStatus.classList.remove("hidden");
-  loginStatus.textContent = "Signing in...";
-  try {
-    await signInWithEmailAndPassword(
-      auth,
-      document.getElementById("email").value.trim(),
-      document.getElementById("password").value
-    );
-    loginStatus.textContent = "Signed in.";
-  } catch (e) {
-    loginStatus.textContent = "Login failed. Check the email and password.";
-    console.error(e);
-  }
-};
-
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    loginBox.classList.add("hidden");
-    adminBox.classList.remove("hidden");
-  } else {
-    loginBox.classList.remove("hidden");
-    adminBox.classList.add("hidden");
-  }
-});
-
-document.getElementById("publishBtn").onclick = async () => {
-  publishStatus.classList.remove("hidden");
-  publishStatus.textContent = "Publishing...";
-  try {
-    await set(ref(db, "dailyUpdate"), {
-      news: document.getElementById("newsInput").value.trim(),
-      importantDay: document.getElementById("dayInput").value.trim(),
-      announcement: document.getElementById("announcementInput").value.trim(),
-      updatedAt: new Date().toISOString()
-    });
-    publishStatus.textContent = "✅ Published online. Student devices connected to this database can receive the update.";
-  } catch (e) {
-    publishStatus.textContent = "❌ Publish failed. Check Firebase Authentication and Database Rules.";
-    console.error(e);
-  }
-};
-
-document.getElementById("logoutBtn").onclick = () => signOut(auth);
-</script>
-</body>
-</html>
+<section id="practical"><button onclick="show('home')">← Home</button><h2>🔬 40 Practical & Experiment Guides</h2><div class="card"><p>Each experiment includes a simplified visual explanation, aim, procedure framework, observations, result, precautions and viva prompts. The diagrams are educational schematics, not substitutes for your laboratory manual or teacher's instructions.</p></div><div class="exp-grid"><details class="experiment"><summary>Experiment 1: Vernier Calipers <span>Physics</span></summary>
+        <div class="exp-body"><div class="diagram"><svg viewBox="0 0 280 170" role="img" aria-label="schematic diagram"><rect width="280" height="170" rx="14" fill="#f8fbff"/><line x1="45" y1="115" x2="235" y2="115" stroke="#2b5c91" stroke-width="6"/><rect x="105" y="65" width="70" height="50" fill="#dbeafe" stroke="#1
