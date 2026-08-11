@@ -3459,7 +3459,19 @@ onValue(daily,snap=>render(snap.val()||{}),e=>console.warn("Daily update listene
 async function readProfile(uid){
   const snap=await getDoc(doc(db,"users",uid));
   if(!snap.exists()) throw new Error("NO_PROFILE");
-  return snap.data();
+  const raw=snap.data();
+
+  // Accept both the intended lowercase field names and the capitalized
+  // names that may have been entered manually in the Firestore console.
+  return {
+    ...raw,
+    name: raw.name ?? raw.Name ?? "",
+    role: raw.role ?? raw.Role ?? "",
+    subject: raw.subject ?? raw.Subject ?? "",
+    teacherId: raw.teacherId ?? raw.TeacherId ?? "",
+    studentId: raw.studentId ?? raw.StudentId ?? "",
+    adminId: raw.adminId ?? raw.AdminId ?? ""
+  };
 }
 
 function hideGate(){
@@ -3523,8 +3535,17 @@ window.tgmsFirebaseLogin = async function(expectedRole,email,password,statusEl){
     statusEl.textContent="✅ Secure login successful.";
     return true;
   }catch(err){
-    console.error(err);
-    statusEl.textContent = err && err.message==="NO_PROFILE" ? "❌ Login succeeded, but no TGMS user profile was found." : "❌ Login failed. Check the Firebase email/password.";
+    console.error("TGMS Firebase login error:", err);
+    const code=err && err.code ? String(err.code) : "";
+    if(err && err.message==="NO_PROFILE"){
+      statusEl.textContent="❌ Firebase login succeeded, but no TGMS user profile was found for this account.";
+    }else if(code==="auth/invalid-credential" || code==="auth/invalid-login-credentials"){
+      statusEl.textContent="❌ Firebase rejected the email/password. Check the account credentials.";
+    }else if(code==="permission-denied" || code==="PERMISSION_DENIED"){
+      statusEl.textContent="❌ Firestore permission denied while reading the user profile. Check the Firestore Rules.";
+    }else{
+      statusEl.textContent="❌ Firebase error: "+(err && (err.message||code) ? (err.message||code) : "Unknown error");
+    }
     return false;
   }
 };
