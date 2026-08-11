@@ -144,6 +144,116 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 .deep-topic-head h3{margin:0}.deep-explanation{line-height:1.7}
 
 </style></head><body>
+
+<!-- TGMS OFFICIAL LOGIN GATE -->
+<div id="tgmsLoginGate" class="tgms-login-gate">
+  <div class="tgms-login-box">
+    <div class="tgms-login-logo">🎓</div>
+    <h1>TGMS STUDENT HUB</h1>
+    <p>TGMS Pegedepelly</p>
+    <p class="tgms-login-subtitle">Official School Learning Portal</p>
+
+    <div id="tgmsRoleChooser" class="tgms-role-grid">
+      <button type="button" onclick="tgmsChooseRole('student')">🎓<span>Student Sign In</span></button>
+      <button type="button" onclick="tgmsChooseRole('teacher')">👨‍🏫<span>Teacher Sign In</span></button>
+      <button type="button" onclick="tgmsChooseRole('admin')">🔐<span>Administrator Sign In</span></button>
+    </div>
+
+    <div id="tgmsLoginForm" class="tgms-login-form" style="display:none">
+      <button type="button" class="tgms-back-role" onclick="tgmsBackToRoles()">← Back</button>
+      <h2 id="tgmsLoginTitle">Sign In</h2>
+      <p id="tgmsLoginHint"></p>
+      <input id="tgmsLoginId" type="text" autocomplete="username" placeholder="Email address">
+      <input id="tgmsLoginPassword" type="password" autocomplete="current-password" placeholder="Password">
+      <button type="button" class="tgms-login-submit" onclick="tgmsOfficialLogin()">Sign In</button>
+      <div id="tgmsLoginMessage" class="tgms-login-message"></div>
+    </div>
+
+    <div class="tgms-demo-note">
+      <b>Official deployment note:</b> Authentication is secured by Firebase Authentication and Firestore role records.
+    </div>
+  </div>
+</div>
+
+<style>
+.tgms-login-gate{
+  position:fixed; inset:0; z-index:999999; display:flex; align-items:center; justify-content:center;
+  padding:20px; overflow:auto; background:linear-gradient(135deg,#0b3b70,#1976b9 55%,#eaf5ff);
+  font-family:Arial,Helvetica,sans-serif;
+}
+.tgms-login-box{
+  width:min(520px,100%); padding:30px 22px; border-radius:28px; background:#fff;
+  box-shadow:0 20px 60px rgba(0,0,0,.25); text-align:center;
+}
+.tgms-login-logo{font-size:54px}.tgms-login-box h1{margin:5px 0;color:#123e72;font-size:30px}
+.tgms-login-box p{margin:5px;color:#4f6478}.tgms-login-subtitle{font-weight:700;margin-bottom:22px!important}
+.tgms-role-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.tgms-role-grid button,.tgms-login-submit{
+  border:0;border-radius:14px;padding:16px;background:#123e72;color:#fff;font-size:17px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.tgms-role-grid button:hover,.tgms-login-submit:hover{filter:brightness(1.08)}
+.tgms-role-grid span{display:inline-block}
+.tgms-login-form{margin-top:8px}.tgms-login-form input{
+  display:block;width:100%;box-sizing:border-box;margin:10px 0;padding:14px;border:1px solid #ccd8e5;
+  border-radius:12px;font-size:16px;background:#f8fbff;
+}
+.tgms-back-role{border:0;background:none;color:#123e72;font-weight:700;cursor:pointer;margin-bottom:10px}
+.tgms-login-message{min-height:22px;margin-top:10px;font-weight:700}
+.tgms-demo-note{margin-top:20px;padding:12px;border-radius:12px;background:#f3f7fb;color:#536779;font-size:12px;line-height:1.5}
+@media(max-width:480px){.tgms-login-box{padding:24px 16px}.tgms-login-box h1{font-size:25px}}
+</style>
+
+<script>
+(function(){
+  let tgmsSelectedRole = "";
+  function el(id){ return document.getElementById(id); }
+
+  window.tgmsChooseRole = function(role){
+    tgmsSelectedRole = role;
+    el("tgmsRoleChooser").style.display="none";
+    el("tgmsLoginForm").style.display="block";
+    el("tgmsLoginMessage").textContent="";
+    el("tgmsLoginId").value="";
+    el("tgmsLoginPassword").value="";
+    const titles={student:"🎓 Student Sign In",teacher:"👨‍🏫 Teacher Sign In",admin:"🔐 Administrator Sign In"};
+    const hints={student:"Use the email address registered in Firebase Authentication.",teacher:"Use the teacher email registered in Firebase Authentication.",admin:"Use the administrator email registered in Firebase Authentication."};
+    el("tgmsLoginTitle").textContent=titles[role];
+    el("tgmsLoginHint").textContent=hints[role];
+    el("tgmsLoginId").type="email";
+    el("tgmsLoginId").placeholder="Email address";
+  };
+
+  window.tgmsBackToRoles = function(){
+    tgmsSelectedRole="";
+    el("tgmsLoginForm").style.display="none";
+    el("tgmsRoleChooser").style.display="grid";
+    el("tgmsLoginMessage").textContent="";
+  };
+
+  window.tgmsOfficialLogin = async function(){
+    const email=el("tgmsLoginId").value.trim();
+    const password=el("tgmsLoginPassword").value;
+    if(!email || !password){
+      el("tgmsLoginMessage").textContent="Please enter your Firebase email and password.";
+      return;
+    }
+    if(typeof window.tgmsFirebaseLogin !== "function"){
+      el("tgmsLoginMessage").textContent="Firebase is still loading. Please try again.";
+      return;
+    }
+    el("tgmsLoginMessage").textContent="Signing in securely…";
+    await window.tgmsFirebaseLogin(tgmsSelectedRole,email,password,el("tgmsLoginMessage"));
+  };
+
+  window.tgmsForceLogout = function(){
+    if(typeof window.tgmsFirebaseLogout === "function") window.tgmsFirebaseLogout();
+    else { sessionStorage.clear(); location.reload(); }
+  };
+})();
+</script>
+
+
 <section id="roleSelection" class="active">
   <div class="card role-select-card">
     <h1>🏫 TGMS Student Hub</h1>
@@ -221,9 +331,9 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 <section id="studentLogin" class="active">
 <div class="card student-login-card">
   <h2>🔐 Student Sign In</h2>
-  <p>Enter your unique username and 10-digit numeric password.</p>
+  <p>Sign in using the email address and password created in Firebase Authentication.</p>
   <label><b>Username</b></label>
-  <input id="studentUsername" autocomplete="username" placeholder="Enter username">
+  <input id="studentUsername" autocomplete="username" placeholder="Firebase email address">
   <label><b>Password</b></label>
   <input id="studentPassword" type="password" inputmode="numeric" maxlength="10" autocomplete="current-password" placeholder="10-digit password">
   <button class="primary" onclick="studentLogin()">Sign In</button>
@@ -286,10 +396,10 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
     <p>Sign in with your subject-restricted teacher account.</p>
 
     <label><b>Username</b></label>
-    <input id="teacherUsername" autocomplete="off" placeholder="Teacher username">
+    <input id="teacherUsername" autocomplete="off" placeholder="Firebase email address">
 
     <label><b>Password</b></label>
-    <input id="teacherPassword" type="password" inputmode="numeric" maxlength="10" placeholder="10-digit password">
+    <input id="teacherPassword" type="password" placeholder="Firebase password">
 
     <button type="button" class="primary" onclick="tgmsTeacherLogin(); return false;">Sign In</button>
     <div id="teacherLoginStatus" class="status" style="display:none"></div>
@@ -362,9 +472,9 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
   <div class="teacher-panel teacher-login-card">
     <h2>🔐 Admin Sign In</h2>
     <label><b>Username</b></label>
-    <input id="adminUsername" autocomplete="off" placeholder="Admin username">
+    <input id="adminUsername" autocomplete="off" placeholder="Firebase email address">
     <label><b>Password</b></label>
-    <input id="adminPassword" type="password" inputmode="numeric" placeholder="Password">
+    <input id="adminPassword" type="password" placeholder="Firebase password">
     <button class="primary" onclick="tgmsAdminLogin()">Sign In</button>
     <div id="adminLoginStatus" class="status" style="display:none"></div>
   </div>
@@ -1299,60 +1409,66 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 
 <section id="admin"><button onclick="show('home')">← Home</button><h2>⚙️ Admin Dashboard</h2><div id="loginBox" class="card"><p><b>Only three fields are editable:</b> School News, Important Day and Announcement.</p><input id="email" type="email" placeholder="Admin email"><input id="password" type="password" placeholder="Password"><button class="primary" onclick="login()">Admin Login</button><div id="loginStatus" class="status" style="display:none"></div></div>
 <div id="adminBox" style="display:none"><div class="card"><b>🔐 Admin mode</b><p>Academic content is fixed. This dashboard cannot edit the syllabus, questions or experiments.</p><label>📰 School News</label><textarea id="newsInput"></textarea><label>📅 Important Day</label><textarea id="dayInput"></textarea><label>📢 Announcement</label><textarea id="annInput"></textarea><button class="primary" onclick="publish()">☁️ Publish Daily Update</button><button onclick="logout()">Logout</button><div id="pubStatus" class="status" style="display:none"></div></div></div></section>
-<footer>TGMS Pegedepelly • Teacher-Ready Learning Edition</footer></main>
+<footer>TGMS Pegedepelly • Teacher-Ready Learning Edition • Firebase-secured authentication</footer></main>
 
 
 <script>
 const STUDENT_ACCOUNTS = {
-  "adigoppulaharika": {name:'ADIGOPPULA HARIKA', password:"4775153882"},
-  "aresrija": {name:'ARE SRIJA', password:"2977860688"},
-  "banothuharsha": {name:'BANOTHU HARSHA', password:"5702345900"},
-  "bathinicharan": {name:'BATHINI CHARAN', password:"9252503756"},
-  "biyalasainarsimharao": {name:'BIYALA SAI NARSIMHA RAO', password:"7402795090"},
-  "busasamanvi": {name:'BUSA SAMANVI', password:"5961262574"},
-  "dommativamshi": {name:'DOMMATI VAMSHI', password:"7541916163"},
-  "doodammahalaxmi": {name:'DOODAM MAHALAXMI', password:"4263216137"},
-  "ellenkisathwika": {name:'ELLENKI SATHWIKA', password:"9162881877"},
-  "gajuravenimaheshwari": {name:'GAJURAVENI MAHESHWARI', password:"2931457069"},
-  "gananthulanithisha": {name:'GANANTHULA NITHISHA', password:"3237780632"},
-  "gannavenipallavi": {name:'GANNAVENI PALLAVI', password:"7663673281"},
-  "gudurisiri": {name:'GUDURI SIRI', password:"8531806817"},
-  "gundavenilaya": {name:'GUNDAVENI LAYA', password:"5708337338"},
-  "jittavenisrilekha": {name:'JITTAVENI SRI LEKHA', password:"4085712392"},
-  "kalwalasaloni": {name:'KALWALA SALONI', password:"3516149777"},
-  "kandivaishnavi": {name:'KANDI VAISHNAVI', password:"7540176571"},
-  "kedamsukumar": {name:'KEDAM SUKUMAR', password:"7445170326"},
-  "kolipakakamalakar": {name:'KOLIPAKA KAMALAKAR', password:"1368235469"},
-  "kothasruthika": {name:'KOTHA SRUTHIKA', password:"1152065199"},
-  "kuncheashwith": {name:'KUNCHE ASHWITH', password:"9080526742"},
-  "matetimythri": {name:'MATETI MYTHRI', password:"3810966667"},
-  "nagammadhavi": {name:'NAGAM MADHAVI', password:"9894861751"},
-  "nampallysahithi": {name:'NAMPALLY SAHITHI', password:"7638053020"},
-  "pallumaluvarshini": {name:'PALLUMALU VARSHINI', password:"6260378081"},
-  "pothugantisupriya": {name:'POTHUGANTI SUPRIYA', password:"1353457375"},
-  "ragallasiddesh": {name:'RAGALLA SIDDESH', password:"4709866099"},
-  "rangujashwanth": {name:'RANGU JASHWANTH', password:"2215987898"},
-  "thotlaamulya": {name:'THOTLA AMULYA', password:"7255573796"},
-  "varalarishika": {name:'VARALA RISHIKA', password:"4614578224"},
-  "varalasathwika": {name:'VARALA SATHWIKA', password:"2545553840"},
-  "pollamharika": {name:'POLLAM HARIKA', password:"1624073635"},
-  "gundojemanideep": {name:'GUNDOJE MANI DEEP', password:"6781477453"},
-  "kambalaakshaya": {name:'KAMBALA AKSHAYA', password:"5286476285"},
-  "kandlysujani": {name:'KANDLY SUJANI', password:"9764322849"},
-  "kothapellyshaswtha": {name:'KOTHAPELLY SHASWTHA', password:"7490461708"},
-  "maheshunimanideep": {name:'MAHESHUNI MANIDEEP', password:"1407027884"},
-  "mamidivaishnavi": {name:'MAMIDI VAISHNAVI', password:"3378756451"},
-  "mathulapuramdikshitha": {name:'MATHULAPURAM DIKSHITHA', password:"9910509144"},
-  "myakalaakshya": {name:'MYAKALA AKSHYA', password:"4026200843"},
-  "papanakakeerthana": {name:'PAPANAKA KEERTHANA', password:"6695080344"},
-  "pentalamohan": {name:'PENTALA MOHAN', password:"9424247064"},
-  "regulathriveni": {name:'REGULA THRIVENI', password:"9029714626"},
-  "sathyamanisherroru": {name:'SATHYAMANISH ERRORU', password:"7863232649"},
-  "shanigaramjaswanth": {name:'SHANIGARAM JASWANTH', password:"3774437169"},
-  "singireddyvaishnavi": {name:'SINGIREDDY VAISHNAVI', password:"4488727297"},
-  "thodetiharisha": {name:'THODETI HARISHA', password:"6520953596"},
-  "vadlurisaveena": {name:'VADLURI SAVEENA', password:"2870687243"}
+  "adigoppulaharika": {name:'ADIGOPPULA HARIKA'},
+  "aresrija": {name:'ARE SRIJA'},
+  "banothuharsha": {name:'BANOTHU HARSHA'},
+  "bathinicharan": {name:'BATHINI CHARAN'},
+  "biyalasainarsimharao": {name:'BIYALA SAI NARSIMHA RAO'},
+  "busasamanvi": {name:'BUSA SAMANVI'},
+  "dommativamshi": {name:'DOMMATI VAMSHI'},
+  "doodammahalaxmi": {name:'DOODAM MAHALAXMI'},
+  "ellenkisathwika": {name:'ELLENKI SATHWIKA'},
+  "gajuravenimaheshwari": {name:'GAJURAVENI MAHESHWARI'},
+  "gananthulanithisha": {name:'GANANTHULA NITHISHA'},
+  "gannavenipallavi": {name:'GANNAVENI PALLAVI'},
+  "gudurisiri": {name:'GUDURI SIRI'},
+  "gundavenilaya": {name:'GUNDAVENI LAYA'},
+  "jittavenisrilekha": {name:'JITTAVENI SRI LEKHA'},
+  "kalwalasaloni": {name:'KALWALA SALONI'},
+  "kandivaishnavi": {name:'KANDI VAISHNAVI'},
+  "kedamsukumar": {name:'KEDAM SUKUMAR'},
+  "kolipakakamalakar": {name:'KOLIPAKA KAMALAKAR'},
+  "kothasruthika": {name:'KOTHA SRUTHIKA'},
+  "kuncheashwith": {name:'KUNCHE ASHWITH'},
+  "matetimythri": {name:'MATETI MYTHRI'},
+  "nagammadhavi": {name:'NAGAM MADHAVI'},
+  "nampallysahithi": {name:'NAMPALLY SAHITHI'},
+  "pallumaluvarshini": {name:'PALLUMALU VARSHINI'},
+  "pothugantisupriya": {name:'POTHUGANTI SUPRIYA'},
+  "ragallasiddesh": {name:'RAGALLA SIDDESH'},
+  "rangujashwanth": {name:'RANGU JASHWANTH'},
+  "thotlaamulya": {name:'THOTLA AMULYA'},
+  "varalarishika": {name:'VARALA RISHIKA'},
+  "varalasathwika": {name:'VARALA SATHWIKA'},
+  "pollamharika": {name:'POLLAM HARIKA'},
+  "gundojemanideep": {name:'GUNDOJE MANI DEEP'},
+  "kambalaakshaya": {name:'KAMBALA AKSHAYA'},
+  "kandlysujani": {name:'KANDLY SUJANI'},
+  "kothapellyshaswtha": {name:'KOTHAPELLY SHASWTHA'},
+  "maheshunimanideep": {name:'MAHESHUNI MANIDEEP'},
+  "mamidivaishnavi": {name:'MAMIDI VAISHNAVI'},
+  "mathulapuramdikshitha": {name:'MATHULAPURAM DIKSHITHA'},
+  "myakalaakshya": {name:'MYAKALA AKSHYA'},
+  "papanakakeerthana": {name:'PAPANAKA KEERTHANA'},
+  "pentalamohan": {name:'PENTALA MOHAN'},
+  "regulathriveni": {name:'REGULA THRIVENI'},
+  "sathyamanisherroru": {name:'SATHYAMANISH ERRORU'},
+  "shanigaramjaswanth": {name:'SHANIGARAM JASWANTH'},
+  "singireddyvaishnavi": {name:'SINGIREDDY VAISHNAVI'},
+  "thodetiharisha": {name:'THODETI HARISHA'},
+  "vadlurisaveena": {name:'VADLURI SAVEENA'}
 };
+window.tgmsRegisterLoggedInStudent=function(studentId,name){
+  try{
+    if(typeof STUDENT_ACCOUNTS!=="undefined") STUDENT_ACCOUNTS[studentId]={name:name};
+  }catch(e){}
+};
+
 
 const WEEKLY_EXAM_RESULTS = {
   /* Example structure:
@@ -1721,29 +1837,25 @@ window.tgmsTeacherLogin = function(){
 };
 
 const TGMS_TEACHERS = {
-  ramarao:   {name:"Ramarao Sir",  subject:"Physics",  password:"5831047269"},
-  jagruti:   {name:"Jagruti Mam",  subject:"Chemistry",password:"7419263058"},
-  tirupati:  {name:"Tirupati Sir", subject:"Maths A",  password:"6295174830"},
-  krishna:   {name:"Krishna Sir",  subject:"Maths B",  password:"8153046972"}
+  ramarao:   {name:"Ramarao Sir",  subject:"Physics"},
+  jagruti:   {name:"Jagruti Mam",  subject:"Chemistry"},
+  tirupati:  {name:"Tirupati Sir", subject:"Maths A"},
+  krishna:   {name:"Krishna Sir",  subject:"Maths B"}
 ,
   "lingagoud": {
     "name": "Linga Goud",
-    "password": "9362185047",
     "subject": "Telugu"
   },
   "arundhati": {
     "name": "Arundhati",
-    "password": "6843051729",
     "subject": "English"
   },
   "biology": {
     "name": "Biology Teacher",
-    "password": "5724186039",
     "subject": "Biology"
   },
   "zoology": {
     "name": "Zoology Teacher",
-    "password": "8046312758",
     "subject": "Zoology"
   }};
 
@@ -3311,19 +3423,170 @@ document.addEventListener("DOMContentLoaded",function(){
 </script>
 
 <script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import{getDatabase,ref,onValue,set}from"https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-import{getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-const firebaseConfig={apiKey:"AIzaSyD68Rg-d4poC7ViGIF40sJHaC_JV0aQWTc",authDomain:"tgms-pegedepelly-hub.firebaseapp.com",databaseURL:"https://tgms-pegedepelly-hub-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"tgms-pegedepelly-hub",storageBucket:"tgms-pegedepelly-hub.firebasestorage.app",messagingSenderId:"665938484871",appId:"1:665938484871:web:07f5c5544909c6940ae222",measurementId:"G-VNVEVZ61S8"};
-const app=initializeApp(firebaseConfig),db=getDatabase(app),auth=getAuth(app),daily=ref(db,"dailyUpdate"),$=id=>document.getElementById(id);
-function show(id){document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");window.scrollTo(0,0)}window.show=show;
-function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]) )}
-function render(d){$("newsBox").innerHTML="<p>"+esc(d.news||"No school news published yet.")+"</p>";$("dayBox").innerHTML="<p>"+esc(d.importantDay||"No important day published yet.")+"</p>";$("annBox").innerHTML="<h3>📢 Announcement</h3><p>"+esc(d.announcement||"No announcement published yet.")+"</p>";if($("newsInput")){$("newsInput").value=d.news||"";$("dayInput").value=d.importantDay||"";$("annInput").value=d.announcement||""}}
-onValue(daily,s=>render(s.val()||{}),e=>console.error(e));
-function login(){signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value).then(()=>{$("loginStatus").style.display="block";$("loginStatus").textContent="✅ Admin signed in."}).catch(()=>{$("loginStatus").style.display="block";$("loginStatus").textContent="❌ Login failed. Check your email and password."})}window.login=login;
-onAuthStateChanged(auth,u=>{$("loginBox").style.display=u?"none":"block";$("adminBox").style.display=u?"block":"none"});
-async function publish(){const s=$("pubStatus");s.style.display="block";s.textContent="Publishing...";try{await set(daily,{news:$("newsInput").value.trim(),importantDay:$("dayInput").value.trim(),announcement:$("annInput").value.trim(),updatedAt:new Date().toISOString()});s.textContent="✅ Published online. Students receive the update automatically."}catch(e){s.textContent="❌ Publish failed. Check Firebase rules.";console.error(e)}}window.publish=publish;
-function logout(){signOut(auth)}window.logout=logout;
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD68Rg-d4poC7ViGIF40sJHaC_JV0aQWTc",
+  authDomain: "tgms-pegedepelly-hub.firebaseapp.com",
+  databaseURL: "https://tgms-pegedepelly-hub-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "tgms-pegedepelly-hub",
+  storageBucket: "tgms-pegedepelly-hub.firebasestorage.app",
+  messagingSenderId: "665938484871",
+  appId: "1:665938484871:web:d26dec2486bdfddb0ae222",
+  measurementId: "G-D8GDCD80FZ"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const rtdb = getDatabase(app);
+
+// Keep the existing daily school-update feature working through Realtime Database.
+const daily = ref(rtdb, "dailyUpdate");
+const $ = id => document.getElementById(id);
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+function render(d){
+  if($("newsBox")) $("newsBox").innerHTML="<p>"+esc(d.news||"No school news published yet.")+"</p>";
+  if($("dayBox")) $("dayBox").innerHTML="<p>"+esc(d.importantDay||"No important day published yet.")+"</p>";
+  if($("annBox")) $("annBox").innerHTML="<h3>📢 Announcement</h3><p>"+esc(d.announcement||"No announcement published yet.")+"</p>";
+  if($("newsInput")){ $("newsInput").value=d.news||""; $("dayInput").value=d.importantDay||""; $("annInput").value=d.announcement||""; }
+}
+onValue(daily,snap=>render(snap.val()||{}),e=>console.warn("Daily update listener:",e));
+
+async function readProfile(uid){
+  const snap=await getDoc(doc(db,"users",uid));
+  if(!snap.exists()) throw new Error("NO_PROFILE");
+  return snap.data();
+}
+
+function hideGate(){
+  const gate=$("tgmsLoginGate");
+  if(gate) gate.style.display="none";
+}
+function showGate(){
+  const gate=$("tgmsLoginGate");
+  if(gate) gate.style.display="flex";
+  if(typeof window.tgmsBackToRoles==="function") window.tgmsBackToRoles();
+}
+
+window.tgmsFirebaseLogin = async function(expectedRole,email,password,statusEl){
+  try{
+    const cred=await signInWithEmailAndPassword(auth,email,password);
+    const profile=await readProfile(cred.user.uid);
+    if(profile.role!==expectedRole){
+      await signOut(auth);
+      statusEl.textContent="❌ This account is not registered as a "+expectedRole+" account.";
+      return false;
+    }
+
+    sessionStorage.setItem("tgmsFirebaseUid",cred.user.uid);
+    sessionStorage.setItem("tgmsRole",profile.role);
+    if(profile.role==="student") sessionStorage.setItem("tgmsStudentUser",profile.studentId||cred.user.uid);
+    if(profile.role==="teacher") sessionStorage.setItem("tgmsTeacherUser",profile.teacherId||cred.user.uid);
+    if(profile.role==="admin") sessionStorage.setItem("tgmsAdminUser",profile.adminId||"admin");
+    if(profile.name) sessionStorage.setItem("tgmsDisplayName",profile.name);
+    if(profile.subject) sessionStorage.setItem("tgmsTeacherSubject",profile.subject);
+
+    // Make the logged-in student available to the existing UI without storing a password.
+    if(profile.role==="student" && profile.studentId){
+      const sid=profile.studentId;
+      if(typeof window.tgmsRegisterLoggedInStudent==="function") window.tgmsRegisterLoggedInStudent(sid,profile.name||sid);
+    }
+
+    hideGate();
+    if(profile.role==="student") {
+      if($("welcomeName")) $("welcomeName").textContent=profile.name||"Student";
+      if($("welcomeModal")) $("welcomeModal").classList.add("show");
+      if(typeof window.studentShow==="function") window.studentShow("home");
+    } else if(profile.role==="teacher") {
+      if($("teacherWelcome")) $("teacherWelcome").textContent="Welcome, "+(profile.name||"Teacher")+"!";
+      if($("teacherSubject")) $("teacherSubject").textContent=profile.subject||"";
+      if($("teacherMathTypeWrap")) $("teacherMathTypeWrap").style.display=(profile.subject==="Maths A"||profile.subject==="Maths B")?"block":"none";
+      if(typeof window.studentShow==="function") window.studentShow("teacherPanel");
+      setTimeout(()=>{ if(typeof window.teacherSelectAssessment==="function") window.teacherSelectAssessment("Unit Test 1"); if(typeof window.teacherRenderQuestions==="function") window.teacherRenderQuestions(); if(typeof window.teacherRenderApproval==="function") window.teacherRenderApproval(); if(typeof window.teacherRenderList==="function") window.teacherRenderList(); },50);
+    } else {
+      if($("adminWelcome")) $("adminWelcome").textContent="Welcome, "+(profile.name||"Administrator")+".";
+      if(typeof window.tgmsOpenAdminPanel==="function") window.tgmsOpenAdminPanel();
+    }
+    statusEl.textContent="✅ Secure login successful.";
+    return true;
+  }catch(err){
+    console.error(err);
+    statusEl.textContent = err && err.message==="NO_PROFILE" ? "❌ Login succeeded, but no TGMS user profile was found." : "❌ Login failed. Check the Firebase email/password.";
+    return false;
+  }
+};
+
+window.tgmsFirebaseLogout = async function(){
+  try{ await signOut(auth); } finally { sessionStorage.clear(); showGate(); if(typeof window.studentShow==="function") window.studentShow("roleSelection"); }
+};
+
+// Override the old local-password login functions so they cannot bypass Firebase.
+window.studentLogin = async function(){
+  const email=$("studentUsername")?.value.trim();
+  const password=$("studentPassword")?.value||"";
+  const s=$("studentLoginStatus"); if(s)s.style.display="block";
+  if(!email||!password){if(s)s.textContent="❌ Enter your Firebase email and password.";return;}
+  await window.tgmsFirebaseLogin("student",email,password,s);
+};
+window.tgmsTeacherLogin = async function(){
+  const email=$("teacherUsername")?.value.trim();
+  const password=$("teacherPassword")?.value||"";
+  const s=$("teacherLoginStatus"); if(s)s.style.display="block";
+  if(!email||!password){if(s)s.textContent="❌ Enter your Firebase email and password.";return false;}
+  await window.tgmsFirebaseLogin("teacher",email,password,s);
+  return false;
+};
+window.tgmsAdminLogin = async function(){
+  const email=$("adminUsername")?.value.trim();
+  const password=$("adminPassword")?.value||"";
+  const s=$("adminLoginStatus"); if(s)s.style.display="block";
+  if(!email||!password){if(s)s.textContent="❌ Enter your Firebase email and password.";return;}
+  await window.tgmsFirebaseLogin("admin",email,password,s);
+};
+
+window.logout = window.tgmsFirebaseLogout;
+window.login = async function(){
+  const email=$("email")?.value.trim(); const password=$("password")?.value||""; const s=$("loginStatus");
+  if(s)s.style.display="block";
+  if(!email||!password){if(s)s.textContent="❌ Enter your Firebase email and password.";return;}
+  await window.tgmsFirebaseLogin("admin",email,password,s);
+};
+
+// If an authenticated Firebase user already has a valid TGMS profile, restore the session.
+onAuthStateChanged(auth,async user=>{
+  if(!user){
+    sessionStorage.removeItem("tgmsFirebaseUid");
+    return;
+  }
+  try{
+    const profile=await readProfile(user.uid);
+    if(!profile || !profile.role) return;
+    sessionStorage.setItem("tgmsFirebaseUid",user.uid);
+    sessionStorage.setItem("tgmsRole",profile.role);
+    if(profile.role==="student") {
+      sessionStorage.setItem("tgmsStudentUser",profile.studentId||user.uid);
+      if(typeof window.tgmsRegisterLoggedInStudent==="function") window.tgmsRegisterLoggedInStudent(profile.studentId||user.uid,profile.name||"Student");
+    }
+    if(profile.role==="teacher") {
+      sessionStorage.setItem("tgmsTeacherUser",profile.teacherId||user.uid);
+      sessionStorage.setItem("tgmsTeacherSubject",profile.subject||"");
+    }
+    if(profile.role==="admin") sessionStorage.setItem("tgmsAdminUser",profile.adminId||"admin");
+  }catch(e){ console.warn("TGMS auth profile:",e); }
+});
+
+async function publish(){
+  const s=$("pubStatus"); if(s){s.style.display="block";s.textContent="Publishing...";}
+  try{
+    await set(daily,{news:$("newsInput")?.value.trim()||"",importantDay:$("dayInput")?.value.trim()||"",announcement:$("annInput")?.value.trim()||"",updatedAt:new Date().toISOString()});
+    if(s)s.textContent="✅ Published online.";
+  }catch(e){if(s)s.textContent="❌ Publish failed. Check Firebase Realtime Database rules.";console.error(e);}
+}
+window.publish=publish;
 </script>
 <script>
 (function(){
