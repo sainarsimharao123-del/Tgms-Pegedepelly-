@@ -3512,7 +3512,7 @@ window.tgmsFirebaseLogin = async function(expectedRole,email,password,statusEl){
     sessionStorage.setItem("tgmsRole",normalizedRole);
     if(profile.role==="student") sessionStorage.setItem("tgmsStudentUser",profile.studentId||cred.user.uid);
     if(profile.role==="teacher") sessionStorage.setItem("tgmsTeacherUser",profile.teacherId||cred.user.uid);
-    if(restoredRole==="admin") sessionStorage.setItem("tgmsAdminUser",profile.adminId||"admin");
+    if(normalizedRole==="admin") sessionStorage.setItem("tgmsAdminUser",profile.adminId||"admin");
     if(profile.name) sessionStorage.setItem("tgmsDisplayName",profile.name);
     if(profile.subject) sessionStorage.setItem("tgmsTeacherSubject",profile.subject);
 
