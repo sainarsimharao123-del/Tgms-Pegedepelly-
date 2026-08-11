@@ -233,7 +233,7 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 
   window.tgmsOfficialLogin = async function(){
     const email=el("tgmsLoginId").value.trim();
-    const password=el("tgmsLoginPassword").value;
+    const password=el("tgmsLoginPassword").value.trim();
     if(!email || !password){
       el("tgmsLoginMessage").textContent="Please enter your Firebase email and password.";
       return;
@@ -335,7 +335,7 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
   <label><b>Username</b></label>
   <input id="studentUsername" autocomplete="username" placeholder="Firebase email address">
   <label><b>Password</b></label>
-  <input id="studentPassword" type="password" inputmode="numeric" maxlength="10" autocomplete="current-password" placeholder="10-digit password">
+  <input id="studentPassword" type="password" inputmode="numeric" autocomplete="current-password" placeholder="10-digit password">
   <button class="primary" onclick="studentLogin()">Sign In</button>
   <div id="studentLoginStatus" class="status" style="display:none"></div>
 </div>
@@ -3569,14 +3569,14 @@ window.tgmsFirebaseLogout = async function(){
 // Override the old local-password login functions so they cannot bypass Firebase.
 window.studentLogin = async function(){
   const email=$("studentUsername")?.value.trim();
-  const password=$("studentPassword")?.value||"";
+  const password=$("studentPassword")?.value.trim()||"";
   const s=$("studentLoginStatus"); if(s)s.style.display="block";
   if(!email||!password){if(s)s.textContent="❌ Enter your Firebase email and password.";return;}
   await window.tgmsFirebaseLogin("student",email,password,s);
 };
 window.tgmsTeacherLogin = async function(){
   const email=$("teacherUsername")?.value.trim();
-  const password=$("teacherPassword")?.value||"";
+  const password=$("teacherPassword")?.value.trim()||"";
   const s=$("teacherLoginStatus"); if(s)s.style.display="block";
   if(!email||!password){if(s)s.textContent="❌ Enter your Firebase email and password.";return false;}
   await window.tgmsFirebaseLogin("teacher",email,password,s);
@@ -3584,7 +3584,7 @@ window.tgmsTeacherLogin = async function(){
 };
 window.tgmsAdminLogin = async function(){
   const email=$("adminUsername")?.value.trim();
-  const password=$("adminPassword")?.value||"";
+  const password=$("adminPassword")?.value.trim()||"";
   const s=$("adminLoginStatus"); if(s)s.style.display="block";
   if(!email||!password){if(s)s.textContent="❌ Enter your Firebase email and password.";return;}
   await window.tgmsFirebaseLogin("admin",email,password,s);
