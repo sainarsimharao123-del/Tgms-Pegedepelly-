@@ -3476,14 +3476,23 @@ window.tgmsFirebaseLogin = async function(expectedRole,email,password,statusEl){
   try{
     const cred=await signInWithEmailAndPassword(auth,email,password);
     const profile=await readProfile(cred.user.uid);
-    if(profile.role!==expectedRole){
+
+    // Normalize Firebase role values so accidental capitalization/whitespace
+    // (for example "Teacher" or " teacher ") cannot block a valid account.
+    const normalizedRole=String(profile.role||"").trim().toLowerCase();
+    const normalizedExpectedRole=String(expectedRole||"").trim().toLowerCase();
+
+    if(normalizedRole!==normalizedExpectedRole){
       await signOut(auth);
       statusEl.textContent="❌ This account is not registered as a "+expectedRole+" account.";
       return false;
     }
 
+    // Use the normalized role everywhere in the session.
+    profile.role=normalizedRole;
+
     sessionStorage.setItem("tgmsFirebaseUid",cred.user.uid);
-    sessionStorage.setItem("tgmsRole",profile.role);
+    sessionStorage.setItem("tgmsRole",normalizedRole);
     if(profile.role==="student") sessionStorage.setItem("tgmsStudentUser",profile.studentId||cred.user.uid);
     if(profile.role==="teacher") sessionStorage.setItem("tgmsTeacherUser",profile.teacherId||cred.user.uid);
     if(profile.role==="admin") sessionStorage.setItem("tgmsAdminUser",profile.adminId||"admin");
