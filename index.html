@@ -3404,7 +3404,11 @@ window.tgmsSetDaily = async function(payload){
 // administrators and students on different devices/browsers.
 window.tgmsLessonResourceKey=function(subject,lesson){
   const clean=v=>String(v??"").normalize("NFKC").replace(/\u00a0/g," ").replace(/\s+/g," ").trim();
-  return encodeURIComponent(clean(subject))+"__"+encodeURIComponent(clean(lesson));
+  // Firebase Realtime Database paths cannot contain ".", "#", "$", "[", or "]".
+  // Encode the complete subject+lesson into hexadecimal so the key is ALWAYS safe.
+  const raw=clean(subject)+"\u0000"+clean(lesson);
+  const bytes=new TextEncoder().encode(raw);
+  return "k_"+Array.from(bytes).map(b=>b.toString(16).padStart(2,"0")).join("");
 };
 window.tgmsGetLessonResources=async function(subject,lesson){
   const key=window.tgmsLessonResourceKey(subject,lesson);
@@ -3440,6 +3444,17 @@ window.tgmsGetLessonResources=async function(subject,lesson){
   }catch(e){
     if(firstError) console.warn("TGMS both resource reads failed:",firstError,e);
   }
+
+  // Legacy local fallback.
+  try{
+    const local=JSON.parse(localStorage.getItem("TGMS_RESOURCES_"+subject+"_"+lesson)||"null");
+    if(local&&typeof local==="object"){
+      return {
+        videos:Array.isArray(local.videos)?local.videos:[],
+        practicals:Array.isArray(local.practicals)?local.practicals:[]
+      };
+    }
+  }catch(e){}
 
   if(firstError){
     return {videos:[],practicals:[],_readError:true,_readErrorMessage:firstError.message||String(firstError)};
