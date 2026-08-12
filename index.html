@@ -307,10 +307,13 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 
 </div>
 
-<div class="card" id="studentDashboardHomeCard" style="display:block !important;">
-  <h2>🎓 Student Dashboard</h2>
-  <p>Open your digital progress, complete syllabus, practice, EAPCET, examinations and notifications.</p>
-  <button type="button" class="primary" onclick="tgmsOpenPlus()">📊 Open Student Dashboard</button>
+<div class="card" id="tgmsSeparateStudentTools">
+  <h2>🎓 Student Tools</h2>
+  <p>Open your progress and EAPCET pages separately.</p>
+  <div class="grid">
+    <button type="button" class="primary" onclick="tgmsOpenProgressPage()">📊 Progress</button>
+    <button type="button" onclick="tgmsOpenEapcetPage()">🎯 EAPCET</button>
+  </div>
 </div>
 
 <div class="card" id="unitTestMarksHomeCard">
@@ -3858,21 +3861,25 @@ document.addEventListener("DOMContentLoaded",function(){
 </style>
 
 <!-- ===== TGMS FEATURE SUITE V1 ===== -->
-<section id="tgmsStudentHubPlus">
+<section id="tgmsStudentHubPlus" style="display:none!important;"></section>
+
+
+<section id="tgmsProgressPage">
   <button type="button" onclick="studentShow('home')">← Home</button>
   <div class="card">
-    <h2>🎓 Student Dashboard</h2>
-    <p>Your student dashboard: progress, complete syllabus, practice, EAPCET, examinations and notifications.</p>
-    <div class="tgms-feature-grid">
-      <button class="primary" onclick="tgmsOpenProgress()">📊 Digital Progress</button>
-      <button onclick="tgmsOpenCurriculum()">📚 Complete Syllabus</button>
-      <button onclick="tgmsOpenEapcet()">🎯 EAPCET</button>
-      <button onclick="tgmsOpenPractice()">📝 Practice Mode</button>
-      <button onclick="tgmsOpenExams()">💻 Digital Examinations</button>
-      <button onclick="tgmsOpenNotifications()">🔔 Notifications</button>
-    </div>
+    <h2>📊 My Progress</h2>
+    <p>Track your subject-wise learning progress.</p>
+    <div id="tgmsProgressPageContent"></div>
   </div>
-  <div id="tgmsPlusContent"></div>
+</section>
+
+<section id="tgmsEapcetPage">
+  <button type="button" onclick="studentShow('home')">← Home</button>
+  <div class="card">
+    <h2>🎯 EAPCET</h2>
+    <p>Practice EAPCET questions and preparation resources.</p>
+    <div id="tgmsEapcetPageContent"></div>
+  </div>
 </section>
 
 <section id="tgmsAdminSuite">
@@ -4000,6 +4007,39 @@ document.addEventListener("DOMContentLoaded",function(){
         '<button onclick="tgmsOpenLessonResources('+JSON.stringify(s)+','+JSON.stringify(x)+')">Open Lesson</button></div>').join("")+
         '</details>'
       ).join("")+'</div>';
+  };
+
+  window.tgmsOpenProgressPage=function(){
+    studentShow("tgmsProgressPage");
+    const data=store.get("TGMS_PROGRESS_"+student(),{});
+    const subjects=Object.keys(curriculum);
+    const rows=subjects.map(function(s){
+      const value=Math.max(0,Math.min(100,Number(data[s]||0)));
+      return '<div class="tgms-resource" style="margin:10px 0">'+
+        '<b>'+esc(s)+'</b>'+
+        '<div style="margin-top:8px;background:#e8eef5;border-radius:999px;height:12px;overflow:hidden">'+
+        '<div style="width:'+value+'%;height:100%;background:#123e72"></div></div>'+
+        '<div style="margin-top:5px">'+value+'%</div></div>';
+    }).join("");
+    document.getElementById("tgmsProgressPageContent").innerHTML=
+      '<h3>Subject Progress</h3>'+rows;
+  };
+
+  window.tgmsOpenEapcetPage=function(){
+    studentShow("tgmsEapcetPage");
+    const qs=store.get("TGMS_EAPCET",[]);
+    const content=document.getElementById("tgmsEapcetPageContent");
+    if(!Array.isArray(qs)||!qs.length){
+      content.innerHTML='<div class="notice">No EAPCET questions have been published yet.</div>';
+      return;
+    }
+    content.innerHTML=qs.map(function(q,i){
+      return '<div class="tgms-resource" style="margin:12px 0">'+
+        '<h3>Question '+(i+1)+'</h3>'+
+        '<p>'+esc(q.question||q.q||"")+'</p>'+
+        (q.answer||q.correct?'<p><b>Answer:</b> '+esc(q.answer||q.correct)+'</p>':'')+
+        '</div>';
+    }).join("");
   };
 
   window.tgmsOpenLessonResources=async function(subject,lesson){
@@ -4258,9 +4298,9 @@ document.addEventListener("DOMContentLoaded",function(){
   function injectStudentButtons(){
     const home=document.getElementById("home"); if(!home||document.getElementById("tgmsPlusHomeCard"))return;
     const card=document.createElement("div"); card.className="card"; card.id="tgmsPlusHomeCard"; card.style.display="block";
-    card.innerHTML='<h2>🚀 Digital Learning Hub</h2><p>Access your progress, complete syllabus, EAPCET, practice and digital examinations.</p><div class="grid">'+
-      '<button class="primary" onclick="tgmsOpenPlus()">📊 Open Student Hub</button>'+
-      '<button onclick="tgmsOpenEapcet()">🎯 EAPCET</button>'+
+    card.innerHTML='<h2>🎓 Student Tools</h2><p>Access your progress and EAPCET separately.</p><div class="grid">'+
+      '<button class="primary" onclick="tgmsOpenProgressPage()">📊 Progress</button>'+
+      '<button onclick="tgmsOpenEapcetPage()">🎯 EAPCET</button>'+
       '<button onclick="tgmsOpenExams()">💻 Digital Examinations</button>'+
       '<button onclick="tgmsOpenNotifications()">🔔 Updates</button></div>';
     home.insertBefore(card,home.querySelector("#englishTeluguCard")||home.lastElementChild);
