@@ -143,6 +143,9 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 .deep-topic-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .deep-topic-head h3{margin:0}.deep-explanation{line-height:1.7}
 
+
+.practical-video-info{margin-top:8px;padding:10px 12px;border-radius:10px;background:#f8fbff;border:1px solid #dbe5ef}
+.practical-video-info p{margin:0 0 10px}
 </style></head><body>
 
 <!-- TGMS OFFICIAL LOGIN GATE -->
@@ -304,7 +307,7 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 
 </div>
 
-<div class="card" id="studentDashboardHomeCard">
+<div class="card" id="studentDashboardHomeCard" style="display:block !important;">
   <h2>🎓 Student Dashboard</h2>
   <p>Open your digital progress, complete syllabus, practice, EAPCET, examinations and notifications.</p>
   <button type="button" class="primary" onclick="tgmsOpenPlus()">📊 Open Student Dashboard</button>
@@ -580,6 +583,9 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
   <label><b>Practical</b></label>
   <select id="adminPracticalNumber" onchange="adminLoadPracticalVideo()">
   </select>
+
+  <label><b>What is this video about?</b></label>
+  <textarea id="adminPracticalVideoDescription" rows="3" placeholder="Write a short description of what this practical video explains..."></textarea>
 
   <label><b>Video Link</b></label>
   <input id="adminPracticalVideoUrl" type="url" placeholder="Paste YouTube or video link">
@@ -3041,15 +3047,29 @@ function adminInitPracticalManager(){
   adminLoadPracticalVideo();
 }
 
+function tgmsGetPracticalVideoData(subject,number){
+  const raw=localStorage.getItem(tgmsPracticalVideoKey(subject,number));
+  if(!raw)return {url:"",description:""};
+  try{
+    const parsed=JSON.parse(raw);
+    if(parsed && typeof parsed==="object"){
+      return {url:String(parsed.url||""),description:String(parsed.description||"")};
+    }
+  }catch(e){}
+  // Backward compatibility with the older format where only the URL was stored.
+  return {url:raw,description:""};
+}
+
 function adminLoadPracticalVideo(){
   const subject=document.getElementById("adminPracticalSubject");
   const number=document.getElementById("adminPracticalNumber");
   const input=document.getElementById("adminPracticalVideoUrl");
+  const description=document.getElementById("adminPracticalVideoDescription");
   if(!subject||!number||!input)return;
 
-  input.value=localStorage.getItem(
-    tgmsPracticalVideoKey(subject.value,number.value)
-  ) || "";
+  const data=tgmsGetPracticalVideoData(subject.value,number.value);
+  input.value=data.url;
+  if(description)description.value=data.description;
 
   const status=document.getElementById("adminPracticalVideoStatus");
   if(status)status.style.display="none";
@@ -3059,7 +3079,15 @@ function adminSavePracticalVideo(){
   const subject=document.getElementById("adminPracticalSubject").value;
   const number=document.getElementById("adminPracticalNumber").value;
   const input=document.getElementById("adminPracticalVideoUrl");
+  const description=document.getElementById("adminPracticalVideoDescription");
   const url=input.value.trim();
+  const about=description ? description.value.trim() : "";
+
+  if(!about){
+    alert("Please write what this practical video is about.");
+    if(description)description.focus();
+    return;
+  }
 
   if(!url){
     alert("Paste a video link first.");
@@ -3076,12 +3104,15 @@ function adminSavePracticalVideo(){
     return;
   }
 
-  localStorage.setItem(tgmsPracticalVideoKey(subject,number),url);
+  localStorage.setItem(
+    tgmsPracticalVideoKey(subject,number),
+    JSON.stringify({url:url,description:about})
+  );
 
   const status=document.getElementById("adminPracticalVideoStatus");
   if(status){
     status.style.display="block";
-    status.textContent="✅ "+subject+" Practical "+number+" video link saved.";
+    status.textContent="✅ "+subject+" Practical "+number+" video and description saved.";
   }
 
   tgmsRenderPracticalVideos();
@@ -3098,7 +3129,7 @@ function adminRemovePracticalVideo(){
   const status=document.getElementById("adminPracticalVideoStatus");
   if(status){
     status.style.display="block";
-    status.textContent="🗑️ Video link removed.";
+    status.textContent="🗑️ Video and description removed.";
   }
 }
 
@@ -3109,9 +3140,15 @@ function tgmsRenderPracticalVideos(){
       const slot=document.getElementById(id);
       if(!slot)continue;
 
-      const url=localStorage.getItem(tgmsPracticalVideoKey(subject,n));
+      const data=tgmsGetPracticalVideoData(subject,n);
+      const url=data.url;
+      const description=data.description;
+
       slot.innerHTML=url
-        ? '<a class="practical-video-btn" href="'+escapeHtmlAttr(url)+'" target="_blank" rel="noopener noreferrer">🎥 Video Explanation ▶️</a>'
+        ? '<div class="practical-video-info">'+
+            '<p><b>📌 About this video:</b> '+escapeHtml(description||"Practical video explanation")+'</p>'+
+            '<a class="practical-video-btn" href="'+escapeHtmlAttr(url)+'" target="_blank" rel="noopener noreferrer">🎥 Video Explanation ▶️</a>'+
+          '</div>'
         : '<span class="notice">🎥 Video explanation will be added by Administrator.</span>';
     }
   });
@@ -3330,7 +3367,7 @@ document.addEventListener("DOMContentLoaded",function(){
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD68Rg-d4poC7ViGIF40sJHaC_JV0aQWTc",
@@ -4155,7 +4192,7 @@ document.addEventListener("DOMContentLoaded",function(){
 
   function injectStudentButtons(){
     const home=document.getElementById("home"); if(!home||document.getElementById("tgmsPlusHomeCard"))return;
-    const card=document.createElement("div"); card.className="card"; card.id="tgmsPlusHomeCard";
+    const card=document.createElement("div"); card.className="card"; card.id="tgmsPlusHomeCard"; card.style.display="block";
     card.innerHTML='<h2>🚀 Digital Learning Hub</h2><p>Access your progress, complete syllabus, EAPCET, practice and digital examinations.</p><div class="grid">'+
       '<button class="primary" onclick="tgmsOpenPlus()">📊 Open Student Hub</button>'+
       '<button onclick="tgmsOpenEapcet()">🎯 EAPCET</button>'+
@@ -4397,7 +4434,13 @@ document.addEventListener("DOMContentLoaded",function(){
     }else{
       d[type].push(item);
     }
-    await window.tgmsSetLessonResources(subject,lesson,d);
+    try{
+      await window.tgmsSetLessonResources(subject,lesson,d);
+    }catch(err){
+      console.error("TGMS resource save failed:",err);
+      alert("❌ The link could not be saved to Firebase. Check Firebase Realtime Database rules/connection and try again.");
+      return;
+    }
 
     // Keep legacy grammar-video keys compatible.
     if(subject==="English Grammar"){
