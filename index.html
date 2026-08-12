@@ -309,6 +309,14 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 
 </div>
 
+<div class="card" id="separateStudentPagesCard">
+  <h2>📌 Student Pages</h2>
+  <div class="grid">
+    <button type="button" onclick="tgmsOpenProgressPage()">📊 Progress</button>
+    <button type="button" onclick="tgmsOpenEapcetPage()">🎯 EAPCET</button>
+  </div>
+</div>
+
 <div class="card" id="unitTestMarksHomeCard">
   <h2>📝 Unit Test Marks</h2>
   <p>View your subject-wise unit test marks updated by your teachers or administrator.</p>
@@ -320,12 +328,12 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
   <h2>📚 Subjects</h2>
   <p>Choose a subject to open its learning section.</p>
   <div class="grid">
-    <button type="button" onclick="studentShow('physics')">⚛️ Physics</button>
-    <button type="button" onclick="studentShow('chem')">🧪 Chemistry</button>
-    <button type="button" onclick="studentShow('maths')">📐 Maths A</button>
-    <button type="button" onclick="studentShow('maths')">📐 Maths B</button>
-    <button type="button" onclick="studentShow('teluguSection')">తెలుగు Grammar</button>
-    <button type="button" onclick="studentShow('englishSection')">🇬🇧 English Grammar</button>
+    <button type="button" type="button" onclick="studentShow('physics')">⚛️ Physics</button>
+    <button type="button" type="button" onclick="studentShow('chem')">🧪 Chemistry</button>
+    <button type="button" type="button" onclick="studentShow('maths')">📐 Maths A</button>
+    <button type="button" type="button" onclick="studentShow('maths')">📐 Maths B</button>
+    <button type="button" onclick="openTeluguSection()">తెలుగు Grammar</button>
+    <button type="button" type="button" onclick="studentShow('englishSection')">🇬🇧 English Grammar</button>
   </div>
 </div>
 
@@ -1279,6 +1287,8 @@ function studentShow(id){
     window.scrollTo(0,0);
   }
 }
+function openEnglishSection(){ studentShow("englishSection"); }
+function openTeluguSection(){ studentShow("teluguSection"); }
 // Navigation compatibility: older buttons may still call show().
 window.show = function(id){
   return studentShow(id);
@@ -3871,6 +3881,12 @@ document.addEventListener("DOMContentLoaded",function(){
 </section>
 
 
+
+<section id="tgmsCurriculumPage">
+  <button type="button" onclick="studentShow('home')">← Home</button>
+  <div class="card"><h2>📚 Complete Syllabus</h2><div id="tgmsCurriculumContent"></div></div>
+</section>
+
 <section id="tgmsProgressPage">
   <button type="button" onclick="studentShow('home')">← Home</button>
   <div class="card">
@@ -3971,21 +3987,8 @@ document.addEventListener("DOMContentLoaded",function(){
   const role = () => sessionStorage.getItem("tgmsRole") || "";
   const pct = (n,d) => d ? Math.max(0,Math.min(100,Math.round(n/d*100))) : 0;
 
-  window.tgmsOpenPlus = function(){ studentShow("tgmsStudentHubPlus"); tgmsOpenProgress(); };
-  window.tgmsOpenProgress = function(){
-    studentShow("tgmsStudentHubPlus");
-    const data=store.get("TGMS_PROGRESS_"+student(),{});
-    const subjects=Object.keys(curriculum);
-    const overall=subjects.reduce((a,s)=>a+(Number(data[s]||0)),0);
-    const total=subjects.length*100;
-    document.getElementById("tgmsPlusContent").innerHTML =
-      '<div class="tgms-feature-card"><h3>📊 Your Digital Progress</h3>'+
-      '<div class="tgms-progress"><i style="width:'+pct(overall,total)+'%"></i></div>'+
-      '<h2>'+pct(overall,total)+'%</h2><p class="tgms-small">Learning completion based on lesson progress recorded in the Student Hub.</p></div>'+
-      '<div class="tgms-feature-grid">'+subjects.map(s=>
-      '<div class="tgms-feature-card"><b>'+esc(s)+'</b><div class="tgms-progress"><i style="width:'+Number(data[s]||0)+'%"></i></div><b>'+Number(data[s]||0)+'%</b></div>'
-      ).join("")+'</div>';
-  };
+  window.tgmsOpenPlus = function(){ tgmsOpenProgressPage(); };
+  window.tgmsOpenProgress = function(){ tgmsOpenProgressPage(); };
 
   window.tgmsMarkProgress = function(subject,percent){
     const d=store.get("TGMS_PROGRESS_"+student(),{});
@@ -3995,20 +3998,19 @@ document.addEventListener("DOMContentLoaded",function(){
   };
 
   window.tgmsOpenCurriculum=function(){
-    studentShow("tgmsStudentHubPlus");
-    document.getElementById("tgmsPlusContent").innerHTML=
+    studentShow("tgmsCurriculumPage");
+    document.getElementById("tgmsCurriculumContent").innerHTML=
       '<div class="tgms-feature-card"><h3>📚 Complete Syllabus</h3>'+
       Object.entries(curriculum).map(([s,arr])=>
         '<details class="chapter"><summary>'+esc(s)+' <span>'+arr.length+' lessons</span></summary>'+
         arr.map((x,i)=>'<div class="tgms-resource"><b>'+(i+1)+'. '+esc(x)+'</b>'+
         '<p class="tgms-small">Resources for this lesson can include notes, multiple YouTube lectures and practical links. Each external link will display its description before the link.</p>'+
-        '<button onclick="tgmsOpenLessonResources('+JSON.stringify(s)+','+JSON.stringify(x)+')">Open Lesson</button></div>').join("")+
+        '<button onclick="tgmsOpenLessonResources('+JSON.stringify(s)+','+JSON.stringify(x)+')">Open Lesson</button></div>').join('')+
         '</details>'
-      ).join("")+'</div>';
+      ).join('')+'</div>';
   };
 
-  
-window.tgmsRenderEapcet=function(){
+  window.tgmsRenderEapcet=function(){
   const box=document.getElementById("eapcetContent");
   if(!box)return;
   let qs=[];
@@ -4161,7 +4163,7 @@ window.tgmsOpenEapcetPage=function(){
   };
 
   window.tgmsOpenEapcet=function(){
-    studentShow("tgmsStudentHubPlus");
+    studentShow("home");
     const qs=store.get("TGMS_EAPCET",[]);
     document.getElementById("tgmsPlusContent").innerHTML=
       '<div class="tgms-feature-card"><h3>🎯 EAPCET Question Bank</h3>'+
@@ -4174,7 +4176,7 @@ window.tgmsOpenEapcetPage=function(){
   };
 
   window.tgmsOpenPractice=function(){
-    studentShow("tgmsStudentHubPlus");
+    studentShow("home");
     const qs=store.get("TGMS_EAPCET",[]);
     const first=qs.slice(0,20);
     document.getElementById("tgmsPlusContent").innerHTML=
@@ -4195,7 +4197,7 @@ window.tgmsOpenEapcetPage=function(){
   };
 
   window.tgmsOpenExams=function(){
-    studentShow("tgmsStudentHubPlus");
+    studentShow("home");
     const exams=store.get("TGMS_PUBLISHED_EXAMS",[]);
     document.getElementById("tgmsPlusContent").innerHTML=
       '<div class="tgms-feature-card"><h3>💻 Digital Examinations</h3>'+
@@ -4311,24 +4313,13 @@ window.tgmsOpenEapcetPage=function(){
   };
 
   window.tgmsOpenNotifications=function(){
-    studentShow("tgmsStudentHubPlus");
+    studentShow("home");
     const n=store.get("TGMS_SITE_NOTIFICATIONS",[]);
     document.getElementById("tgmsPlusContent").innerHTML='<div class="tgms-feature-card"><h3>🔔 Notifications</h3>'+
       (n.length?n.map(x=>'<div class="tgms-resource"><b>'+esc(x.title)+'</b><p>'+esc(x.message)+'</p><span class="tgms-small">'+esc(x.time||"")+'</span></div>').join(""):'<div class="notice">No site updates yet.</div>')+'</div>';
   };
 
-  function injectStudentButtons(){
-    const home=document.getElementById("home"); if(!home||document.getElementById("tgmsPlusHomeCard"))return;
-    const card=document.createElement("div"); card.className="card"; card.id="tgmsPlusHomeCard"; card.style.display="block";
-    card.innerHTML='<h2>🎓 Student Tools</h2><p>Access your progress and EAPCET separately.</p><div class="grid">'+
-      '<button class="primary" onclick="tgmsOpenProgressPage()">📊 Progress</button>'+
-      '<button onclick="tgmsOpenEapcetPage()">🎯 EAPCET</button>'+
-      '<button onclick="tgmsOpenExams()">💻 Digital Examinations</button>'+
-      '<button onclick="tgmsOpenNotifications()">🔔 Updates</button></div>';
-    home.insertBefore(card,home.querySelector("#englishTeluguCard")||home.lastElementChild);
-  }
-
-  window.tgmsOpenFeatureAdmin=function(){studentShow("tgmsAdminSuite");tgmsAdminRender("dashboard")};
+    window.tgmsOpenFeatureAdmin=function(){studentShow("tgmsAdminSuite");tgmsAdminRender("dashboard")};
 
   window.tgmsAdminRender=function(view){
     studentShow("tgmsAdminSuite");
@@ -4636,14 +4627,14 @@ window.tgmsOpenEapcetPage=function(){
   function injectExamRunner(){
     if(document.getElementById("tgmsFeatureExamRunner"))return;
     const s=document.createElement("section");s.id="tgmsFeatureExamRunner";
-    s.innerHTML='<button onclick="studentShow(\'tgmsStudentHubPlus\')">← Exit</button><div class="tgms-sticky-exam"><b id="tgmsFeatureExamTitle"></b><div id="tgmsFeatureExamMeta" class="tgms-small"></div><span id="tgmsFeatureExamTimer"></span><p id="tgmsFeatureExamCounter"></p></div>'+
+    s.innerHTML='<button onclick="studentShow(\'home\')">← Exit</button><div class="tgms-sticky-exam"><b id="tgmsFeatureExamTitle"></b><div id="tgmsFeatureExamMeta" class="tgms-small"></div><span id="tgmsFeatureExamTimer"></span><p id="tgmsFeatureExamCounter"></p></div>'+
       '<video id="tgmsExamCamera" autoplay muted playsinline style="position:fixed;right:10px;bottom:10px;width:150px;height:110px;object-fit:cover;border-radius:12px;border:2px solid #123e72;background:#111;display:none"></video>'+
       '<div id="tgmsFeatureExamQuestion"></div><div class="grid"><button id="tgmsFeatureExamPrev" onclick="tgmsFeatureExamPrev()">← Previous</button><button class="primary" id="tgmsFeatureExamNext" onclick="tgmsFeatureExamNext()">Next →</button></div>';
     document.body.appendChild(s);
   }
 
   document.addEventListener("DOMContentLoaded",function(){
-    injectStudentButtons();injectAdminTeacherButtons();injectExamRunner();
+    injectAdminTeacherButtons();injectExamRunner();
     // Render every academic lesson with a permanently visible Video Explanation button.
     // The button is outside the <details> accordion, so students can see it immediately.
     const lessonBlock = (subject, lesson, description) =>
