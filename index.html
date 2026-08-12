@@ -3782,18 +3782,18 @@ window.publish=publish;
     }
   };
 
-  window.tgmsAdminLogin = function(){
-    const u=document.getElementById('adminUsername').value.trim().toLowerCase();
-    const p=document.getElementById('adminPassword').value.trim();
+  // Final admin login: use Firebase Authentication so the Realtime Database
+  // rule (auth != null && auth.token.email == admin email) is satisfied.
+  window.tgmsAdminLogin = async function(){
+    const email=document.getElementById('adminUsername')?.value.trim() || '';
+    const password=document.getElementById('adminPassword')?.value || '';
     const s=document.getElementById('adminLoginStatus');
-    s.style.display='block';
-    if(u !== 'admin' || p !== '1234567890'){
-      s.textContent='❌ Invalid admin username or password.';
-      return;
+    if(s){s.style.display='block'; s.textContent='Signing in securely...';}
+    if(!email || !password){
+      if(s)s.textContent='❌ Enter the Administrator Firebase email and password.';
+      return false;
     }
-    s.textContent='✅ Admin login successful.';
-    sessionStorage.setItem('tgmsAdminUser','admin');
-    setTimeout(function(){ tgmsOpenAdminPanel(); },300);
+    return await window.tgmsFirebaseLogin('admin',email,password,s);
   };
 
   document.addEventListener('DOMContentLoaded', function(){
