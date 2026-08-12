@@ -491,8 +491,7 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
     <p id="adminWelcome"></p>
 
     <h3>📰 Daily School Updates — Edit & Publish</h3>
-    <button type="button" class="primary" id="adminDailyEditorToggle" onclick="toggleAdminDailyEditor()">✏️ Edit News • Important Day • Announcement</button>
-    <div class="assessment-panel" id="adminDailyUpdatesEditor" style="display:none">
+    <div class="assessment-panel" id="adminDailyUpdatesEditor">
       <p><b>Administrator only:</b> Edit any of the three daily updates independently.</p>
       <div class="notice"><b>How it works:</b> Press <b>Edit</b> → change the text → press <b>Save</b>. Students will see the updated content immediately.</div>
 
@@ -1144,7 +1143,24 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 <div class="type-block"><h4>9. comparison</h4><p><b>Explanation:</b> explain the difference between forms</p><p><b>Example:</b> a university / an umbrella.</p><p><b>Practice:</b> Identify this type in another sentence and write one new example.</p></div>
 <div class="type-block"><h4>10. mixed practice</h4><p><b>Explanation:</b> combine identification, type, rule, correction and creation</p><p><b>Example:</b> Identify, classify, explain and transform.</p><p><b>Practice:</b> Identify this type in another sentence and write one new example.</p></div>
 </div>
-</div></section>
+</div><div class="card language-card" id="englishLessonsCard">
+<h2>📚 English Lessons</h2>
+<p>These are the preloaded English lessons. Open any lesson to see its lecture links and descriptions.</p>
+<div class="grammar-grid">
+<div class="grammar-topic"><h4>1. Keep Going — Edgar Guest</h4><button type="button" onclick="tgmsOpenLessonResources('English Lessons','Keep Going — Edgar Guest')">🎥 Open Lesson</button></div>
+<div class="grammar-topic"><h4>2. Happiness — Carl Sandburg</h4><button type="button" onclick="tgmsOpenLessonResources('English Lessons','Happiness — Carl Sandburg')">🎥 Open Lesson</button></div>
+<div class="grammar-topic"><h4>3. The Beggar — Dr. Ammangi Venugopal</h4><button type="button" onclick="tgmsOpenLessonResources('English Lessons','The Beggar — Dr. Ammangi Venugopal')">🎥 Open Lesson</button></div>
+<div class="grammar-topic"><h4>4. The Nobel Nature — Ben Jonson</h4><button type="button" onclick="tgmsOpenLessonResources('English Lessons','The Nobel Nature — Ben Jonson')">🎥 Open Lesson</button></div>
+<div class="grammar-topic"><h4>5. Father, Dear Father — Raj Kinger</h4><button type="button" onclick="tgmsOpenLessonResources('English Lessons','Father, Dear Father — Raj Kinger')">🎥 Open Lesson</button></div>
+<div class="grammar-topic"><h4>6. The Green Champion — Thimmakka — Internet</h4><button type="button" onclick="tgmsOpenLessonResources('English Lessons','The Green Champion — Thimmakka — Internet')">🎥 Open Lesson</button></div>
+<div class="grammar-topic"><h4>7. The First Four Minutes — Roger Bannister</h4><button type="button" onclick="tgmsOpenLessonResources('English Lessons','The First Four Minutes — Roger Bannister')">🎥 Open Lesson</button></div>
+<div class="grammar-topic"><h4>8. Box and Cox (One-act Play) — John Maddison Morton</h4><button type="button" onclick="tgmsOpenLessonResources('English Lessons','Box and Cox (One-act Play) — John Maddison Morton')">🎥 Open Lesson</button></div>
+<div class="grammar-topic"><h4>9. Playing the Game — Arthur Mee</h4><button type="button" onclick="tgmsOpenLessonResources('English Lessons','Playing the Game — Arthur Mee')">🎥 Open Lesson</button></div>
+<div class="grammar-topic"><h4>10. The Five Boons of Life — Mark Twain</h4><button type="button" onclick="tgmsOpenLessonResources('English Lessons','The Five Boons of Life — Mark Twain')">🎥 Open Lesson</button></div>
+<div class="grammar-topic"><h4>11. The Short-sighted Brothers — Folklore</h4><button type="button" onclick="tgmsOpenLessonResources('English Lessons','The Short-sighted Brothers — Folklore')">🎥 Open Lesson</button></div>
+<div class="grammar-topic"><h4>12. The Dinner Party — Mona Gardner</h4><button type="button" onclick="tgmsOpenLessonResources('English Lessons','The Dinner Party — Mona Gardner')">🎥 Open Lesson</button></div>
+</div></div>
+</section>
 <section id="teluguSection">
 <button type="button" onclick="studentShow('home')">← Home</button>
 <div class="card language-card"><h2>తెలుగు Grammar</h2><p><b>ప్రతి అంశంలోని ప్రతి రకానికి ప్రత్యేక అర్థం, ఉదాహరణ మరియు అభ్యాసం ఇచ్చాం.</b></p>
@@ -1419,7 +1435,8 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 <div class="type-block"><h4>9. స్వంత ఉదాహరణ</h4><p><b>Explanation:</b> నియమంతో కొత్త ఉదాహరణ సృష్టించడం</p><p><b>Example:</b> ఒక ద్వంద్వ సమాసం రాయండి.</p><p><b>Practice:</b> Identify this type in another sentence and write one new example.</p></div>
 <div class="type-block"><h4>10. మిశ్రమ సాధన</h4><p><b>Explanation:</b> గుర్తింపు, రకం, నియమం, సవరణ, రూపాంతరం కలిపి</p><p><b>Example:</b> సంధి పదాన్ని విడదీసి రకం చెప్పండి.</p><p><b>Practice:</b> Identify this type in another sentence and write one new example.</p></div>
 </div>
-</div></section>
+</div><div class="card language-card" id="teluguLessonsCard"><h2>📚 తెలుగు Lessons</h2><p>These are the preloaded Telugu lessons. Open any lesson to see its lecture links and descriptions.</p><div class="grammar-grid"><div class="grammar-topic"><h4>1. Telugu Lesson 1</h4><button type="button" onclick="tgmsOpenLessonResources('Telugu Lessons','Telugu Lesson 1')">🎥 Open Lesson</button></div><div class="grammar-topic"><h4>2. Telugu Lesson 2</h4><button type="button" onclick="tgmsOpenLessonResources('Telugu Lessons','Telugu Lesson 2')">🎥 Open Lesson</button></div><div class="grammar-topic"><h4>3. Telugu Lesson 3</h4><button type="button" onclick="tgmsOpenLessonResources('Telugu Lessons','Telugu Lesson 3')">🎥 Open Lesson</button></div><div class="grammar-topic"><h4>4. Telugu Lesson 4</h4><button type="button" onclick="tgmsOpenLessonResources('Telugu Lessons','Telugu Lesson 4')">🎥 Open Lesson</button></div><div class="grammar-topic"><h4>5. Telugu Lesson 5</h4><button type="button" onclick="tgmsOpenLessonResources('Telugu Lessons','Telugu Lesson 5')">🎥 Open Lesson</button></div><div class="grammar-topic"><h4>6. Telugu Lesson 6</h4><button type="button" onclick="tgmsOpenLessonResources('Telugu Lessons','Telugu Lesson 6')">🎥 Open Lesson</button></div><div class="grammar-topic"><h4>7. Telugu Lesson 7</h4><button type="button" onclick="tgmsOpenLessonResources('Telugu Lessons','Telugu Lesson 7')">🎥 Open Lesson</button></div><div class="grammar-topic"><h4>8. Telugu Lesson 8</h4><button type="button" onclick="tgmsOpenLessonResources('Telugu Lessons','Telugu Lesson 8')">🎥 Open Lesson</button></div><div class="grammar-topic"><h4>9. Telugu Lesson 9</h4><button type="button" onclick="tgmsOpenLessonResources('Telugu Lessons','Telugu Lesson 9')">🎥 Open Lesson</button></div><div class="grammar-topic"><h4>10. Telugu Lesson 10</h4><button type="button" onclick="tgmsOpenLessonResources('Telugu Lessons','Telugu Lesson 10')">🎥 Open Lesson</button></div><div class="grammar-topic"><h4>11. Telugu Lesson 11</h4><button type="button" onclick="tgmsOpenLessonResources('Telugu Lessons','Telugu Lesson 11')">🎥 Open Lesson</button></div><div class="grammar-topic"><h4>12. Telugu Lesson 12</h4><button type="button" onclick="tgmsOpenLessonResources('Telugu Lessons','Telugu Lesson 12')">🎥 Open Lesson</button></div><div class="grammar-topic"><h4>13. Telugu Lesson 13</h4><button type="button" onclick="tgmsOpenLessonResources('Telugu Lessons','Telugu Lesson 13')">🎥 Open Lesson</button></div><div class="grammar-topic"><h4>14. Telugu Lesson 14</h4><button type="button" onclick="tgmsOpenLessonResources('Telugu Lessons','Telugu Lesson 14')">🎥 Open Lesson</button></div></div></div>
+</section>
 <section id="weeklyExam">
 <button type="button" onclick="studentShow('home')">← Home</button>
 <div class="card">
@@ -1878,7 +1895,7 @@ window.tgmsTeacherLogin = function(){
   studentShow("teacherPanel");
 
   setTimeout(function(){
-    if(typeof teacherSelectAssessment==="function")teacherSelectAssessment("Unit Test 1");
+    if(false && typeof teacherSelectAssessment==="function")teacherSelectAssessment("Unit Test 1");
     if(typeof teacherRenderQuestions==="function")teacherRenderQuestions();
     if(typeof teacherRenderApproval==="function")teacherRenderApproval();
     if(typeof teacherRenderList==="function")teacherRenderList();
@@ -2842,30 +2859,12 @@ function tgmsAssessmentKey(name){
 }
 
 function teacherSelectAssessment(name){
-  const info=document.getElementById("teacherAssessmentInfo");
-  const box=document.getElementById("teacherStudentMarks");
-  const same = teacherSelectedAssessment === name &&
-               info && info.dataset.openAssessment === name;
-
-  if(same){
-    if(info) info.innerHTML="";
-    if(info) info.dataset.openAssessment="";
-    if(box) box.innerHTML="";
-    document.querySelectorAll("#teacherAssessmentTabs .assessment-tab").forEach(function(b){
-      b.classList.remove("active");
-    });
-    return;
-  }
-
   teacherSelectedAssessment=name;
   document.querySelectorAll("#teacherAssessmentTabs .assessment-tab").forEach(function(b){
-    b.classList.toggle("active",b.textContent.trim().startsWith(name));
+    b.classList.toggle("active",b.textContent.trim()===name);
   });
-
-  if(info){
-    info.dataset.openAssessment=name;
-    info.innerHTML="<b>"+escapeHtml(name)+"</b> — Maximum <b>"+tgmsMaxMarks(name)+" marks</b> | Subject: <b>"+escapeHtml(teacherCurrent().subject)+"</b>";
-  }
+  const info=document.getElementById("teacherAssessmentInfo");
+  info.innerHTML="<b>"+escapeHtml(name)+"</b> — Maximum <b>"+tgmsMaxMarks(name)+" marks</b> | Subject: <b>"+escapeHtml(teacherCurrent().subject)+"</b>";
   teacherRenderStudentMarks();
 }
 
@@ -3016,7 +3015,7 @@ window.tgmsOpenAdminPanel = function(){
     _oldAdminPanelForAssessment.apply(this,arguments);
   }
   setTimeout(function(){
-    adminSelectAssessment("Unit Test 1");
+    /* user opens a test by tapping its tab */
   },50);
 };
 
@@ -3068,7 +3067,6 @@ const TGMS_ADMIN_ASSESSMENTS = {
   "Unit Test 3":30,
   "Unit Test 4":30
 };
-let adminSelectedAssessment="Unit Test 1";
 
 function adminAssessmentData(){
   try{return JSON.parse(localStorage.getItem("TGMS_ASSESSMENT_MARKS")||"[]");}
@@ -3076,29 +3074,14 @@ function adminAssessmentData(){
 }
 
 function adminSelectAssessment(name){
-  const info=document.getElementById("adminAssessmentInfo");
-  const box=document.getElementById("adminStudentMarks");
-  const same = adminSelectedAssessment === name &&
-               info && info.dataset.openAssessment === name;
-
-  if(same){
-    if(info) info.innerHTML="";
-    if(info) info.dataset.openAssessment="";
-    if(box) box.innerHTML="";
-    document.querySelectorAll("#adminAssessmentTabs .assessment-tab").forEach(function(btn){
-      btn.classList.remove("active");
-    });
-    return;
-  }
-
   adminSelectedAssessment=name;
 
   document.querySelectorAll("#adminAssessmentTabs .assessment-tab").forEach(function(btn){
     btn.classList.toggle("active", btn.textContent.trim().startsWith(name));
   });
 
+  const info=document.getElementById("adminAssessmentInfo");
   if(info){
-    info.dataset.openAssessment=name;
     info.innerHTML="<b>"+escapeHtml(name)+"</b> — Maximum <b>"+
       TGMS_ADMIN_ASSESSMENTS[name]+" marks</b>";
   }
@@ -3628,7 +3611,7 @@ window.tgmsFirebaseLogin = async function(expectedRole,email,password,statusEl){
         mathSelect.disabled = true;
       }
       if(typeof window.studentShow==="function") window.studentShow("teacherPanel");
-      setTimeout(()=>{ if(typeof window.teacherSelectAssessment==="function") window.teacherSelectAssessment("Unit Test 1"); if(typeof window.teacherRenderQuestions==="function") window.teacherRenderQuestions(); if(typeof window.teacherRenderApproval==="function") window.teacherRenderApproval(); if(typeof window.teacherRenderList==="function") window.teacherRenderList(); },50);
+      setTimeout(()=>{ if(false && typeof window.teacherSelectAssessment==="function") window.teacherSelectAssessment("Unit Test 1"); if(typeof window.teacherRenderQuestions==="function") window.teacherRenderQuestions(); if(typeof window.teacherRenderApproval==="function") window.teacherRenderApproval(); if(typeof window.teacherRenderList==="function") window.teacherRenderList(); },50);
     } else {
       if($("adminWelcome")) $("adminWelcome").textContent="Welcome, "+(profile.name||"Administrator")+".";
       if(typeof window.tgmsOpenAdminPanel==="function") window.tgmsOpenAdminPanel();
@@ -3721,17 +3704,6 @@ function adminSyncDailyEditor(){
   if(document.getElementById("adminEditDay")) document.getElementById("adminEditDay").value=day;
   if(document.getElementById("adminEditAnnouncement")) document.getElementById("adminEditAnnouncement").value=ann;
 }
-
-window.toggleAdminDailyEditor = function(){
-  const panel=document.getElementById("adminDailyUpdatesEditor");
-  const btn=document.getElementById("adminDailyEditorToggle");
-  if(!panel || !btn) return;
-  const isOpen=panel.style.display !== "none";
-  panel.style.display=isOpen ? "none" : "block";
-  btn.textContent=isOpen
-    ? "✏️ Edit News • Important Day • Announcement"
-    : "✖️ Close News • Important Day • Announcement";
-};
 
 window.adminEditDailyField = function(field){
   const ids={news:"adminEditNews",importantDay:"adminEditDay",announcement:"adminEditAnnouncement"};
@@ -4391,14 +4363,22 @@ document.addEventListener("DOMContentLoaded",function(){
       window.tgmsAdminRenderQuestionBank();
     }
     if(view==="resources"){
-      box.innerHTML='<div class="tgms-feature-card"><h3>▶️ Lectures & 🧪 Practicals</h3><p>Resources are stored per subject + lesson. Each item contains a title, an information/description field and a link. Multiple items can be added.</p>'+
-      '<label>Subject</label><select id="arSubject">'+Object.keys(curriculum).map(s=>'<option>'+esc(s)+'</option>').join("")+'</select>'+
-      '<label>Lesson</label><input id="arLesson" placeholder="Exact lesson name">'+
-      '<label>Type</label><select id="arType"><option value="videos">YouTube Lecture</option><option value="practicals">Practical / External Link</option></select>'+
-      '<label>Title</label><input id="arTitle">'+
-      '<label>What is inside this link?</label><textarea id="arInfo" placeholder="Explain what the student will find before the link."></textarea>'+
-      '<label>Link</label><input id="arUrl" placeholder="https://...">'+
-      '<button class="primary" onclick="tgmsAdminSaveResource()">💾 Save Resource</button></div>';
+      box.innerHTML='<div class="tgms-feature-card"><h3>▶️ Lectures & 🧪 Practicals</h3>'+
+      '<p><b>Lesson names are already preloaded.</b> Select the subject and lesson. Do not type the lesson name.</p>'+
+      '<label>Subject</label><select id="arSubject" onchange="tgmsAdminLoadResourceLessons()">'+
+        '<option value="Physics">Physics</option>'+
+        '<option value="Maths">Maths</option>'+
+        '<option value="Chemistry">Chemistry</option>'+
+        '<option value="Telugu">Telugu</option>'+
+        '<option value="English">English</option>'+
+      '</select>'+
+      '<label>Lesson</label><select id="arLesson"></select>'+
+      '<label>Type</label><select id="arType"><option value="videos">🎥 Video / YouTube Link</option><option value="practicals">🔗 Practical / External Link</option></select>'+
+      '<label>Description — What is this link about?</label><textarea id="arInfo" placeholder="Explain what students will learn or find in this link."></textarea>'+
+      '<label>Video / Resource Link</label><input id="arUrl" type="url" placeholder="https://...">'+
+      '<button class="primary" onclick="tgmsAdminSaveResource()">💾 Update Lesson Resource</button></div>'+
+      '<div class="tgms-small" style="margin-top:10px">For every lesson, the administrator only updates the description and link. The lesson name is fixed.</div>';
+      tgmsAdminLoadResourceLessons();
     }
     if(view==="updates"){
       box.innerHTML='<div class="tgms-feature-card"><h3>🔔 Publish Student Update</h3>'+
@@ -4480,12 +4460,51 @@ document.addEventListener("DOMContentLoaded",function(){
     store.set("TGMS_PENDING_FEATURE_EXAMS",store.get("TGMS_PENDING_FEATURE_EXAMS",[]).filter(x=>x.id!==id));tgmsAdminRender("submissions");
   };
 
+  window.tgmsAdminLoadResourceLessons=function(){
+    const subject=document.getElementById("arSubject");
+    const lesson=document.getElementById("arLesson");
+    if(!subject||!lesson)return;
+
+    const groups={
+      Physics:[["Physics",curriculum["Physics"]||[]]],
+      Chemistry:[["Chemistry",curriculum["Chemistry"]||[]]],
+      Maths:[["Maths A",curriculum["Maths A"]||[]],["Maths B",curriculum["Maths B"]||[]]],
+      Telugu:[["Telugu Lessons",curriculum["Telugu Lessons"]||[]]],
+      English:[["English Lessons",curriculum["English Lessons"]||[]]]
+    }[subject.value]||[];
+
+    lesson.innerHTML=groups.map(function(group){
+      return '<optgroup label="'+esc(group[0])+'">'+
+        (group[1]||[]).map(function(name){
+          return '<option value="'+esc(group[0]+'::'+name)+'">'+esc(name)+'</option>';
+        }).join("")+
+      '</optgroup>';
+    }).join("");
+  };
+
   window.tgmsAdminSaveResource=function(){
-    const subject=arSubject.value,lesson=arLesson.value.trim();if(!lesson){alert("Enter the lesson name.");return}
-    const key="TGMS_RESOURCES_"+subject+"_"+lesson,d=store.get(key,{videos:[],practicals:[]});
-    const item={id:uid(),title:arTitle.value.trim(),info:arInfo.value.trim(),url:arUrl.value.trim()};
-    if(!item.title||!item.info||!item.url){alert("Enter title, description and link.");return}
-    d[arType.value].push(item);store.set(key,d);alert("✅ Resource saved.");
+    const encoded=document.getElementById("arLesson").value;
+    if(!encoded){alert("Select a lesson.");return}
+    const parts=encoded.split("::");
+    const subject=parts.shift();
+    const lesson=parts.join("::").trim();
+    const info=document.getElementById("arInfo").value.trim();
+    const url=document.getElementById("arUrl").value.trim();
+    if(!info||!url){alert("Enter the description and link.");return}
+
+    const key="TGMS_RESOURCES_"+subject+"_"+lesson;
+    const d=store.get(key,{videos:[],practicals:[]});
+    const type=document.getElementById("arType").value;
+    const item={id:uid(),title:lesson,info:info,url:url};
+
+    /* Update the existing resource for this lesson instead of creating duplicate entries. */
+    d[type]=d[type]||[];
+    const existing=d[type].findIndex(x=>x.title===lesson);
+    if(existing>=0)d[type][existing]=item;
+    else d[type].push(item);
+
+    store.set(key,d);
+    alert("✅ "+lesson+" resource updated.");
   };
   window.tgmsAdminPublishNotice=function(){
     const n=store.get("TGMS_SITE_NOTIFICATIONS",[]);
@@ -4597,6 +4616,75 @@ document.addEventListener("DOMContentLoaded",function(){
   }
   window.tgmsRefreshAssessmentAccordions=makeAssessmentCards;
   document.addEventListener('DOMContentLoaded',function(){setTimeout(makeAssessmentCards,300);});
+})();
+</script>
+
+
+<script id="tgms-final-user-request-fixes">
+(function(){
+  function clearAssessment(containerId, infoId){
+    var box=document.getElementById(containerId), info=document.getElementById(infoId);
+    if(box) box.innerHTML="";
+    if(info){ info.innerHTML=""; info.dataset.openAssessment=""; }
+  }
+
+  window.teacherSelectAssessment=function(name){
+    var info=document.getElementById("teacherAssessmentInfo");
+    var box=document.getElementById("teacherStudentMarks");
+    var same=info && info.dataset.openAssessment===name;
+    if(same){
+      clearAssessment("teacherStudentMarks","teacherAssessmentInfo");
+      document.querySelectorAll("#teacherAssessmentTabs .assessment-tab").forEach(function(b){b.classList.remove("active");});
+      return;
+    }
+    teacherSelectedAssessment=name;
+    document.querySelectorAll("#teacherAssessmentTabs .assessment-tab").forEach(function(b){
+      b.classList.toggle("active",b.textContent.trim().startsWith(name));
+    });
+    if(info){
+      info.dataset.openAssessment=name;
+      info.innerHTML="<b>"+escapeHtml(name)+"</b> — Maximum <b>"+tgmsMaxMarks(name)+" marks</b> | Subject: <b>"+escapeHtml(teacherCurrent().subject)+"</b>";
+    }
+    if(typeof teacherRenderStudentMarks==="function") teacherRenderStudentMarks();
+  };
+
+  window.adminSelectAssessment=function(name){
+    var info=document.getElementById("adminAssessmentInfo");
+    var same=info && info.dataset.openAssessment===name;
+    if(same){
+      clearAssessment("adminStudentMarks","adminAssessmentInfo");
+      document.querySelectorAll("#adminAssessmentTabs .assessment-tab").forEach(function(b){b.classList.remove("active");});
+      return;
+    }
+    adminSelectedAssessment=name;
+    document.querySelectorAll("#adminAssessmentTabs .assessment-tab").forEach(function(b){
+      b.classList.toggle("active",b.textContent.trim().startsWith(name));
+    });
+    if(info){
+      info.dataset.openAssessment=name;
+      info.innerHTML="<b>"+escapeHtml(name)+"</b> — Maximum <b>"+tgmsMaxMarks(name)+" marks</b>";
+    }
+    if(typeof adminRenderStudentMarks==="function") adminRenderStudentMarks();
+  };
+
+  function closeAllAssessmentLists(){
+    clearAssessment("teacherStudentMarks","teacherAssessmentInfo");
+    clearAssessment("adminStudentMarks","adminAssessmentInfo");
+    document.querySelectorAll(".assessment-tab").forEach(function(b){b.classList.remove("active");});
+  }
+
+  document.addEventListener("DOMContentLoaded",function(){
+    setTimeout(function(){
+      /* Never auto-open a student list on login. */
+      closeAllAssessmentLists();
+
+      /* Keep the administrator resource editor lesson selector populated whenever opened. */
+      if(typeof window.tgmsAdminLoadResourceLessons==="function") {
+        var s=document.getElementById("arSubject");
+        if(s) window.tgmsAdminLoadResourceLessons();
+      }
+    },120);
+  });
 })();
 </script>
 
