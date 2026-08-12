@@ -3409,26 +3409,59 @@ window.tgmsLessonResourceKey=function(subject,lesson){
 window.tgmsGetLessonResources=async function(subject,lesson){
   const key=window.tgmsLessonResourceKey(subject,lesson);
   const empty={videos:[],practicals:[]};
+
+  // Try the mirror first because it is the simplest shared student/admin path.
+  let firstError=null;
+  try{
+    const snap=await get(ref(rtdb,"lessonResources/"+key));
+    if(snap.exists()){
+      const d=snap.val();
+      if(d&&typeof d==="object"){
+        return {
+          videos:Array.isArray(d.videos)?d.videos:[],
+          practicals:Array.isArray(d.practicals)?d.practicals:[]
+        };
+      }
+    }
+  }catch(e){firstError=e;}
+
+  // Then try the original dailyUpdate path for older records.
   try{
     const snap=await get(ref(rtdb,"dailyUpdate/lessonResources/"+key));
     if(snap.exists()){
       const d=snap.val();
-      if(d&&typeof d==="object") return {videos:Array.isArray(d.videos)?d.videos:[],practicals:Array.isArray(d.practicals)?d.practicals:[]};
+      if(d&&typeof d==="object"){
+        return {
+          videos:Array.isArray(d.videos)?d.videos:[],
+          practicals:Array.isArray(d.practicals)?d.practicals:[]
+        };
+      }
     }
-  }catch(e){console.warn("TGMS resource read failed:",e);}
-  try{
-    const old=await get(ref(rtdb,"lessonResources/"+key));
-    if(old.exists()){
-      const d=old.val();
-      if(d&&typeof d==="object") return {videos:Array.isArray(d.videos)?d.videos:[],practicals:Array.isArray(d.practicals)?d.practicals:[]};
-    }
-  }catch(e){}
+  }catch(e){
+    if(firstError) console.warn("TGMS both resource reads failed:",firstError,e);
+  }
+
+  if(firstError){
+    return {videos:[],practicals:[],_readError:true,_readErrorMessage:firstError.message||String(firstError)};
+  }
   return empty;
 };
 window.tgmsSetLessonResources=async function(subject,lesson,data){
   const key=window.tgmsLessonResourceKey(subject,lesson);
-  const payload={videos:Array.isArray(data.videos)?data.videos:[],practicals:Array.isArray(data.practicals)?data.practicals:[],updatedAt:Date.now()};
+  const payload={
+    subject:String(subject||""),
+    lesson:String(lesson||""),
+    videos:Array.isArray(data.videos)?data.videos:[],
+    practicals:Array.isArray(data.practicals)?data.practicals:[],
+    updatedAt:Date.now()
+  };
+
+  // Canonical shared location.
   await set(ref(rtdb,"dailyUpdate/lessonResources/"+key),payload);
+
+  // Mirror used by the student reader. Both Admin and Student use the same key.
+  await set(ref(rtdb,"lessonResources/"+key),payload);
+
   return payload;
 };
 
@@ -4055,6 +4088,12 @@ window.tgmsOpenEapcetPage=function(){
       d={videos:[],practicals:[]};
     }
 
+    if(d&&d._readError){
+      box.innerHTML='<div class="tgms-feature-card"><button type="button" onclick="tgmsOpenCurriculum()">← Back to Lessons</button>'+
+        '<h2>📖 '+esc(lesson)+'</h2><div class="notice">⚠️ Firebase could not read this lesson resource. Please check the Firebase Realtime Database read rule.</div>'+
+        '<p style="word-break:break-word"><b>Read error:</b> '+esc(d._readErrorMessage||"Unknown Firebase read error")+'</p></div>';
+      return;
+    }
     d.videos=Array.isArray(d.videos)?d.videos:[];
     d.practicals=Array.isArray(d.practicals)?d.practicals:[];
 
