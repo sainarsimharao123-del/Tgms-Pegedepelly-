@@ -283,10 +283,10 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 <div class="grid">
 <button onclick="studentLogout()">🚪<br>Logout</button>
 <button onclick="studentShow('news')">📰<br>School News</button><button onclick="studentShow('days')">📅<br>Important Day</button>
-<button onclick="show('chem')">🧪<br>Chemistry</button><button onclick="show('physics')">⚛️<br>Physics</button>
-<button onclick="show('maths')">📐<br>Mathematics</button><button onclick="show('practical')">🔬<br>40 Practicals</button>
-<button onclick="studentShow('questions')">📝<br>180 Answered Questions</button><button onclick="show('jee')">🎯<br>JEE Preparation</button>
-<button onclick="studentShow('study')">📚<br>Study Plan</button><button onclick="show('admin')">⚙️<br>Admin</button>
+<button onclick="studentShow(\'chem\')">🧪<br>Chemistry</button><button onclick="studentShow(\'physics\')">⚛️<br>Physics</button>
+<button onclick="studentShow(\'maths\')">📐<br>Mathematics</button><button onclick="studentShow(\'practical\')">🔬<br>40 Practicals</button>
+<button onclick="studentShow('questions')">📝<br>180 Answered Questions</button><button onclick="studentShow(\'jee\')">🎯<br>JEE Preparation</button>
+<button onclick="studentShow('study')">📚<br>Study Plan</button><button onclick="studentShow(\'admin\')">⚙️<br>Admin</button>
 </div>
 <div class="card" id="weeklyExamHomeCard">
   <h2>📊 Weekly Exam</h2>
@@ -315,10 +315,10 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
   <div class="grid">
     <button type="button" onclick="studentShow('teluguSection')">తెలుగు Grammar</button>
     <button type="button" onclick="studentShow('englishSection')">🇬🇧 English Grammar</button>
-    <button type="button" onclick="show('physics')">⚛️ Physics</button>
-    <button type="button" onclick="show('chem')">🧪 Chemistry</button>
-    <button type="button" onclick="show('maths')">📐 Maths</button>
-    <button type="button" onclick="show('maths')">📐 Maths</button>
+    <button type="button" onclick="studentShow(\'physics\')">⚛️ Physics</button>
+    <button type="button" onclick="studentShow(\'chem\')">🧪 Chemistry</button>
+    <button type="button" onclick="studentShow(\'maths\')">📐 Maths</button>
+    <button type="button" onclick="studentShow(\'maths\')">📐 Maths</button>
   </div>
 </div>
 
@@ -1495,7 +1495,7 @@ function studentShow(id){
 }
 
 // Backward-compatible navigation alias for older buttons.
-window.show = function(id){ studentShow(id); };
+
 
 function studentLogin(){
   const usernameEl = document.getElementById("studentUsername");
@@ -3833,4 +3833,11 @@ document.addEventListener("DOMContentLoaded",function(){
 })();
 </script>
 
+
+<script>
+// TGMS navigation compatibility: every old `show()` call routes to studentShow().
+window.show = function(id){
+  if(typeof window.studentShow === "function") window.studentShow(id);
+};
+</script>
 </body></html>
