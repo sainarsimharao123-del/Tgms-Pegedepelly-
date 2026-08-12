@@ -304,6 +304,12 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 
 </div>
 
+<div class="card" id="studentDashboardHomeCard">
+  <h2>🎓 Student Dashboard</h2>
+  <p>Open your digital progress, complete syllabus, practice, EAPCET, examinations and notifications.</p>
+  <button type="button" class="primary" onclick="tgmsOpenPlus()">📊 Open Student Dashboard</button>
+</div>
+
 <div class="card" id="unitTestMarksHomeCard">
   <h2>📝 Unit Test Marks</h2>
   <p>View your subject-wise unit test marks updated by your teachers or administrator.</p>
@@ -545,7 +551,7 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 
 <h3>🎥 English Grammar & Telugu Grammar Video Manager</h3>
 <div class="assessment-panel" id="adminGrammarVideoManager">
-  <p><b>Administrator only:</b> add one video explanation link to every English or Telugu grammar topic.</p>
+  <p><b>Administrator only:</b> add the first video explanation here. For <b>multiple videos with titles and descriptions</b>, use <b>Lectures &amp; Practicals → select the grammar topic</b>.</p>
   <label><b>Language</b></label>
   <select id="adminGrammarLanguage" onchange="adminLoadGrammarVideo()">
     <option value="EN">🇬🇧 English Grammar</option>
@@ -3151,15 +3157,23 @@ function adminInitGrammarVideoManager(){
   adminLoadGrammarVideo();
 }
 
-function adminLoadGrammarVideo(){
+async function adminLoadGrammarVideo(){
   const lang=document.getElementById("adminGrammarLanguage");
   const topic=document.getElementById("adminGrammarTopic");
   const input=document.getElementById("adminGrammarVideoUrl");
   if(!lang||!topic||!input)return;
-  input.value=localStorage.getItem(tgmsGrammarVideoKey(lang.value,topic.value))||"";
+  const index=Number(topic.value)-1;
+  const subject=lang.value==="EN"?"English Grammar":"Telugu Grammar";
+  const lesson=(TGMS_GRAMMAR_TOPICS[lang.value]||[])[index]||"";
+  try{
+    const d=await window.tgmsGetLessonResources(subject,lesson);
+    input.value=(d.videos&&d.videos[0]&&d.videos[0].url)||localStorage.getItem(tgmsGrammarVideoKey(lang.value,topic.value))||"";
+  }catch(e){
+    input.value=localStorage.getItem(tgmsGrammarVideoKey(lang.value,topic.value))||"";
+  }
 }
 
-function adminSaveGrammarVideo(){
+async function adminSaveGrammarVideo(){
   const lang=document.getElementById("adminGrammarLanguage").value;
   const topic=document.getElementById("adminGrammarTopic").value;
   const input=document.getElementById("adminGrammarVideoUrl");
@@ -3174,6 +3188,16 @@ function adminSaveGrammarVideo(){
     return;
   }
 
+  const index=Number(topic)-1;
+  const subject=lang==="EN"?"English Grammar":"Telugu Grammar";
+  const lesson=(TGMS_GRAMMAR_TOPICS[lang]||[])[index]||"";
+  try{
+    const d=await window.tgmsGetLessonResources(subject,lesson);
+    d.videos=Array.isArray(d.videos)?d.videos:[];
+    if(d.videos.length){ d.videos[0].url=url; }
+    else { d.videos.push({id:"grammar_"+Date.now(),title:lesson,info:"Video explanation",url:url}); }
+    await window.tgmsSetLessonResources(subject,lesson,d);
+  }catch(e){ console.warn("Shared grammar video save failed:",e); }
   localStorage.setItem(tgmsGrammarVideoKey(lang,topic),url);
   const status=document.getElementById("adminGrammarVideoStatus");
   if(status){
@@ -3333,6 +3357,26 @@ const daily = ref(rtdb, "dailyUpdate");
 window.tgmsSetDaily = async function(payload){
   return await set(daily, payload);
 };
+
+// Shared lesson-resource storage: unlike localStorage, this is visible to
+// administrators and students on different devices/browsers.
+window.tgmsGetLessonResources = async function(subject, lesson){
+  try{
+    const key=encodeURIComponent(subject)+'__'+encodeURIComponent(lesson);
+    const snap=await get(ref(rtdb,'lessonResources/'+key));
+    const d=snap.exists()?snap.val():null;
+    return (d && typeof d==='object') ? d : {videos:[],practicals:[]};
+  }catch(e){
+    console.warn('TGMS lesson resource read failed:',e);
+    return {videos:[],practicals:[]};
+  }
+};
+window.tgmsSetLessonResources = async function(subject, lesson, data){
+  const key=encodeURIComponent(subject)+'__'+encodeURIComponent(lesson);
+  await set(ref(rtdb,'lessonResources/'+key),data);
+  return data;
+};
+
 const $ = id => document.getElementById(id);
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
 function render(d){
@@ -3724,81 +3768,13 @@ document.addEventListener("DOMContentLoaded",function(){
 </script>
 
 
-<script>
-/* ONE-TIME TEST DATA RESET
-   Clears only TGMS testing data from this browser.
-   It runs once, then marks the reset as complete. */
-(function(){
-  const RESET_FLAG="TGMS_TEST_DATA_RESET_2026_08_11_V1";
-  if(localStorage.getItem(RESET_FLAG)==="done") return;
-
-  const keys=[];
-  for(let i=0;i<localStorage.length;i++){
-    const k=localStorage.key(i);
-    if(k && (
-      k.indexOf("TGMS_")===0 ||
-      k.indexOf("week")===0 ||
-      k.indexOf("student")===0
-    )){
-      keys.push(k);
-    }
-  }
-  keys.forEach(k=>localStorage.removeItem(k));
-
-  localStorage.setItem(RESET_FLAG,"done");
-
-  /* Remove any signed-in test session. */
-  try{
-    sessionStorage.removeItem("tgmsStudentUser");
-    sessionStorage.removeItem("tgmsTeacherUser");
-    sessionStorage.removeItem("tgmsAdminUser");
-  }catch(e){}
-})();
-</script>
 
 
-<script>
-/* Clean old testing records once. This removes Week 1/Week 2 test results
-   and old approved digital-exam results, but keeps the student/teacher accounts
-   and the new assessment-mark system. */
-(function(){
-  const FLAG="TGMS_OLD_WEEKLY_TEST_CLEANED_2026_08_11_V1";
-  if(localStorage.getItem(FLAG)==="done") return;
-
-  const remove=[];
-  for(let i=0;i<localStorage.length;i++){
-    const k=localStorage.key(i);
-    if(!k) continue;
-
-    if(
-      /^TGMS_WEEK[12]_/.test(k) ||
-      /^TGMS_APPROVED_EXAM_RESULT_/.test(k) ||
-      /^TGMS_APPROVED_EXAM_DONE_/.test(k) ||
-      /^TGMS_PUBLISHED_EXAMS_/.test(k) ||
-      /^TGMS_PENDING_EXAMS_/.test(k)
-    ){
-      remove.push(k);
-    }
-  }
-  remove.forEach(k=>localStorage.removeItem(k));
-  localStorage.setItem(FLAG,"done");
-})();
-</script>
 
 
-<script>
-(function(){
-  const flag="TGMS_SECTION_EDITOR_REMOVED_2026_08_11_V1";
-  if(localStorage.getItem(flag)==="done") return;
-  const remove=[];
-  for(let i=0;i<localStorage.length;i++){
-    const k=localStorage.key(i);
-    if(k && k.indexOf("TGMS_SITE_CONTENT_")===0) remove.push(k);
-  }
-  remove.forEach(k=>localStorage.removeItem(k));
-  localStorage.setItem(flag,"done");
-})();
-</script>
+
+
+
 
 <style id="tgms-feature-suite-css">
 /* ===== TGMS FEATURE SUITE V1 ===== */
@@ -3824,8 +3800,8 @@ document.addEventListener("DOMContentLoaded",function(){
 <section id="tgmsStudentHubPlus">
   <button type="button" onclick="studentShow('home')">← Home</button>
   <div class="card">
-    <h2>🚀 TGMS Student Hub</h2>
-    <p>Learning, practice, EAPCET, examinations and digital progress.</p>
+    <h2>🎓 Student Dashboard</h2>
+    <p>Your student dashboard: progress, complete syllabus, practice, EAPCET, examinations and notifications.</p>
     <div class="tgms-feature-grid">
       <button class="primary" onclick="tgmsOpenProgress()">📊 Digital Progress</button>
       <button onclick="tgmsOpenCurriculum()">📚 Complete Syllabus</button>
@@ -3965,19 +3941,21 @@ document.addEventListener("DOMContentLoaded",function(){
       ).join("")+'</div>';
   };
 
-  window.tgmsOpenLessonResources=function(subject,lesson){
-    const key="TGMS_RESOURCES_"+subject+"_"+lesson;
-    const d=store.get(key,{videos:[],practicals:[]});
+  window.tgmsOpenLessonResources=async function(subject,lesson){
+    let d={videos:[],practicals:[]};
+    if(typeof window.tgmsGetLessonResources==='function') d=await window.tgmsGetLessonResources(subject,lesson);
+    else d=store.get("TGMS_RESOURCES_"+subject+"_"+lesson,d);
     d.videos=Array.isArray(d.videos)?d.videos:[];
     d.practicals=Array.isArray(d.practicals)?d.practicals:[];
 
+    // Compatibility with older grammar-only links.
     if(subject==="English Grammar" && !d.videos.length){
-      const i=curriculum[subject].indexOf(lesson)+1;
+      const i=TGMS_GRAMMAR_TOPICS.EN.indexOf(lesson)+1;
       const legacy=localStorage.getItem("TGMS_GRAMMAR_VIDEO_EN_"+i);
       if(legacy)d.videos=[{id:"legacy",title:lesson,info:"Video explanation",url:legacy}];
     }
     if(subject==="Telugu Grammar" && !d.videos.length){
-      const i=curriculum[subject].indexOf(lesson)+1;
+      const i=TGMS_GRAMMAR_TOPICS.TE.indexOf(lesson)+1;
       const legacy=localStorage.getItem("TGMS_GRAMMAR_VIDEO_TE_"+i);
       if(legacy)d.videos=[{id:"legacy",title:lesson,info:"Video explanation",url:legacy}];
     }
@@ -3985,14 +3963,14 @@ document.addEventListener("DOMContentLoaded",function(){
     function youtubeEmbed(url){
       try{
         const u=new URL(url); let id="";
-        if(u.hostname.includes("youtu.be")) id=u.pathname.slice(1);
+        if(u.hostname.includes("youtu.be")) id=u.pathname.slice(1).split("/")[0];
         if(u.hostname.includes("youtube.com")){
           if(u.pathname==="/watch") id=u.searchParams.get("v")||"";
           else if(u.pathname.startsWith("/shorts/")) id=u.pathname.split("/")[2]||"";
           else if(u.pathname.startsWith("/embed/")) id=u.pathname.split("/")[2]||"";
         }
         return id?"https://www.youtube.com/embed/"+encodeURIComponent(id):"";
-      }catch(e){return ""}
+      }catch(e){return "";}
     }
 
     const videoHtml=d.videos.length?d.videos.map((v,i)=>{
@@ -4005,16 +3983,16 @@ document.addEventListener("DOMContentLoaded",function(){
     }).join(""):'<p class="notice">No video has been added to this lesson yet.</p>';
 
     const practicalHtml=d.practicals.length?d.practicals.map((v,i)=>
-      '<div class="tgms-resource" style="margin:12px 0">'+
-      '<h4 style="margin:0 0 6px">🔗 '+(i+1)+'. '+esc(v.title||"Resource")+'</h4>'+
-      (v.info?'<p style="margin:5px 0 10px"><b>Description:</b> '+esc(v.info)+'</p>':'')+
+      '<div class="tgms-resource" style="margin:12px 0"><h4 style="margin:0 0 6px">🔗 '+(i+1)+'. '+esc(v.title||"Resource")+'</h4>'+(
+      v.info?'<p style="margin:5px 0 10px"><b>Description:</b> '+esc(v.info)+'</p>':'')+
       '<a target="_blank" rel="noopener" href="'+esc(v.url)+'">🔗 Open Resource</a></div>'
     ).join(""):'<p class="notice">No practical/external links added yet.</p>';
 
-    document.getElementById("tgmsPlusContent").innerHTML=
-      '<div class="tgms-feature-card"><h3>📖 '+esc(lesson)+'</h3><span class="tgms-chip">'+esc(subject)+'</span>'+\
-      '<h3>▶️ Video Explanations ('+d.videos.length+')</h3>'+videoHtml+\
-      '<h3>🧪 Practicals / External Resources ('+d.practicals.length+')</h3>'+practicalHtml+\
+    const box=document.getElementById("tgmsPlusContent");
+    if(!box)return;
+    box.innerHTML='<div class="tgms-feature-card"><h3>📖 '+esc(lesson)+'</h3><span class="tgms-chip">'+esc(subject)+'</span>'+ 
+      '<h3>▶️ Video Explanations ('+d.videos.length+')</h3>'+videoHtml+
+      '<h3>🧪 Practicals / External Resources ('+d.practicals.length+')</h3>'+practicalHtml+
       '<button onclick="tgmsOpenCurriculum()">← Back to Syllabus</button></div>';
   };
 
@@ -4339,7 +4317,7 @@ document.addEventListener("DOMContentLoaded",function(){
     tgmsAdminLoadResource();
   };
 
-  window.tgmsAdminLoadResource=function(){
+  window.tgmsAdminLoadResource=async function(){
     const subject=document.getElementById("arSubject");
     const lesson=document.getElementById("arLesson");
     const title=document.getElementById("arTitle");
@@ -4348,29 +4326,32 @@ document.addEventListener("DOMContentLoaded",function(){
     const existing=document.getElementById("arExisting");
     if(!subject||!lesson||!title||!info||!url)return;
     title.value=""; info.value=""; url.value="";
-    const d=store.get("TGMS_RESOURCES_"+subject.value+"_"+lesson.value,{videos:[],practicals:[]});
+    let d={videos:[],practicals:[]};
+    if(typeof window.tgmsGetLessonResources==='function') d=await window.tgmsGetLessonResources(subject.value,lesson.value);
+    else d=store.get("TGMS_RESOURCES_"+subject.value+"_"+lesson.value,d);
+    d.videos=Array.isArray(d.videos)?d.videos:[];
+    d.practicals=Array.isArray(d.practicals)?d.practicals:[];
     const type=(document.getElementById("arType")||{}).value||"videos";
     const items=d[type]||[];
     if(existing){
-      existing.innerHTML='<h4 style="margin:0 0 8px">Existing '+(type==="videos"?'video links':'external links')+' ('+items.length+')</h4>'+
-        (items.length?items.map((item,i)=>
+      existing.innerHTML='<h4 style="margin:0 0 8px">Existing '+(type==="videos"?'video links':'external links')+' ('+items.length+')</h4>'+(
+        items.length?items.map((item,i)=>
           '<div class="tgms-resource" style="margin:8px 0">'+
-          '<b>'+(i+1)+'. '+esc(item.title||lesson.value)+'</b>'+
-          (item.info?'<p>'+esc(item.info)+'</p>':'')+
+          '<b>'+(i+1)+'. '+esc(item.title||lesson.value)+'</b>'+(
+            item.info?'<p>'+esc(item.info)+'</p>':'')+
           '<div class="teacher-actions">'+
           '<button type="button" onclick="tgmsAdminEditResource('+i+')">✏️ Edit</button>'+ 
-          '<button type="button" onclick="tgmsAdminDeleteResource('+i+')">🗑️ Delete</button>'+
+          '<button type="button" onclick="tgmsAdminDeleteResource('+i+')">🗑️ Delete</button>'+ 
           '</div></div>'
         ).join(""):'<p class="notice">No links added yet. Add the first one below.</p>');
     }
   };
 
-  window.tgmsAdminEditResource=function(index){
+  window.tgmsAdminEditResource=async function(index){
     const subject=document.getElementById("arSubject").value;
     const lesson=document.getElementById("arLesson").value;
     const type=document.getElementById("arType").value;
-    const key="TGMS_RESOURCES_"+subject+"_"+lesson;
-    const d=store.get(key,{videos:[],practicals:[]});
+    const d=await window.tgmsGetLessonResources(subject,lesson);
     const item=(d[type]||[])[index];
     if(!item)return;
     document.getElementById("arTitle").value=item.title||"";
@@ -4383,22 +4364,21 @@ document.addEventListener("DOMContentLoaded",function(){
     if(status){status.style.display="block";status.textContent="✏️ Editing link "+(index+1)+". Save to update it.";}
   };
 
-  window.tgmsAdminDeleteResource=function(index){
+  window.tgmsAdminDeleteResource=async function(index){
     const subject=document.getElementById("arSubject").value;
     const lesson=document.getElementById("arLesson").value;
     const type=document.getElementById("arType").value;
-    const key="TGMS_RESOURCES_"+subject+"_"+lesson;
-    const d=store.get(key,{videos:[],practicals:[]});
+    const d=await window.tgmsGetLessonResources(subject,lesson);
     if(!confirm("Delete this link from "+lesson+"?"))return;
     d[type]=(d[type]||[]).filter((_,i)=>i!==index);
-    store.set(key,d);
+    await window.tgmsSetLessonResources(subject,lesson,d);
     window.tgmsAdminEditingResourceIndex=null;
-    tgmsAdminLoadResource();
+    await tgmsAdminLoadResource();
     const status=document.getElementById("arStatus");
     if(status){status.style.display="block";status.textContent="✅ Link deleted.";}
   };
 
-  window.tgmsAdminSaveResource=function(){
+  window.tgmsAdminSaveResource=async function(){
     const subject=arSubject.value, lesson=arLesson.value;
     const type=arType.value, url=arUrl.value.trim();
     if(!lesson){alert("Select a lesson.");return}
@@ -4406,8 +4386,7 @@ document.addEventListener("DOMContentLoaded",function(){
     try{ const u=new URL(url); if(!/^https?:$/.test(u.protocol))throw new Error(); }
     catch(e){ alert("Please enter a valid http/https link."); return; }
 
-    const key="TGMS_RESOURCES_"+subject+"_"+lesson;
-    const d=store.get(key,{videos:[],practicals:[]});
+    const d=await window.tgmsGetLessonResources(subject,lesson);
     d.videos=Array.isArray(d.videos)?d.videos:[];
     d.practicals=Array.isArray(d.practicals)?d.practicals:[];
     const item={id:uid(),title:arTitle.value.trim()||lesson,info:arInfo.value.trim(),url:url};
@@ -4418,8 +4397,9 @@ document.addEventListener("DOMContentLoaded",function(){
     }else{
       d[type].push(item);
     }
-    store.set(key,d);
+    await window.tgmsSetLessonResources(subject,lesson,d);
 
+    // Keep legacy grammar-video keys compatible.
     if(subject==="English Grammar"){
       const i=curriculum[subject].indexOf(lesson)+1;
       if(d.videos[0]?.url)localStorage.setItem("TGMS_GRAMMAR_VIDEO_EN_"+i,d.videos[0].url);
@@ -4432,7 +4412,7 @@ document.addEventListener("DOMContentLoaded",function(){
     arTitle.value=""; arInfo.value=""; arUrl.value="";
     const btn=document.querySelector('#tgmsAdminSuiteContent button[onclick="tgmsAdminSaveResource()"]');
     if(btn)btn.textContent="➕ Add New Link";
-    tgmsAdminLoadResource();
+    await tgmsAdminLoadResource();
     const status=document.getElementById("arStatus");
     if(status){status.style.display="block";status.textContent="✅ Link saved for "+lesson+". Add another link if needed.";}
   };
