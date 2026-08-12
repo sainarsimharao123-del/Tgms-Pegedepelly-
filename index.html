@@ -3968,7 +3968,9 @@ document.addEventListener("DOMContentLoaded",function(){
   window.tgmsOpenLessonResources=function(subject,lesson){
     const key="TGMS_RESOURCES_"+subject+"_"+lesson;
     const d=store.get(key,{videos:[],practicals:[]});
-    // Compatibility: older grammar links were stored in TGMS_GRAMMAR_VIDEO_*.
+    d.videos=Array.isArray(d.videos)?d.videos:[];
+    d.practicals=Array.isArray(d.practicals)?d.practicals:[];
+
     if(subject==="English Grammar" && !d.videos.length){
       const i=curriculum[subject].indexOf(lesson)+1;
       const legacy=localStorage.getItem("TGMS_GRAMMAR_VIDEO_EN_"+i);
@@ -3979,12 +3981,40 @@ document.addEventListener("DOMContentLoaded",function(){
       const legacy=localStorage.getItem("TGMS_GRAMMAR_VIDEO_TE_"+i);
       if(legacy)d.videos=[{id:"legacy",title:lesson,info:"Video explanation",url:legacy}];
     }
+
+    function youtubeEmbed(url){
+      try{
+        const u=new URL(url); let id="";
+        if(u.hostname.includes("youtu.be")) id=u.pathname.slice(1);
+        if(u.hostname.includes("youtube.com")){
+          if(u.pathname==="/watch") id=u.searchParams.get("v")||"";
+          else if(u.pathname.startsWith("/shorts/")) id=u.pathname.split("/")[2]||"";
+          else if(u.pathname.startsWith("/embed/")) id=u.pathname.split("/")[2]||"";
+        }
+        return id?"https://www.youtube.com/embed/"+encodeURIComponent(id):"";
+      }catch(e){return ""}
+    }
+
+    const videoHtml=d.videos.length?d.videos.map((v,i)=>{
+      const embed=youtubeEmbed(v.url);
+      return '<div class="tgms-resource" style="margin:12px 0">'+
+        '<h4 style="margin:0 0 6px">🎥 '+(i+1)+'. '+esc(v.title||"Video Explanation")+'</h4>'+
+        (v.info?'<p style="margin:5px 0 10px"><b>Description:</b> '+esc(v.info)+'</p>':'')+
+        (embed?'<div style="position:relative;width:100%;padding-top:56.25%;margin:10px 0;border-radius:12px;overflow:hidden;background:#000"><iframe src="'+esc(embed)+'" title="'+esc(v.title||"Video")+'" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share" allowfullscreen></iframe></div>':'')+
+        '<a target="_blank" rel="noopener" href="'+esc(v.url)+'">▶️ Open Video</a></div>';
+    }).join(""):'<p class="notice">No video has been added to this lesson yet.</p>';
+
+    const practicalHtml=d.practicals.length?d.practicals.map((v,i)=>
+      '<div class="tgms-resource" style="margin:12px 0">'+
+      '<h4 style="margin:0 0 6px">🔗 '+(i+1)+'. '+esc(v.title||"Resource")+'</h4>'+
+      (v.info?'<p style="margin:5px 0 10px"><b>Description:</b> '+esc(v.info)+'</p>':'')+
+      '<a target="_blank" rel="noopener" href="'+esc(v.url)+'">🔗 Open Resource</a></div>'
+    ).join(""):'<p class="notice">No practical/external links added yet.</p>';
+
     document.getElementById("tgmsPlusContent").innerHTML=
-      '<div class="tgms-feature-card"><h3>📖 '+esc(lesson)+'</h3><span class="tgms-chip">'+esc(subject)+'</span>'+
-      '<h3>▶️ YouTube Lectures</h3>'+
-      (d.videos.length?d.videos.map(v=>'<div class="tgms-resource"><b>'+esc(v.title)+'</b><p>'+esc(v.info)+'</p><a target="_blank" rel="noopener" href="'+esc(v.url)+'">▶️ Open YouTube Lecture</a></div>').join(""):'<p class="notice">No lectures added yet.</p>')+
-      '<h3>🧪 Practicals / External Resources</h3>'+
-      (d.practicals.length?d.practicals.map(v=>'<div class="tgms-resource"><b>'+esc(v.title)+'</b><p>'+esc(v.info)+'</p><a target="_blank" rel="noopener" href="'+esc(v.url)+'">🔗 Open Practical</a></div>').join(""):'<p class="notice">No practical links added yet.</p>')+
+      '<div class="tgms-feature-card"><h3>📖 '+esc(lesson)+'</h3><span class="tgms-chip">'+esc(subject)+'</span>'+\
+      '<h3>▶️ Video Explanations ('+d.videos.length+')</h3>'+videoHtml+\
+      '<h3>🧪 Practicals / External Resources ('+d.practicals.length+')</h3>'+practicalHtml+\
       '<button onclick="tgmsOpenCurriculum()">← Back to Syllabus</button></div>';
   };
 
@@ -4208,14 +4238,15 @@ document.addEventListener("DOMContentLoaded",function(){
     }
     if(view==="resources"){
       box.innerHTML='<div class="tgms-feature-card"><h3>▶️ Lessons & Video Resources</h3>'+
-      '<p><b>Lesson names are already stored.</b> Select the subject, then select the lesson. You never need to type the lesson name.</p>'+
+      '<p><b>Lesson names are already stored.</b> Select the subject and lesson. You can now add <b>multiple videos/links</b> to the same lesson, each with its own title and description.</p>'+
       '<label>Subject</label><select id="arSubject" onchange="tgmsAdminPopulateResourceLessons()">'+Object.keys(curriculum).map(s=>'<option>'+esc(s)+'</option>').join("")+'</select>'+
       '<label>Lesson</label><select id="arLesson" onchange="tgmsAdminLoadResource()"></select>'+
       '<label>Type</label><select id="arType" onchange="tgmsAdminLoadResource()"><option value="videos">🎥 Video / YouTube Lecture</option><option value="practicals">🔗 Practical / External Link</option></select>'+
-      '<label>Video / Resource Title <span class="tgms-small">(optional)</span></label><input id="arTitle" placeholder="Leave blank to use the lesson name">'+
-      '<label>Description <span class="tgms-small">(optional)</span></label><textarea id="arInfo" placeholder="What will students learn from this link?"></textarea>'+
+      '<div id="arExisting" style="margin:12px 0"></div>'+
+      '<label>Video / Resource Title</label><input id="arTitle" placeholder="Example: Complete Explanation">'+
+      '<label>Description</label><textarea id="arInfo" placeholder="What will students learn from this link?"></textarea>'+
       '<label>Link</label><input id="arUrl" placeholder="https://...">'+
-      '<button class="primary" onclick="tgmsAdminSaveResource()">💾 Save / Update Link</button>'+
+      '<button class="primary" onclick="tgmsAdminSaveResource()">➕ Add New Link</button>'+
       '<div id="arStatus" class="status" style="display:none"></div></div>';
       tgmsAdminPopulateResourceLessons();
     }
@@ -4314,14 +4345,57 @@ document.addEventListener("DOMContentLoaded",function(){
     const title=document.getElementById("arTitle");
     const info=document.getElementById("arInfo");
     const url=document.getElementById("arUrl");
+    const existing=document.getElementById("arExisting");
     if(!subject||!lesson||!title||!info||!url)return;
+    title.value=""; info.value=""; url.value="";
     const d=store.get("TGMS_RESOURCES_"+subject.value+"_"+lesson.value,{videos:[],practicals:[]});
     const type=(document.getElementById("arType")||{}).value||"videos";
     const items=d[type]||[];
-    const item=items[0]||null;
-    title.value=item?.title||"";
-    info.value=item?.info||"";
-    url.value=item?.url||"";
+    if(existing){
+      existing.innerHTML='<h4 style="margin:0 0 8px">Existing '+(type==="videos"?'video links':'external links')+' ('+items.length+')</h4>'+
+        (items.length?items.map((item,i)=>
+          '<div class="tgms-resource" style="margin:8px 0">'+
+          '<b>'+(i+1)+'. '+esc(item.title||lesson.value)+'</b>'+
+          (item.info?'<p>'+esc(item.info)+'</p>':'')+
+          '<div class="teacher-actions">'+
+          '<button type="button" onclick="tgmsAdminEditResource('+i+')">✏️ Edit</button>'+ 
+          '<button type="button" onclick="tgmsAdminDeleteResource('+i+')">🗑️ Delete</button>'+
+          '</div></div>'
+        ).join(""):'<p class="notice">No links added yet. Add the first one below.</p>');
+    }
+  };
+
+  window.tgmsAdminEditResource=function(index){
+    const subject=document.getElementById("arSubject").value;
+    const lesson=document.getElementById("arLesson").value;
+    const type=document.getElementById("arType").value;
+    const key="TGMS_RESOURCES_"+subject+"_"+lesson;
+    const d=store.get(key,{videos:[],practicals:[]});
+    const item=(d[type]||[])[index];
+    if(!item)return;
+    document.getElementById("arTitle").value=item.title||"";
+    document.getElementById("arInfo").value=item.info||"";
+    document.getElementById("arUrl").value=item.url||"";
+    window.tgmsAdminEditingResourceIndex=index;
+    const btn=document.querySelector('#tgmsAdminSuiteContent button[onclick="tgmsAdminSaveResource()"]');
+    if(btn)btn.textContent="💾 Update Selected Link";
+    const status=document.getElementById("arStatus");
+    if(status){status.style.display="block";status.textContent="✏️ Editing link "+(index+1)+". Save to update it.";}
+  };
+
+  window.tgmsAdminDeleteResource=function(index){
+    const subject=document.getElementById("arSubject").value;
+    const lesson=document.getElementById("arLesson").value;
+    const type=document.getElementById("arType").value;
+    const key="TGMS_RESOURCES_"+subject+"_"+lesson;
+    const d=store.get(key,{videos:[],practicals:[]});
+    if(!confirm("Delete this link from "+lesson+"?"))return;
+    d[type]=(d[type]||[]).filter((_,i)=>i!==index);
+    store.set(key,d);
+    window.tgmsAdminEditingResourceIndex=null;
+    tgmsAdminLoadResource();
+    const status=document.getElementById("arStatus");
+    if(status){status.style.display="block";status.textContent="✅ Link deleted.";}
   };
 
   window.tgmsAdminSaveResource=function(){
@@ -4334,22 +4408,35 @@ document.addEventListener("DOMContentLoaded",function(){
 
     const key="TGMS_RESOURCES_"+subject+"_"+lesson;
     const d=store.get(key,{videos:[],practicals:[]});
+    d.videos=Array.isArray(d.videos)?d.videos:[];
+    d.practicals=Array.isArray(d.practicals)?d.practicals:[];
     const item={id:uid(),title:arTitle.value.trim()||lesson,info:arInfo.value.trim(),url:url};
-    d[type]=[item]; // one primary link per preloaded lesson; saving again updates it
+    const editIndex=window.tgmsAdminEditingResourceIndex;
+    if(Number.isInteger(editIndex) && editIndex>=0 && editIndex<d[type].length){
+      item.id=d[type][editIndex].id||uid();
+      d[type][editIndex]=item;
+    }else{
+      d[type].push(item);
+    }
     store.set(key,d);
 
-    // Keep the existing grammar-video system compatible with the new lesson manager.
     if(subject==="English Grammar"){
       const i=curriculum[subject].indexOf(lesson)+1;
-      localStorage.setItem("TGMS_GRAMMAR_VIDEO_EN_"+i,url);
+      if(d.videos[0]?.url)localStorage.setItem("TGMS_GRAMMAR_VIDEO_EN_"+i,d.videos[0].url);
     }else if(subject==="Telugu Grammar"){
       const i=curriculum[subject].indexOf(lesson)+1;
-      localStorage.setItem("TGMS_GRAMMAR_VIDEO_TE_"+i,url);
+      if(d.videos[0]?.url)localStorage.setItem("TGMS_GRAMMAR_VIDEO_TE_"+i,d.videos[0].url);
     }
 
+    window.tgmsAdminEditingResourceIndex=null;
+    arTitle.value=""; arInfo.value=""; arUrl.value="";
+    const btn=document.querySelector('#tgmsAdminSuiteContent button[onclick="tgmsAdminSaveResource()"]');
+    if(btn)btn.textContent="➕ Add New Link";
+    tgmsAdminLoadResource();
     const status=document.getElementById("arStatus");
-    if(status){status.style.display="block";status.textContent="✅ Link saved for "+lesson+". Select another lesson to add its video.";}
+    if(status){status.style.display="block";status.textContent="✅ Link saved for "+lesson+". Add another link if needed.";}
   };
+
   window.tgmsAdminPublishNotice=function(){
     const n=store.get("TGMS_SITE_NOTIFICATIONS",[]);
     n.unshift({id:uid(),title:anTitle.value.trim(),message:anMessage.value.trim(),time:new Date().toLocaleString()});
