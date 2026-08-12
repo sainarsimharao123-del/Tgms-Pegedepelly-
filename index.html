@@ -3495,6 +3495,13 @@ const rtdb = getDatabase(app);
 
 // Keep the existing daily school-update feature working through Realtime Database.
 const daily = ref(rtdb, "dailyUpdate");
+
+// Bridge Firebase Realtime Database access to the administrator UI scripts.
+// The admin editor is intentionally kept in a normal <script> block, so it
+// cannot directly access module-scoped variables such as `daily` and `set`.
+window.tgmsSetDaily = async function(payload){
+  return await set(daily, payload);
+};
 const $ = id => document.getElementById(id);
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
 function render(d){
@@ -3705,7 +3712,7 @@ async function adminSaveDailyField(field){
       announcement:document.getElementById("annInput")?.value||""
     };
     current[field]=input.value.trim();
-    await set(daily,{...current,updatedAt:new Date().toISOString()});
+    await window.tgmsSetDaily({...current,updatedAt:new Date().toISOString()});
     if(document.getElementById("newsInput")) document.getElementById("newsInput").value=current.news;
     if(document.getElementById("dayInput")) document.getElementById("dayInput").value=current.importantDay;
     if(document.getElementById("annInput")) document.getElementById("annInput").value=current.announcement;
@@ -3727,7 +3734,7 @@ async function adminSaveAllDailyFields(){
       announcement:document.getElementById("adminEditAnnouncement")?.value.trim()||"",
       updatedAt:new Date().toISOString()
     };
-    await set(daily,payload);
+    await window.tgmsSetDaily(payload);
     if(status){status.textContent="✅ News, Important Day and Announcement published successfully.";setTimeout(()=>status.style.display="none",3000);}
   }catch(e){
     if(status)status.textContent="❌ Publish failed. Check Firebase Realtime Database rules.";
@@ -3738,7 +3745,7 @@ async function adminSaveAllDailyFields(){
 async function publish(){
   const s=$("pubStatus"); if(s){s.style.display="block";s.textContent="Publishing...";}
   try{
-    await set(daily,{news:$("newsInput")?.value.trim()||"",importantDay:$("dayInput")?.value.trim()||"",announcement:$("annInput")?.value.trim()||"",updatedAt:new Date().toISOString()});
+    await window.tgmsSetDaily({news:$("newsInput")?.value.trim()||"",importantDay:$("dayInput")?.value.trim()||"",announcement:$("annInput")?.value.trim()||"",updatedAt:new Date().toISOString()});
     if(s)s.textContent="✅ Published online.";
   }catch(e){if(s)s.textContent="❌ Publish failed. Check Firebase Realtime Database rules.";console.error(e);}
 }
