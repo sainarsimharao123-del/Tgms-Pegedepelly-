@@ -3398,16 +3398,40 @@ window.tgmsSetDaily = async function(payload){
 // Shared lesson-resource storage: unlike localStorage, this is visible to
 // administrators and students on different devices/browsers.
 window.tgmsGetLessonResources = async function(subject, lesson){
+  const key=encodeURIComponent(subject)+'__'+encodeURIComponent(lesson);
+  const empty={videos:[],practicals:[]};
+
+  // New working location.
   try{
-    const key=encodeURIComponent(subject)+'__'+encodeURIComponent(lesson);
     const snap=await get(ref(rtdb,'dailyUpdate/lessonResources/'+key));
-    const d=snap.exists()?snap.val():null;
-    return (d && typeof d==='object') ? d : {videos:[],practicals:[]};
+    if(snap.exists()){
+      const d=snap.val();
+      if(d && typeof d==='object') return d;
+    }
   }catch(e){
-    console.warn('TGMS lesson resource read failed:',e);
-    return {videos:[],practicals:[]};
+    console.warn('TGMS new lesson-resource read failed:',e);
   }
+
+  // Backward compatibility: videos saved by earlier versions were stored here.
+  try{
+    const oldSnap=await get(ref(rtdb,'lessonResources/'+key));
+    if(oldSnap.exists()){
+      const d=oldSnap.val();
+      if(d && typeof d==='object') return d;
+    }
+  }catch(e){
+    console.warn('TGMS legacy lesson-resource read failed:',e);
+  }
+
+  // Last fallback for resources saved locally by older builds.
+  try{
+    const local=JSON.parse(localStorage.getItem('TGMS_RESOURCES_'+subject+'_'+lesson)||'null');
+    if(local && typeof local==='object') return local;
+  }catch(e){}
+
+  return empty;
 };
+
 window.tgmsSetLessonResources = async function(subject, lesson, data){
   const key=encodeURIComponent(subject)+'__'+encodeURIComponent(lesson);
   await set(ref(rtdb,'dailyUpdate/lessonResources/'+key),data);
@@ -3979,13 +4003,31 @@ document.addEventListener("DOMContentLoaded",function(){
   };
 
   window.tgmsOpenLessonResources=async function(subject,lesson){
+    const box=document.getElementById("tgmsPlusContent");
+    if(!box)return;
+
+    // Always open the lesson page immediately, even while Firebase is loading.
+    studentShow("tgmsStudentHubPlus");
+    box.innerHTML=
+      '<div class="tgms-feature-card">'+
+      '<button type="button" onclick="tgmsOpenCurriculum()">← Back to Syllabus</button>'+
+      '<h2>📖 '+esc(lesson)+'</h2>'+
+      '<span class="tgms-chip">'+esc(subject)+'</span>'+
+      '<div class="notice" id="tgmsLessonLoading">⏳ Loading video resources...</div>'+
+      '</div>';
+
     let d={videos:[],practicals:[]};
-    if(typeof window.tgmsGetLessonResources==='function') d=await window.tgmsGetLessonResources(subject,lesson);
-    else d=store.get("TGMS_RESOURCES_"+subject+"_"+lesson,d);
+    try{
+      d=await window.tgmsGetLessonResources(subject,lesson);
+    }catch(e){
+      console.error("TGMS lesson resources failed:",e);
+      d={videos:[],practicals:[]};
+    }
+
     d.videos=Array.isArray(d.videos)?d.videos:[];
     d.practicals=Array.isArray(d.practicals)?d.practicals:[];
 
-    // Compatibility with older grammar-only links.
+    // Compatibility with old grammar-only video keys.
     if(subject==="English Grammar" && !d.videos.length){
       const i=TGMS_GRAMMAR_TOPICS.EN.indexOf(lesson)+1;
       const legacy=localStorage.getItem("TGMS_GRAMMAR_VIDEO_EN_"+i);
@@ -3999,38 +4041,55 @@ document.addEventListener("DOMContentLoaded",function(){
 
     function youtubeEmbed(url){
       try{
-        const u=new URL(url); let id="";
-        if(u.hostname.includes("youtu.be")) id=u.pathname.slice(1).split("/")[0];
-        if(u.hostname.includes("youtube.com")){
+        const u=new URL(url);
+        let id="";
+        if(u.hostname==="youtu.be" || u.hostname.endsWith(".youtu.be")){
+          id=u.pathname.replace(/^\/+/,"").split("/")[0];
+        }else if(u.hostname.includes("youtube.com")){
           if(u.pathname==="/watch") id=u.searchParams.get("v")||"";
           else if(u.pathname.startsWith("/shorts/")) id=u.pathname.split("/")[2]||"";
           else if(u.pathname.startsWith("/embed/")) id=u.pathname.split("/")[2]||"";
         }
-        return id?"https://www.youtube.com/embed/"+encodeURIComponent(id):"";
+        return id ? "https://www.youtube.com/embed/"+encodeURIComponent(id) : "";
       }catch(e){return "";}
     }
 
-    const videoHtml=d.videos.length?d.videos.map((v,i)=>{
-      const embed=youtubeEmbed(v.url);
-      return '<div class="tgms-resource" style="margin:12px 0">'+
-        '<h4 style="margin:0 0 6px">🎥 '+(i+1)+'. '+esc(v.title||"Video Explanation")+'</h4>'+
-        (v.info?'<p style="margin:5px 0 10px"><b>Description:</b> '+esc(v.info)+'</p>':'')+
-        (embed?'<div style="position:relative;width:100%;padding-top:56.25%;margin:10px 0;border-radius:12px;overflow:hidden;background:#000"><iframe src="'+esc(embed)+'" title="'+esc(v.title||"Video")+'" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share" allowfullscreen></iframe></div>':'')+
-        '<a target="_blank" rel="noopener" href="'+esc(v.url)+'">▶️ Open Video</a></div>';
-    }).join(""):'<p class="notice">No video has been added to this lesson yet.</p>';
+    const videoHtml=d.videos.length
+      ? d.videos.map((v,i)=>{
+          const url=String(v.url||"");
+          const embed=youtubeEmbed(url);
+          return '<div class="tgms-resource" style="margin:14px 0">'+
+            '<h3>🎥 Video '+(i+1)+': '+esc(v.title||"Video Explanation")+'</h3>'+
+            (v.info?'<p><b>Description:</b> '+esc(v.info)+'</p>':'')+
+            (embed
+              ? '<div style="position:relative;width:100%;padding-top:56.25%;margin:10px 0;border-radius:12px;overflow:hidden;background:#000">'+
+                '<iframe src="'+esc(embed)+'" title="'+esc(v.title||"Video Explanation")+'" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share" allowfullscreen></iframe></div>'
+              : '')+
+            '<a class="primary tgms-video-open-link" target="_blank" rel="noopener noreferrer" href="'+esc(url)+'">▶️ Open Video</a>'+
+            '</div>';
+        }).join("")
+      : '<div class="notice">🎥 No video has been added to this lesson yet.</div>';
 
-    const practicalHtml=d.practicals.length?d.practicals.map((v,i)=>
-      '<div class="tgms-resource" style="margin:12px 0"><h4 style="margin:0 0 6px">🔗 '+(i+1)+'. '+esc(v.title||"Resource")+'</h4>'+(
-      v.info?'<p style="margin:5px 0 10px"><b>Description:</b> '+esc(v.info)+'</p>':'')+
-      '<a target="_blank" rel="noopener" href="'+esc(v.url)+'">🔗 Open Resource</a></div>'
-    ).join(""):'<p class="notice">No practical/external links added yet.</p>';
+    const practicalHtml=d.practicals.length
+      ? d.practicals.map((v,i)=>
+          '<div class="tgms-resource" style="margin:14px 0">'+
+          '<h3>🔗 Resource '+(i+1)+': '+esc(v.title||"Resource")+'</h3>'+
+          (v.info?'<p><b>Description:</b> '+esc(v.info)+'</p>':'')+
+          '<a class="primary" target="_blank" rel="noopener noreferrer" href="'+esc(v.url||"")+'">🔗 Open Resource</a>'+
+          '</div>'
+        ).join("")
+      : '<div class="notice">No practical/external links have been added to this lesson.</div>';
 
-    const box=document.getElementById("tgmsPlusContent");
-    if(!box)return;
-    box.innerHTML='<div class="tgms-feature-card"><h3>📖 '+esc(lesson)+'</h3><span class="tgms-chip">'+esc(subject)+'</span>'+ 
-      '<h3>▶️ Video Explanations ('+d.videos.length+')</h3>'+videoHtml+
-      '<h3>🧪 Practicals / External Resources ('+d.practicals.length+')</h3>'+practicalHtml+
-      '<button onclick="tgmsOpenCurriculum()">← Back to Syllabus</button></div>';
+    box.innerHTML=
+      '<div class="tgms-feature-card">'+
+      '<button type="button" onclick="tgmsOpenCurriculum()">← Back to Syllabus</button>'+
+      '<h2>📖 '+esc(lesson)+'</h2>'+
+      '<span class="tgms-chip">'+esc(subject)+'</span>'+
+      '<h3>🎥 Video Explanations ('+d.videos.length+')</h3>'+
+      videoHtml+
+      '<h3>🔗 Other Resources ('+d.practicals.length+')</h3>'+
+      practicalHtml+
+      '</div>';
   };
 
   // Dedicated lesson-video entry point used by all subject lesson buttons.
@@ -4596,6 +4655,9 @@ document.addEventListener("DOMContentLoaded",function(){
 .tgms-subject-lesson summary{font-weight:700;cursor:pointer;padding:6px 2px}
 .tgms-lesson-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .tgms-video-lesson-btn{display:inline-block!important;visibility:visible!important;opacity:1!important;cursor:pointer!important}
+
+.tgms-video-open-link{display:inline-block!important;text-decoration:none!important;margin-top:8px}
+.tgms-lesson-actions{display:block!important;margin-top:8px}
 </style>
 <style id="tgms-exam-accordion-css">
 .tgms-assessment-card{border:1px solid #dbe5ef;border-radius:14px;margin:10px 0;background:#fff;overflow:hidden}
