@@ -289,7 +289,7 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 <button onclick="studentLogout()">🚪<br>Logout</button>
 <button type="button" onclick="studentShow('news')">📰<br>School News</button><button type="button" onclick="studentShow('days')">📅<br>Important Day</button>
 <button type="button" onclick="studentShow('chem')">🧪<br>Chemistry</button><button type="button" onclick="studentShow('physics')">⚛️<br>Physics</button>
-<button type="button" onclick="studentShow('maths')">📐<br>Mathematics</button><button type="button" onclick="studentShow('practical')">🔬<br>40 Practicals</button><button type="button" onclick="studentShow('eapcetPage')">🎯<br>EAPCET</button>
+<button type="button" onclick="studentShow('maths')">📐<br>Mathematics</button><button type="button" onclick="studentShow('practical')">🔬<br>40 Practicals</button><button type="button" onclick="studentShow('eapcetPage')">🎯<br>EAPCET</button><button type="button" onclick="tgmsOpenProgressPage()">📊<br>Progress</button>
 <button type="button" onclick="studentShow('questions')">📝<br>180 Answered Questions</button><button type="button" onclick="studentShow('jee')">🎯<br>JEE Preparation</button>
 <button type="button" onclick="studentShow('study')">📚<br>Study Plan</button><button type="button" onclick="studentShow('admin')">⚙️<br>Admin</button>
 </div>
@@ -309,14 +309,6 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 
 </div>
 
-<div class="card" id="separateStudentPagesCard">
-  <h2>📌 Student Pages</h2>
-  <div class="grid">
-    <button type="button" onclick="tgmsOpenProgressPage()">📊 Progress</button>
-    <button type="button" onclick="tgmsOpenEapcetPage()">🎯 EAPCET</button>
-  </div>
-</div>
-
 <div class="card" id="unitTestMarksHomeCard">
   <h2>📝 Unit Test Marks</h2>
   <p>View your subject-wise unit test marks updated by your teachers or administrator.</p>
@@ -328,12 +320,12 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
   <h2>📚 Subjects</h2>
   <p>Choose a subject to open its learning section.</p>
   <div class="grid">
-    <button type="button" type="button" onclick="studentShow('physics')">⚛️ Physics</button>
-    <button type="button" type="button" onclick="studentShow('chem')">🧪 Chemistry</button>
-    <button type="button" type="button" onclick="studentShow('maths')">📐 Maths A</button>
-    <button type="button" type="button" onclick="studentShow('maths')">📐 Maths B</button>
-    <button type="button" onclick="openTeluguSection()">తెలుగు Grammar</button>
-    <button type="button" type="button" onclick="studentShow('englishSection')">🇬🇧 English Grammar</button>
+    <button type="button" onclick="studentShow('physics')">⚛️ Physics</button>
+    <button type="button" onclick="studentShow('chem')">🧪 Chemistry</button>
+    <button type="button" onclick="studentShow('maths')">📐 Maths A</button>
+    <button type="button" onclick="studentShow('maths')">📐 Maths B</button>
+    <button type="button" onclick="studentShow('teluguSection')">తెలుగు Grammar</button>
+    <button type="button" onclick="studentShow('englishSection')">🇬🇧 English Grammar</button>
   </div>
 </div>
 
@@ -1287,8 +1279,6 @@ function studentShow(id){
     window.scrollTo(0,0);
   }
 }
-function openEnglishSection(){ studentShow("englishSection"); }
-function openTeluguSection(){ studentShow("teluguSection"); }
 // Navigation compatibility: older buttons may still call show().
 window.show = function(id){
   return studentShow(id);
@@ -3874,18 +3864,12 @@ document.addEventListener("DOMContentLoaded",function(){
 
 <!-- ===== TGMS FEATURE SUITE V1 ===== -->
 <section id="tgmsLessonResourcePage">
-  <button type="button" onclick="tgmsOpenCurriculum()">← Back to Lessons</button>
+  <button type="button" onclick="studentShow('home')">← Back to Subject</button>
   <div id="tgmsLessonResourceContent" class="card">
     <div class="notice">Select a lesson to view its videos.</div>
   </div>
 </section>
 
-
-
-<section id="tgmsCurriculumPage">
-  <button type="button" onclick="studentShow('home')">← Home</button>
-  <div class="card"><h2>📚 Complete Syllabus</h2><div id="tgmsCurriculumContent"></div></div>
-</section>
 
 <section id="tgmsProgressPage">
   <button type="button" onclick="studentShow('home')">← Home</button>
@@ -3977,6 +3961,17 @@ document.addEventListener("DOMContentLoaded",function(){
     "Telugu Grammar": TGMS_GRAMMAR_TOPICS.TE
   };
 
+  const lessonResourceCurriculum = {
+    "Physics": Array.from(document.querySelectorAll('#physics details.chapter > summary')).map(x=>x.textContent.trim().replace(/^\d+\.\s*/,'')),
+    "Chemistry": Array.from(document.querySelectorAll('#chem details.chapter > summary')).map(x=>x.textContent.trim().replace(/^\d+\.\s*/,'')),
+    "Maths A": Array.from(document.querySelectorAll('#maths > .card:first-of-type details.chapter > summary')).map(x=>x.textContent.trim().replace(/^\d+\.\s*/,'')),
+    "Maths B": Array.from(document.querySelectorAll('#mathsBCard details.chapter > summary')).map(x=>x.textContent.trim().replace(/^\d+\.\s*/,'')),
+    "English Lessons": Array.from(document.querySelectorAll('#english_lessons_lessons .chapter > h3')).map(x=>x.textContent.trim().replace(/^\d+\.\s*/,'')),
+    "Telugu Lessons": Array.from(document.querySelectorAll('#telugu_lessons_lessons .chapter > h3')).map(x=>x.textContent.trim().replace(/^\d+\.\s*/,'')),
+    "English Grammar": TGMS_GRAMMAR_TOPICS.EN,
+    "Telugu Grammar": TGMS_GRAMMAR_TOPICS.TE
+  };
+
   const store = {
     get(k,d){try{return JSON.parse(localStorage.getItem(k)) ?? d}catch(e){return d}},
     set(k,v){localStorage.setItem(k,JSON.stringify(v));return v}
@@ -3987,30 +3982,14 @@ document.addEventListener("DOMContentLoaded",function(){
   const role = () => sessionStorage.getItem("tgmsRole") || "";
   const pct = (n,d) => d ? Math.max(0,Math.min(100,Math.round(n/d*100))) : 0;
 
-  window.tgmsOpenPlus = function(){ tgmsOpenProgressPage(); };
-  window.tgmsOpenProgress = function(){ tgmsOpenProgressPage(); };
-
   window.tgmsMarkProgress = function(subject,percent){
     const d=store.get("TGMS_PROGRESS_"+student(),{});
     d[subject]=Math.max(0,Math.min(100,Number(percent)||0));
     store.set("TGMS_PROGRESS_"+student(),d);
-    tgmsOpenProgress();
+    tgmsOpenProgressPage();
   };
 
-  window.tgmsOpenCurriculum=function(){
-    studentShow("tgmsCurriculumPage");
-    document.getElementById("tgmsCurriculumContent").innerHTML=
-      '<div class="tgms-feature-card"><h3>📚 Complete Syllabus</h3>'+
-      Object.entries(curriculum).map(([s,arr])=>
-        '<details class="chapter"><summary>'+esc(s)+' <span>'+arr.length+' lessons</span></summary>'+
-        arr.map((x,i)=>'<div class="tgms-resource"><b>'+(i+1)+'. '+esc(x)+'</b>'+
-        '<p class="tgms-small">Resources for this lesson can include notes, multiple YouTube lectures and practical links. Each external link will display its description before the link.</p>'+
-        '<button onclick="tgmsOpenLessonResources('+JSON.stringify(s)+','+JSON.stringify(x)+')">Open Lesson</button></div>').join('')+
-        '</details>'
-      ).join('')+'</div>';
-  };
-
-  window.tgmsRenderEapcet=function(){
+window.tgmsRenderEapcet=function(){
   const box=document.getElementById("eapcetContent");
   if(!box)return;
   let qs=[];
@@ -4069,12 +4048,11 @@ window.tgmsOpenEapcetPage=function(){
   window.tgmsOpenLessonResources=async function(subject,lesson){
     const box=document.getElementById("tgmsLessonResourceContent");
     if(!box)return;
-
-    // Always open the lesson page immediately, even while Firebase is loading.
+    const returnSection = subject==="Physics" ? "physics" : subject==="Chemistry" ? "chem" : (subject==="Maths A" || subject==="Maths B") ? "maths" : (subject==="English Lessons" || subject==="English Grammar") ? "englishSection" : (subject==="Telugu Lessons" || subject==="Telugu Grammar") ? "teluguSection" : "home";
     studentShow("tgmsLessonResourcePage");
     box.innerHTML=
       '<div class="tgms-feature-card">'+
-      '<button type="button" onclick="tgmsOpenCurriculum()">← Back to Lessons</button>'+
+      '<button type="button" onclick="studentShow(\''+returnSection+'\')">← Back to Subject</button>'+
       '<h2>📖 '+esc(lesson)+'</h2>'+
       '<span class="tgms-chip">'+esc(subject)+'</span>'+
       '<div class="notice" id="tgmsLessonLoading">⏳ Loading video resources...</div>'+
@@ -4146,7 +4124,7 @@ window.tgmsOpenEapcetPage=function(){
 
     box.innerHTML=
       '<div class="tgms-feature-card">'+
-      '<button type="button" onclick="tgmsOpenCurriculum()">← Back to Lessons</button>'+
+      '<button type="button" onclick="studentShow(\''+returnSection+'\')">← Back to Subject</button>'+
       '<h2>📖 '+esc(lesson)+'</h2>'+
       '<span class="tgms-chip">'+esc(subject)+'</span>'+
       '<h3>🎥 Video Explanations ('+d.videos.length+')</h3>'+
@@ -4162,164 +4140,7 @@ window.tgmsOpenEapcetPage=function(){
     return window.tgmsOpenLessonResources(subject,lesson);
   };
 
-  window.tgmsOpenEapcet=function(){
-    studentShow("home");
-    const qs=store.get("TGMS_EAPCET",[]);
-    document.getElementById("tgmsPlusContent").innerHTML=
-      '<div class="tgms-feature-card"><h3>🎯 EAPCET Question Bank</h3>'+
-      '<p>Administrator-controlled practice questions.</p>'+
-      (qs.length?qs.map((q,i)=>'<div class="tgms-qbox"><b>Q'+(i+1)+'. '+esc(q.text)+'</b>'+
-      '<p><span class="tgms-chip">'+esc(q.subject)+'</span> <span class="tgms-chip">'+esc(q.topic||"General")+'</span></p>'+
-      (q.options||[]).map((o,j)=>'<div class="tgms-option">'+String.fromCharCode(65+j)+'. '+esc(o)+'</div>').join("")+
-      '<details><summary>Show answer & explanation</summary><div class="answer"><b>Answer:</b> '+esc((q.options||[])[Number(q.answer)]||"")+'<br>'+esc(q.explanation||"No explanation added.")+'</div></details></div>').join("")
-      :'<div class="notice">No EAPCET questions have been published yet.</div>')+'</div>';
-  };
-
-  window.tgmsOpenPractice=function(){
-    studentShow("home");
-    const qs=store.get("TGMS_EAPCET",[]);
-    const first=qs.slice(0,20);
-    document.getElementById("tgmsPlusContent").innerHTML=
-      '<div class="tgms-feature-card"><h3>📝 Practice Mode</h3>'+
-      (first.length?first.map((q,i)=>'<div class="tgms-qbox"><b>Q'+(i+1)+'. '+esc(q.text)+'</b>'+
-      (q.options||[]).map((o,j)=>'<label class="tgms-option"><input type="radio" name="p'+i+'" value="'+j+'"> '+String.fromCharCode(65+j)+'. '+esc(o)+'</label>').join("")+
-      '<button onclick="tgmsCheckPractice('+i+')">Check Answer</button><div id="presult'+i+'"></div></div>').join("")
-      :'<div class="notice">Add EAPCET questions from the Administrator panel to use Practice Mode.</div>')+'</div>';
-    window.tgmsPracticeSet=first;
-  };
-  window.tgmsCheckPractice=function(i){
-    const q=(window.tgmsPracticeSet||[])[i]; if(!q)return;
-    const chosen=document.querySelector('input[name="p'+i+'"]:checked');
-    const box=document.getElementById("presult"+i);
-    if(!chosen){box.innerHTML='<div class="notice">Choose an answer first.</div>';return}
-    const ok=Number(chosen.value)===Number(q.answer);
-    box.innerHTML=ok?'<div class="tgms-success">✅ Correct!</div>':'<div class="tgms-incident">❌ Incorrect. Correct answer: '+esc((q.options||[])[Number(q.answer)]||"")+'</div>';
-  };
-
-  window.tgmsOpenExams=function(){
-    studentShow("home");
-    const exams=store.get("TGMS_PUBLISHED_EXAMS",[]);
-    document.getElementById("tgmsPlusContent").innerHTML=
-      '<div class="tgms-feature-card"><h3>💻 Digital Examinations</h3>'+
-      (exams.length?exams.map(e=>'<div class="tgms-feature-card"><h3>'+esc(e.name)+'</h3>'+
-      '<p><b>Subjects:</b> '+esc((e.subjects||[]).join(", "))+'</p><p><b>Lessons:</b> '+esc((e.lessons||[]).join(", "))+'</p>'+
-      '<p>'+e.questions.length+' questions • '+esc(e.duration||"Not specified")+'</p>'+
-      '<p>📷 Camera: '+(e.cameraRequired?"Required":"Not required")+'</p>'+
-      '<button class="primary" onclick="tgmsStartFeatureExam('+JSON.stringify(e.id)+')">Start Exam</button></div>').join("")
-      :'<div class="notice">No published digital examinations yet.</div>')+'</div>';
-  };
-
-  let activeExam=null, activeIndex=0, activeAnswers=[], examTimer=null, cameraStream=null, cameraMissingTimer=null;
-
-  window.tgmsStartFeatureExam=function(id){
-    const exams=store.get("TGMS_PUBLISHED_EXAMS",[]);
-    const e=exams.find(x=>x.id===id); if(!e)return;
-    if(store.get("TGMS_EXAM_DONE_"+id+"_"+student(),false)){alert("This examination has already been submitted.");return}
-    activeExam=e; activeIndex=0; activeAnswers=new Array(e.questions.length).fill(null);
-    if(e.cameraRequired){ tgmsRequestExamCamera(startFeatureExamAfterCamera); }
-    else startFeatureExamAfterCamera();
-  };
-
-  function startFeatureExamAfterCamera(){
-    if(!activeExam)return;
-    studentShow("tgmsFeatureExamRunner");
-    tgmsRenderFeatureExam();
-  }
-
-  function tgmsRequestExamCamera(cb){
-    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      tgmsCameraIncident("Camera API unavailable"); return;
-    }
-    navigator.mediaDevices.getUserMedia({video:true,audio:false}).then(stream=>{
-      cameraStream=stream; clearTimeout(cameraMissingTimer); cb();
-    }).catch(()=>tgmsCameraIncident("Camera permission denied or unavailable"));
-  }
-
-  function tgmsCameraIncident(reason){
-    const incidents=store.get("TGMS_CAMERA_INCIDENTS",[]);
-    incidents.push({id:uid(),student:student(),exam:activeExam?.name||"",reason,time:new Date().toISOString()});
-    store.set("TGMS_CAMERA_INCIDENTS",incidents);
-    if(activeExam) store.set("TGMS_EXAM_CANCELLED_"+activeExam.id+"_"+student(),true);
-    if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}
-    clearInterval(examTimer); clearTimeout(cameraMissingTimer);
-    alert("📷 Camera requirement was not satisfied. The examination has been cancelled and the Administrator has been notified on this device.");
-    studentShow("home");
-  }
-
-  function watchCamera(){
-    if(!activeExam?.cameraRequired || !cameraStream)return;
-    const v=document.getElementById("tgmsExamCamera");
-    if(!v)return;
-    cameraMissingTimer=setTimeout(()=>{
-      if(!cameraStream || cameraStream.getVideoTracks().some(t=>t.readyState!=="live")) tgmsCameraIncident("Camera became unavailable");
-    },5000);
-  }
-
-  function tgmsRenderFeatureExam(){
-    if(!activeExam)return;
-    clearInterval(examTimer);
-    const q=activeExam.questions[activeIndex];
-    document.getElementById("tgmsFeatureExamTitle").textContent=activeExam.name;
-    document.getElementById("tgmsFeatureExamMeta").textContent="Lessons: "+(activeExam.lessons||[]).join(", ");
-    document.getElementById("tgmsFeatureExamCounter").textContent="Question "+(activeIndex+1)+" of "+activeExam.questions.length;
-    let h='<div class="tgms-qbox"><h3>Q'+(activeIndex+1)+'. '+esc(q.text)+'</h3>'+
-      (q.options||[]).map((o,i)=>'<label class="approved-option"><input type="radio" name="featureAns" value="'+i+'" '+(activeAnswers[activeIndex]===i?"checked":"")+' onchange="tgmsSelectFeatureAnswer('+i+')"> '+String.fromCharCode(65+i)+'. '+esc(o)+'</label>').join("")+
-      '</div>';
-    document.getElementById("tgmsFeatureExamQuestion").innerHTML=h;
-    document.getElementById("tgmsFeatureExamNext").textContent=activeIndex===activeExam.questions.length-1?"Submit Examination ✓":"Next →";
-    const seconds=Math.max(1,Number(activeExam.timePerQuestion||1))*60;
-    let remaining=seconds;
-    document.getElementById("tgmsFeatureExamTimer").textContent=remaining+"s";
-    examTimer=setInterval(()=>{
-      remaining--; document.getElementById("tgmsFeatureExamTimer").textContent=remaining+"s";
-      if(remaining<=0){clearInterval(examTimer); if(activeIndex===activeExam.questions.length-1)tgmsFinishFeatureExam();else{activeIndex++;tgmsRenderFeatureExam()}}
-    },1000);
-    if(cameraStream){
-      const v=document.getElementById("tgmsExamCamera"); v.srcObject=cameraStream; v.play().catch(()=>{});
-      watchCamera();
-    }
-  }
-
-  window.tgmsSelectFeatureAnswer=function(i){activeAnswers[activeIndex]=i};
-  window.tgmsFeatureExamNext=function(){
-    if(activeIndex===activeExam.questions.length-1)tgmsFinishFeatureExam();else{activeIndex++;tgmsRenderFeatureExam()}
-  };
-  window.tgmsFeatureExamPrev=function(){if(activeIndex>0){activeIndex--;tgmsRenderFeatureExam()}};
-
-  window.tgmsFinishFeatureExam=function(){
-    if(!activeExam)return;
-    clearInterval(examTimer); clearTimeout(cameraMissingTimer);
-    if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}
-    let score=0,max=0,wrong=[],correct=[],unattempted=[];
-    activeExam.questions.forEach((q,i)=>{
-      const m=Number(q.marks||1); max+=m;
-      if(activeAnswers[i]===null||activeAnswers[i]===undefined)unattempted.push(i);
-      else if(Number(activeAnswers[i])===Number(q.answer)){score+=m;correct.push(i)}
-      else wrong.push(i);
-    });
-    const result={id:uid(),student:student(),examId:activeExam.id,exam:activeExam.name,score,maxMarks:max,percentage:max?Number((score/max*100).toFixed(1)):0,wrong,correct,unattempted,submittedAt:new Date().toISOString()};
-    store.set("TGMS_EXAM_RESULT_"+activeExam.id+"_"+student(),result);
-    store.set("TGMS_EXAM_DONE_"+activeExam.id+"_"+student(),true);
-    const d=store.get("TGMS_PROGRESS_"+student(),{});
-    (activeExam.subjects||[]).forEach(s=>d[s]=Math.max(Number(d[s]||0),result.percentage));
-    store.set("TGMS_PROGRESS_"+student(),d);
-    document.getElementById("tgmsFeatureExamQuestion").innerHTML=
-      '<div class="tgms-success"><h2>🎉 Examination Submitted</h2><p><b>'+score+' / '+max+' ('+result.percentage+'%)</b></p>'+
-      '<p>❌ Wrong: '+wrong.length+' &nbsp; ✅ Correct: '+correct.length+' &nbsp; ⚪ Unattempted: '+unattempted.length+'</p></div>'+
-      '<h3>❌ Questions Attempted Wrong</h3>'+
-      (wrong.length?wrong.map(i=>'<div class="tgms-qbox"><b>Q'+(i+1)+'. '+esc(activeExam.questions[i].text)+'</b><p><span class="tgms-chip">'+esc(activeExam.questions[i].subject||"")+'</span> <span class="tgms-chip">'+esc(activeExam.questions[i].lesson||"")+'</span></p><p>Your answer: '+esc((activeExam.questions[i].options||[])[activeAnswers[i]]||"")+'</p><p>Correct answer: '+esc((activeExam.questions[i].options||[])[Number(activeExam.questions[i].answer)]||"")+'</p><p>'+esc(activeExam.questions[i].explanation||"No explanation provided.")+'</p></div>').join(""):'<p class="tgms-success">No wrong answers. Excellent!</p>');
-    document.getElementById("tgmsFeatureExamNext").style.display="none";
-    document.getElementById("tgmsFeatureExamPrev").style.display="none";
-  };
-
-  window.tgmsOpenNotifications=function(){
-    studentShow("home");
-    const n=store.get("TGMS_SITE_NOTIFICATIONS",[]);
-    document.getElementById("tgmsPlusContent").innerHTML='<div class="tgms-feature-card"><h3>🔔 Notifications</h3>'+
-      (n.length?n.map(x=>'<div class="tgms-resource"><b>'+esc(x.title)+'</b><p>'+esc(x.message)+'</p><span class="tgms-small">'+esc(x.time||"")+'</span></div>').join(""):'<div class="notice">No site updates yet.</div>')+'</div>';
-  };
-
-    window.tgmsOpenFeatureAdmin=function(){studentShow("tgmsAdminSuite");tgmsAdminRender("dashboard")};
+  window.tgmsOpenFeatureAdmin=function(){studentShow("tgmsAdminSuite");tgmsAdminRender("dashboard")};
 
   window.tgmsAdminRender=function(view){
     studentShow("tgmsAdminSuite");
@@ -4467,7 +4288,7 @@ window.tgmsOpenEapcetPage=function(){
     const subject=document.getElementById("arSubject");
     const lesson=document.getElementById("arLesson");
     if(!subject||!lesson)return;
-    const arr=curriculum[subject.value]||[];
+    const arr=lessonResourceCurriculum[subject.value]||curriculum[subject.value]||[];
     lesson.innerHTML=arr.map((name,i)=>'<option value="'+esc(name)+'">'+(i+1)+'. '+esc(name)+'</option>').join("");
     tgmsAdminLoadResource();
   };
@@ -4747,4 +4568,27 @@ window.tgmsOpenEapcetPage=function(){
 })();
 </script>
 
+<script>
+(function(){
+  function addButtons(rootId, subject, selector){
+    const root=document.getElementById(rootId); if(!root)return;
+    root.querySelectorAll(selector).forEach(function(ch){
+      if(ch.querySelector('.tgms-subject-video-btn'))return;
+      const s=ch.querySelector(':scope > summary'); if(!s)return;
+      const lesson=s.textContent.trim().replace(/^\d+\.\s*/, '');
+      const b=document.createElement('button'); b.type='button'; b.className='primary tgms-subject-video-btn';
+      b.textContent='🎥 Video Explanation'; b.style.margin='8px 0 4px';
+      b.onclick=function(){window.tgmsOpenLessonResources(subject,lesson);};
+      ch.appendChild(b);
+    });
+  }
+  function init(){
+    addButtons('physics','Physics','details.chapter');
+    addButtons('chem','Chemistry','details.chapter');
+    addButtons('maths','Maths A','#maths > .card:first-of-type details.chapter');
+    addButtons('mathsBCard','Maths B','details.chapter');
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
 </body></html>
