@@ -276,6 +276,7 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
   <div class="principal-text">
     <h2>Welcome to TG Model School, Pegedepelly</h2>
     <h3>Principal</h3>
+    <p><b>Sri. Prabhakar Reddy Kotha</b></p>
     <p>We warmly welcome you to the TGMS Student Hub — a learning portal created to support our students in academics, practical learning, school updates and preparation.</p>
   </div>
 </div>
@@ -317,8 +318,8 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
     <button type="button" onclick="studentShow('englishSection')">🇬🇧 English Grammar</button>
     <button type="button" onclick="studentShow('physics')">⚛️ Physics</button>
     <button type="button" onclick="studentShow('chem')">🧪 Chemistry</button>
-    <button type="button" onclick="studentShow('maths')">📐 Maths</button>
-    <button type="button" onclick="studentShow('maths')">📐 Maths</button>
+    <button type="button" onclick="studentShow('maths')">📐 Maths A</button>
+    <button type="button" onclick="studentShow('maths')">📐 Maths B</button>
   </div>
 </div>
 
@@ -490,7 +491,8 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
     <p id="adminWelcome"></p>
 
     <h3>📰 Daily School Updates — Edit & Publish</h3>
-    <div class="assessment-panel" id="adminDailyUpdatesEditor">
+    <button type="button" class="primary" id="adminDailyEditorToggle" onclick="toggleAdminDailyEditor()">✏️ Edit News • Important Day • Announcement</button>
+    <div class="assessment-panel" id="adminDailyUpdatesEditor" style="display:none">
       <p><b>Administrator only:</b> Edit any of the three daily updates independently.</p>
       <div class="notice"><b>How it works:</b> Press <b>Edit</b> → change the text → press <b>Save</b>. Students will see the updated content immediately.</div>
 
@@ -2840,12 +2842,30 @@ function tgmsAssessmentKey(name){
 }
 
 function teacherSelectAssessment(name){
+  const info=document.getElementById("teacherAssessmentInfo");
+  const box=document.getElementById("teacherStudentMarks");
+  const same = teacherSelectedAssessment === name &&
+               info && info.dataset.openAssessment === name;
+
+  if(same){
+    if(info) info.innerHTML="";
+    if(info) info.dataset.openAssessment="";
+    if(box) box.innerHTML="";
+    document.querySelectorAll("#teacherAssessmentTabs .assessment-tab").forEach(function(b){
+      b.classList.remove("active");
+    });
+    return;
+  }
+
   teacherSelectedAssessment=name;
   document.querySelectorAll("#teacherAssessmentTabs .assessment-tab").forEach(function(b){
-    b.classList.toggle("active",b.textContent.trim()===name);
+    b.classList.toggle("active",b.textContent.trim().startsWith(name));
   });
-  const info=document.getElementById("teacherAssessmentInfo");
-  info.innerHTML="<b>"+escapeHtml(name)+"</b> — Maximum <b>"+tgmsMaxMarks(name)+" marks</b> | Subject: <b>"+escapeHtml(teacherCurrent().subject)+"</b>";
+
+  if(info){
+    info.dataset.openAssessment=name;
+    info.innerHTML="<b>"+escapeHtml(name)+"</b> — Maximum <b>"+tgmsMaxMarks(name)+" marks</b> | Subject: <b>"+escapeHtml(teacherCurrent().subject)+"</b>";
+  }
   teacherRenderStudentMarks();
 }
 
@@ -3056,14 +3076,29 @@ function adminAssessmentData(){
 }
 
 function adminSelectAssessment(name){
+  const info=document.getElementById("adminAssessmentInfo");
+  const box=document.getElementById("adminStudentMarks");
+  const same = adminSelectedAssessment === name &&
+               info && info.dataset.openAssessment === name;
+
+  if(same){
+    if(info) info.innerHTML="";
+    if(info) info.dataset.openAssessment="";
+    if(box) box.innerHTML="";
+    document.querySelectorAll("#adminAssessmentTabs .assessment-tab").forEach(function(btn){
+      btn.classList.remove("active");
+    });
+    return;
+  }
+
   adminSelectedAssessment=name;
 
   document.querySelectorAll("#adminAssessmentTabs .assessment-tab").forEach(function(btn){
     btn.classList.toggle("active", btn.textContent.trim().startsWith(name));
   });
 
-  const info=document.getElementById("adminAssessmentInfo");
   if(info){
+    info.dataset.openAssessment=name;
     info.innerHTML="<b>"+escapeHtml(name)+"</b> — Maximum <b>"+
       TGMS_ADMIN_ASSESSMENTS[name]+" marks</b>";
   }
@@ -3686,6 +3721,17 @@ function adminSyncDailyEditor(){
   if(document.getElementById("adminEditDay")) document.getElementById("adminEditDay").value=day;
   if(document.getElementById("adminEditAnnouncement")) document.getElementById("adminEditAnnouncement").value=ann;
 }
+
+window.toggleAdminDailyEditor = function(){
+  const panel=document.getElementById("adminDailyUpdatesEditor");
+  const btn=document.getElementById("adminDailyEditorToggle");
+  if(!panel || !btn) return;
+  const isOpen=panel.style.display !== "none";
+  panel.style.display=isOpen ? "none" : "block";
+  btn.textContent=isOpen
+    ? "✏️ Edit News • Important Day • Announcement"
+    : "✖️ Close News • Important Day • Announcement";
+};
 
 window.adminEditDailyField = function(field){
   const ids={news:"adminEditNews",importantDay:"adminEditDay",announcement:"adminEditAnnouncement"};
