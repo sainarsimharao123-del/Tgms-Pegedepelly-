@@ -3402,45 +3402,34 @@ window.tgmsSetDaily = async function(payload){
 
 // Shared lesson-resource storage: unlike localStorage, this is visible to
 // administrators and students on different devices/browsers.
-window.tgmsGetLessonResources = async function(subject, lesson){
-  const key=encodeURIComponent(subject)+'__'+encodeURIComponent(lesson);
+window.tgmsLessonResourceKey=function(subject,lesson){
+  const clean=v=>String(v??"").normalize("NFKC").replace(/\u00a0/g," ").replace(/\s+/g," ").trim();
+  return encodeURIComponent(clean(subject))+"__"+encodeURIComponent(clean(lesson));
+};
+window.tgmsGetLessonResources=async function(subject,lesson){
+  const key=window.tgmsLessonResourceKey(subject,lesson);
   const empty={videos:[],practicals:[]};
-
-  // New working location.
   try{
-    const snap=await get(ref(rtdb,'dailyUpdate/lessonResources/'+key));
+    const snap=await get(ref(rtdb,"dailyUpdate/lessonResources/"+key));
     if(snap.exists()){
       const d=snap.val();
-      if(d && typeof d==='object') return d;
+      if(d&&typeof d==="object") return {videos:Array.isArray(d.videos)?d.videos:[],practicals:Array.isArray(d.practicals)?d.practicals:[]};
     }
-  }catch(e){
-    console.warn('TGMS new lesson-resource read failed:',e);
-  }
-
-  // Backward compatibility: videos saved by earlier versions were stored here.
+  }catch(e){console.warn("TGMS resource read failed:",e);}
   try{
-    const oldSnap=await get(ref(rtdb,'lessonResources/'+key));
-    if(oldSnap.exists()){
-      const d=oldSnap.val();
-      if(d && typeof d==='object') return d;
+    const old=await get(ref(rtdb,"lessonResources/"+key));
+    if(old.exists()){
+      const d=old.val();
+      if(d&&typeof d==="object") return {videos:Array.isArray(d.videos)?d.videos:[],practicals:Array.isArray(d.practicals)?d.practicals:[]};
     }
-  }catch(e){
-    console.warn('TGMS legacy lesson-resource read failed:',e);
-  }
-
-  // Last fallback for resources saved locally by older builds.
-  try{
-    const local=JSON.parse(localStorage.getItem('TGMS_RESOURCES_'+subject+'_'+lesson)||'null');
-    if(local && typeof local==='object') return local;
   }catch(e){}
-
   return empty;
 };
-
-window.tgmsSetLessonResources = async function(subject, lesson, data){
-  const key=encodeURIComponent(subject)+'__'+encodeURIComponent(lesson);
-  await set(ref(rtdb,'dailyUpdate/lessonResources/'+key),data);
-  return data;
+window.tgmsSetLessonResources=async function(subject,lesson,data){
+  const key=window.tgmsLessonResourceKey(subject,lesson);
+  const payload={videos:Array.isArray(data.videos)?data.videos:[],practicals:Array.isArray(data.practicals)?data.practicals:[],updatedAt:Date.now()};
+  await set(ref(rtdb,"dailyUpdate/lessonResources/"+key),payload);
+  return payload;
 };
 
 const $ = id => document.getElementById(id);
@@ -4289,7 +4278,7 @@ window.tgmsOpenEapcetPage=function(){
     const lesson=document.getElementById("arLesson");
     if(!subject||!lesson)return;
     const arr=lessonResourceCurriculum[subject.value]||curriculum[subject.value]||[];
-    lesson.innerHTML=arr.map((name,i)=>'<option value="'+esc(name)+'">'+(i+1)+'. '+esc(name)+'</option>').join("");
+    lesson.innerHTML=arr.map((name,i)=>{const n=String(name).normalize("NFKC").replace(/\u00a0/g," ").replace(/\s+/g," ").trim();return '<option value="'+esc(n)+'">'+(i+1)+'. '+esc(n)+'</option>';}).join("");
     tgmsAdminLoadResource();
   };
 
@@ -4355,50 +4344,40 @@ window.tgmsOpenEapcetPage=function(){
   };
 
   window.tgmsAdminSaveResource=async function(){
-    const subject=arSubject.value, lesson=arLesson.value;
-    const type=arType.value, url=arUrl.value.trim();
-    if(!lesson){alert("Select a lesson.");return}
-    if(!url){alert("Paste the video/resource link first.");return}
-    try{ const u=new URL(url); if(!/^https?:$/.test(u.protocol))throw new Error(); }
-    catch(e){ alert("Please enter a valid http/https link."); return; }
-
-    const d=await window.tgmsGetLessonResources(subject,lesson);
-    d.videos=Array.isArray(d.videos)?d.videos:[];
-    d.practicals=Array.isArray(d.practicals)?d.practicals:[];
-    const item={id:uid(),title:arTitle.value.trim()||lesson,info:arInfo.value.trim(),url:url};
-    const editIndex=window.tgmsAdminEditingResourceIndex;
-    if(Number.isInteger(editIndex) && editIndex>=0 && editIndex<d[type].length){
-      item.id=d[type][editIndex].id||uid();
-      d[type][editIndex]=item;
-    }else{
-      d[type].push(item);
-    }
+    const subjectEl=document.getElementById("arSubject"), lessonEl=document.getElementById("arLesson");
+    const typeEl=document.getElementById("arType"), titleEl=document.getElementById("arTitle");
+    const infoEl=document.getElementById("arInfo"), urlEl=document.getElementById("arUrl");
+    const status=document.getElementById("arStatus");
+    if(!subjectEl||!lessonEl||!typeEl||!titleEl||!infoEl||!urlEl){alert("Resource editor is not loaded.");return;}
+    const subject=subjectEl.value.trim(), lesson=lessonEl.value, type=typeEl.value, url=urlEl.value.trim();
+    if(!lesson){alert("Select a lesson.");return;}
+    if(!url){alert("Paste the video/resource link first.");return;}
+    try{const u=new URL(url);if(!/^https?:$/.test(u.protocol))throw new Error();}catch(e){alert("Please enter a valid http/https link.");return;}
     try{
+      const d=await window.tgmsGetLessonResources(subject,lesson);
+      d.videos=Array.isArray(d.videos)?d.videos:[]; d.practicals=Array.isArray(d.practicals)?d.practicals:[];
+      const editIndex=window.tgmsAdminEditingResourceIndex;
+      const item={id:uid(),title:titleEl.value.trim()||lesson,info:infoEl.value.trim(),url:url};
+      if(Number.isInteger(editIndex)&&editIndex>=0&&editIndex<d[type].length){
+        item.id=d[type][editIndex].id||uid(); d[type][editIndex]=item;
+      }else d[type].push(item);
       await window.tgmsSetLessonResources(subject,lesson,d);
+      const verify=await window.tgmsGetLessonResources(subject,lesson);
+      if(!verify[type].some(x=>x.id===item.id&&x.url===item.url)) throw new Error("Firebase save verification failed.");
+      window.tgmsAdminEditingResourceIndex=null;
+      titleEl.value=""; infoEl.value=""; urlEl.value="";
+      const btn=document.querySelector('#tgmsAdminSuiteContent button[onclick="tgmsAdminSaveResource()"]');
+      if(btn)btn.textContent="➕ Add New Link";
+      await window.tgmsAdminLoadResource();
+      if(status){status.style.display="block";status.textContent=Number.isInteger(editIndex)&&editIndex>=0?"✅ Link updated successfully.":"✅ Link added successfully.";}
     }catch(err){
       console.error("TGMS resource save failed:",err);
-      const msg=(err&&err.message)?err.message:String(err||"Unknown Firebase error");
-      alert("❌ Link could not be saved. Firebase said: "+msg);
-      return;
+      const msg=err&&err.message?err.message:String(err||"Unknown error");
+      if(status){status.style.display="block";status.textContent="❌ Save failed: "+msg;}
+      else alert("❌ Link could not be saved: "+msg);
     }
-
-    // Keep legacy grammar-video keys compatible.
-    if(subject==="English Grammar"){
-      const i=curriculum[subject].indexOf(lesson)+1;
-      if(d.videos[0]?.url)localStorage.setItem("TGMS_GRAMMAR_VIDEO_EN_"+i,d.videos[0].url);
-    }else if(subject==="Telugu Grammar"){
-      const i=curriculum[subject].indexOf(lesson)+1;
-      if(d.videos[0]?.url)localStorage.setItem("TGMS_GRAMMAR_VIDEO_TE_"+i,d.videos[0].url);
-    }
-
-    window.tgmsAdminEditingResourceIndex=null;
-    arTitle.value=""; arInfo.value=""; arUrl.value="";
-    const btn=document.querySelector('#tgmsAdminSuiteContent button[onclick="tgmsAdminSaveResource()"]');
-    if(btn)btn.textContent="➕ Add New Link";
-    await tgmsAdminLoadResource();
-    const status=document.getElementById("arStatus");
-    if(status){status.style.display="block";status.textContent="✅ Link saved for "+lesson+". Add another link if needed.";}
   };
+
 
   window.tgmsAdminPublishNotice=function(){
     const n=store.get("TGMS_SITE_NOTIFICATIONS",[]);
