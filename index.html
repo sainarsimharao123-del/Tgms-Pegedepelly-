@@ -238,12 +238,14 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
       el("tgmsLoginMessage").textContent="Please enter your Firebase email and password.";
       return;
     }
-    if(typeof window.tgmsFirebaseLogin !== "function"){
-      el("tgmsLoginMessage").textContent="Firebase is still loading. Please try again.";
-      return;
-    }
     el("tgmsLoginMessage").textContent="Signing in securely…";
-    await window.tgmsFirebaseLogin(tgmsSelectedRole,email,password,el("tgmsLoginMessage"));
+    if(typeof window.tgmsFirebaseLogin === "function"){
+      await window.tgmsFirebaseLogin(tgmsSelectedRole,email,password,el("tgmsLoginMessage"));
+    }else if(typeof window.tgmsRestFirebaseLogin === "function"){
+      await window.tgmsRestFirebaseLogin(tgmsSelectedRole,email,password,el("tgmsLoginMessage"));
+    }else{
+      el("tgmsLoginMessage").textContent="❌ Secure login is unavailable. Please refresh the page.";
+    }
   };
 
   window.tgmsForceLogout = function(){
@@ -3048,7 +3050,7 @@ const TGMS_ADMIN_ASSESSMENTS = {
   "Unit Test 3":30,
   "Unit Test 4":30
 };
-let adminSelectedAssessment="Unit Test 1";
+adminSelectedAssessment="Unit Test 1";
 
 function adminAssessmentData(){
   try{return JSON.parse(localStorage.getItem("TGMS_ASSESSMENT_MARKS")||"[]");}
@@ -3471,6 +3473,109 @@ document.addEventListener("DOMContentLoaded",function(){
 });
 </script>
 
+
+<script id="tgms-firebase-login-fallback">
+(function(){
+  const API_KEY="AIzaSyD68Rg-d4poC7ViGIF40sJHaC_JV0aQWTc";
+  const PROJECT="tgms-pegedepelly-hub";
+
+  function fv(v){
+    if(!v) return "";
+    if(v.stringValue!==undefined) return v.stringValue;
+    if(v.integerValue!==undefined) return v.integerValue;
+    if(v.doubleValue!==undefined) return v.doubleValue;
+    if(v.booleanValue!==undefined) return v.booleanValue;
+    if(v.timestampValue!==undefined) return v.timestampValue;
+    return "";
+  }
+
+  async function restLogin(email,password){
+    const r=await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key="+API_KEY,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({email,password,returnSecureToken:true})
+    });
+    const d=await r.json();
+    if(!r.ok){
+      const e=new Error(d?.error?.message||"Firebase sign-in failed");
+      e.code=d?.error?.message||"auth/unknown";
+      throw e;
+    }
+    return d;
+  }
+
+  async function profile(uid,idToken){
+    const url="https://firestore.googleapis.com/v1/projects/"+PROJECT+"/databases/(default)/documents/users/"+encodeURIComponent(uid);
+    const r=await fetch(url,{headers:{Authorization:"Bearer "+idToken}});
+    const d=await r.json();
+    if(!r.ok || !d.fields) throw new Error("NO_PROFILE");
+    const f=d.fields;
+    return {
+      name:fv(f.name)||fv(f.Name),
+      role:fv(f.role)||fv(f.Role),
+      subject:fv(f.subject)||fv(f.Subject),
+      teacherId:fv(f.teacherid)||fv(f.teacherId)||fv(f.TeacherId),
+      studentId:fv(f.studentid)||fv(f.studentId)||fv(f.StudentId),
+      adminId:fv(f.adminid)||fv(f.adminId)||fv(f.AdminId),
+      className:fv(f.class)||fv(f.className)||fv(f.Class)
+    };
+  }
+
+  window.tgmsRestFirebaseLogin=async function(expectedRole,email,password,statusEl){
+    try{
+      const cred=await restLogin(email,password);
+      const p=await profile(cred.localId,cred.idToken);
+      const roleRaw=String(p.role||"").trim().toLowerCase();
+      const role=roleRaw==="administrator"?"admin":roleRaw;
+      const expected=String(expectedRole||"").trim().toLowerCase();
+
+      if(role!==expected){
+        statusEl.textContent="❌ This account is not registered as a "+expectedRole+" account.";
+        return false;
+      }
+
+      sessionStorage.setItem("tgmsFirebaseUid",cred.localId);
+      sessionStorage.setItem("tgmsRole",role);
+      if(role==="student") sessionStorage.setItem("tgmsStudentUser",p.studentId||cred.localId);
+      if(role==="teacher") sessionStorage.setItem("tgmsTeacherUser",p.teacherId||cred.localId);
+      if(role==="admin") sessionStorage.setItem("tgmsAdminUser",p.adminId||"admin");
+      if(p.name) sessionStorage.setItem("tgmsDisplayName",p.name);
+      if(p.subject) sessionStorage.setItem("tgmsTeacherSubject",p.subject);
+
+      const gate=document.getElementById("tgmsLoginGate");
+      if(gate) gate.style.display="none";
+
+      if(role==="student"){
+        if(document.getElementById("welcomeName")) document.getElementById("welcomeName").textContent=p.name||"Student";
+        if(document.getElementById("welcomeModal")) document.getElementById("welcomeModal").classList.add("show");
+        if(typeof window.studentShow==="function") window.studentShow("home");
+      }else if(role==="teacher"){
+        if(document.getElementById("teacherWelcome")) document.getElementById("teacherWelcome").textContent="Welcome, "+(p.name||"Teacher")+"!";
+        if(document.getElementById("teacherSubject")) document.getElementById("teacherSubject").textContent=p.subject||"";
+        if(document.getElementById("teacherAllowedSubject")) document.getElementById("teacherAllowedSubject").textContent=p.subject||"Not assigned";
+        if(typeof window.studentShow==="function") window.studentShow("teacherPanel");
+        setTimeout(function(){
+          if(typeof window.teacherRenderQuestions==="function") window.teacherRenderQuestions();
+          if(typeof window.teacherRenderApproval==="function") window.teacherRenderApproval();
+          if(typeof window.teacherRenderList==="function") window.teacherRenderList();
+        },50);
+      }else{
+        if(document.getElementById("adminWelcome")) document.getElementById("adminWelcome").textContent="Welcome, "+(p.name||"Administrator")+".";
+        if(typeof window.tgmsOpenAdminPanel==="function") window.tgmsOpenAdminPanel();
+      }
+
+      statusEl.textContent="✅ Secure login successful.";
+      return true;
+    }catch(err){
+      console.error("TGMS Firebase REST login:",err);
+      statusEl.textContent=err.message==="NO_PROFILE"
+        ?"❌ Firebase login succeeded, but no TGMS user profile was found for this account."
+        :"❌ Firebase login failed: "+(err.message||"Unknown error");
+      return false;
+    }
+  };
+})();
+</script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
@@ -4555,56 +4660,3 @@ document.addEventListener("DOMContentLoaded",function(){
 </script>
 
 </body></html>
-
-<script id="tgms-ui-fixes-only">
-(function(){
-  // Unit Test / Half-Year buttons: same tap opens, same tap closes.
-  window.tgmsToggleAssessment=function(name,mode){
-    var info=document.getElementById(mode==="teacher"?"teacherAssessmentInfo":"adminAssessmentInfo");
-    var box=document.getElementById(mode==="teacher"?"teacherStudentMarks":"adminStudentMarks");
-    if(!info||!box)return;
-    var open=info.getAttribute("data-open-assessment");
-    if(open===name){
-      info.innerHTML="";
-      info.removeAttribute("data-open-assessment");
-      box.innerHTML="";
-      document.querySelectorAll((mode==="teacher"?"#teacherAssessmentTabs":"#adminAssessmentTabs")+" .assessment-tab")
-        .forEach(function(b){b.classList.remove("active");});
-      return;
-    }
-    if(mode==="teacher"){
-      teacherSelectedAssessment=name;
-      document.querySelectorAll("#teacherAssessmentTabs .assessment-tab").forEach(function(b){
-        b.classList.toggle("active",b.textContent.trim().startsWith(name));
-      });
-      info.setAttribute("data-open-assessment",name);
-      info.innerHTML="<b>"+escapeHtml(name)+"</b> — Maximum <b>"+tgmsMaxMarks(name)+" marks</b> | Subject: <b>"+escapeHtml(teacherCurrent().subject)+"</b>";
-      teacherRenderStudentMarks();
-    }else{
-      adminSelectedAssessment=name;
-      document.querySelectorAll("#adminAssessmentTabs .assessment-tab").forEach(function(b){
-        b.classList.toggle("active",b.textContent.trim().startsWith(name));
-      });
-      info.setAttribute("data-open-assessment",name);
-      info.innerHTML="<b>"+escapeHtml(name)+"</b> — Maximum <b>"+tgmsMaxMarks(name)+" marks</b>";
-      adminRenderStudentMarks();
-    }
-  };
-
-  // Install wrappers after the page's original functions exist.
-  function install(){
-    if(typeof window.teacherSelectAssessment==="function" && !window._tgmsTeacherToggleInstalled){
-      window._tgmsTeacherToggleInstalled=true;
-      window.teacherSelectAssessment=function(name){window.tgmsToggleAssessment(name,"teacher");};
-    }
-    if(typeof window.adminSelectAssessment==="function" && !window._tgmsAdminToggleInstalled){
-      window._tgmsAdminToggleInstalled=true;
-      window.adminSelectAssessment=function(name){window.tgmsToggleAssessment(name,"admin");};
-    }
-  }
-  setTimeout(install,100);
-  setTimeout(install,500);
-  setTimeout(install,1500);
-})();
-</script>
-
