@@ -492,10 +492,11 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
     <h3>📰 Daily School Updates — Edit & Publish</h3>
     <div class="assessment-panel" id="adminDailyUpdatesEditor">
       <p><b>Administrator only:</b> Edit any of the three daily updates independently.</p>
+      <div class="notice"><b>How it works:</b> Press <b>Edit</b> → change the text → press <b>Save</b>. Students will see the updated content immediately.</div>
 
       <div class="card" style="margin:10px 0">
         <label><b>📰 School News</b></label>
-        <textarea id="adminEditNews" placeholder="Enter today's school news..."></textarea>
+        <textarea id="adminEditNews" readonly placeholder="Enter today's school news..."></textarea>
         <div class="content-editor-actions">
           <button type="button" onclick="adminEditDailyField('news')">✏️ Edit News</button>
           <button type="button" class="primary" onclick="adminSaveDailyField('news')">💾 Save News</button>
@@ -505,7 +506,7 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 
       <div class="card" style="margin:10px 0">
         <label><b>📅 Important Day</b></label>
-        <textarea id="adminEditDay" placeholder="Enter today's important day..."></textarea>
+        <textarea id="adminEditDay" readonly placeholder="Enter today's important day..."></textarea>
         <div class="content-editor-actions">
           <button type="button" onclick="adminEditDailyField('importantDay')">✏️ Edit Important Day</button>
           <button type="button" class="primary" onclick="adminSaveDailyField('importantDay')">💾 Save Important Day</button>
@@ -515,7 +516,7 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 
       <div class="card" style="margin:10px 0">
         <label><b>📢 Announcement</b></label>
-        <textarea id="adminEditAnnouncement" placeholder="Enter today's announcement..."></textarea>
+        <textarea id="adminEditAnnouncement" readonly placeholder="Enter today's announcement..."></textarea>
         <div class="content-editor-actions">
           <button type="button" onclick="adminEditDailyField('announcement')">✏️ Edit Announcement</button>
           <button type="button" class="primary" onclick="adminSaveDailyField('announcement')">💾 Save Announcement</button>
@@ -3684,9 +3685,9 @@ function adminEditDailyField(field){
   const id=ids[field];
   const el=document.getElementById(id);
   if(!el)return;
+  el.readOnly=false;
   el.focus();
   el.style.outline="2px solid #123e72";
-  setTimeout(()=>{el.style.outline="";},1200);
 }
 
 async function adminSaveDailyField(field){
@@ -3708,6 +3709,7 @@ async function adminSaveDailyField(field){
     if(document.getElementById("newsInput")) document.getElementById("newsInput").value=current.news;
     if(document.getElementById("dayInput")) document.getElementById("dayInput").value=current.importantDay;
     if(document.getElementById("annInput")) document.getElementById("annInput").value=current.announcement;
+    input.readOnly=true;
     if(status){status.textContent="✅ Saved and published online.";setTimeout(()=>status.style.display="none",2500);}
   }catch(e){
     if(status){status.textContent="❌ Save failed. Check Firebase Realtime Database rules.";}
