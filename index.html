@@ -4095,9 +4095,7 @@ document.addEventListener("DOMContentLoaded",function(){
   // Dedicated lesson-video entry point used by all subject lesson buttons.
   // This keeps the video action separate and visible from the lesson accordion.
   window.tgmsOpenLessonVideos=function(subject,lesson){
-    if(typeof window.tgmsOpenLessonResources==='function'){
-      return window.tgmsOpenLessonResources(subject,lesson);
-    }
+    return window.tgmsOpenLessonResources(subject,lesson);
   };
 
   window.tgmsOpenEapcet=function(){
@@ -4593,7 +4591,7 @@ document.addEventListener("DOMContentLoaded",function(){
       '<p>'+esc(description||'Lesson resources can be added by the Administrator.')+'</p>'+
       '</details>'+
       '<div class="tgms-lesson-actions">'+
-      '<button type="button" class="primary tgms-video-lesson-btn" onclick="tgmsOpenLessonVideos('+JSON.stringify(subject)+','+JSON.stringify(lesson)+')">🎥 Video Explanation</button>'+
+      '<button type="button" class="primary tgms-video-lesson-btn" onclick="tgmsOpenLessonResources('+JSON.stringify(subject)+','+JSON.stringify(lesson)+')">🎥 Video Explanation</button>'+
       '</div>'+
       '</div>';
 
@@ -4618,32 +4616,30 @@ document.addEventListener("DOMContentLoaded",function(){
       if(cards[1])cards[1].innerHTML='<h3>Mathematics 1B — Updated Syllabus</h3>'+curriculum["Maths B"].map(x=>lessonBlock("Maths B",x,"Lesson resources, multiple YouTube lectures and practical links can be managed by the Administrator.")).join("");
     }
 
-    // English and Telugu lesson buttons are also explicitly video buttons.
+    // Keep English and Telugu lesson buttons on the same direct resource handler.
     document.querySelectorAll('#english_lessons_lessons .chapter').forEach(function(ch){
-      const b=ch.querySelector('button[onclick*="tgmsOpenLessonResources"]');
-      if(b){
-        const m=b.getAttribute('onclick').match(/tgmsOpenLessonResources\((['"])(.*?)\1,\s*(['"])(.*?)\3\)/);
-        if(m){
-          b.textContent='🎥 Video Explanation';
-          b.className='primary tgms-video-lesson-btn';
-          b.setAttribute('onclick','tgmsOpenLessonVideos("English Lessons",'+JSON.stringify(m[4])+')');
-        }
-      }
+      const b=ch.querySelector('button');
+      if(!b)return;
+      const title=ch.querySelector('h3')?.textContent||'';
+      const lesson=title.replace(/^\\d+\\.\\s*/,'').trim();
+      b.textContent='🎥 Video Explanation';
+      b.className='primary tgms-video-lesson-btn';
+      b.onclick=function(){ tgmsOpenLessonResources('English Lessons',lesson); };
     });
+
     const teluguLessons=document.getElementById('telugu_lessons_lessons');
     if(teluguLessons){
       teluguLessons.querySelectorAll('.chapter').forEach(function(ch){
-        const b=ch.querySelector('button[onclick*="tgmsOpenLessonResources"]');
-        if(b){
-          const m=b.getAttribute('onclick').match(/tgmsOpenLessonResources\((['"])(.*?)\1,\s*(['"])(.*?)\3\)/);
-          if(m){
-            b.textContent='🎥 Video Explanation';
-            b.className='primary tgms-video-lesson-btn';
-            b.setAttribute('onclick','tgmsOpenLessonVideos("Telugu Lessons",'+JSON.stringify(m[4])+')');
-          }
-        }
+        const b=ch.querySelector('button');
+        if(!b)return;
+        const title=ch.querySelector('h3')?.textContent||'';
+        const lesson=title.replace(/^\\d+\\.\\s*/,'').trim();
+        b.textContent='🎥 Video Explanation';
+        b.className='primary tgms-video-lesson-btn';
+        b.onclick=function(){ tgmsOpenLessonResources('Telugu Lessons',lesson); };
       });
     }
+
   });
 })();
 </script>
