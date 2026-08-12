@@ -4324,17 +4324,25 @@ document.addEventListener("DOMContentLoaded",function(){
       (p.length?p.map(e=>'<div class="approval-item"><b>'+esc(e.name)+'</b><p>Teacher: '+esc(e.teacher)+' | Subjects: '+esc((e.subjects||[]).join(", "))+'</p><p>Lessons: '+esc((e.lessons||[]).join(", "))+'</p><p>'+e.questions.length+' questions</p><button class="primary" onclick="tgmsAdminApproveFeatureExam('+JSON.stringify(e.id)+')">✅ Approve & Publish</button> <button onclick="tgmsAdminRejectFeatureExam('+JSON.stringify(e.id)+')">❌ Reject</button></div>').join(""):'<div class="notice">No pending submissions.</div>')+'</div>';
     }
     if(view==="exams"){
-      box.innerHTML='<div class="tgms-feature-card"><h3>📝 Create All-in-One Test</h3>'+
-      '<p>Combine Telugu, English, Maths, Physics and Chemistry in one examination.</p>'+
-      '<label>Exam Name</label><input id="aeExamName" value="TGMS All-in-One Test 1">'+
-      '<label>Subjects (comma separated)</label><input id="aeExamSubjects" value="Telugu, English, Maths, Physics, Chemistry">'+
-      '<label>Lessons (comma separated)</label><input id="aeExamLessons" placeholder="Select or type 2 or more lessons">'+
+      const bank=store.get("TGMS_APPROVED_QUESTION_BANK",[]);
+      const published=store.get("TGMS_PUBLISHED_EXAMS",[]);
+      box.innerHTML='<div class="tgms-feature-card"><h3>📝 All-in-One Test Builder</h3>'+
+      '<p><b>Approved questions only.</b> Teachers submit → Administrator approves → questions enter this Question Bank → Administrator selects questions one-by-one and combines them into one Unit Test.</p>'+
+      '<label>Exam Name</label><input id="aeExamName" value="Unit Test 1">'+
+      '<label>Subjects</label><input id="aeExamSubjects" value="Telugu, English, Maths, Physics, Chemistry">'+
+      '<label>Lessons covered (2 or more allowed)</label><input id="aeExamLessons" placeholder="Lesson 1, Lesson 2, Lesson 3">'+
       '<label>Time per question (minutes)</label><input id="aeTime" type="number" min="1" value="2">'+
-      '<label><input id="aeCamera" type="checkbox"> Camera Required</label><p class="tgms-small">Camera-required exams use a fixed 5-second grace period if the camera becomes unavailable.</p>'+
-      '<div id="aeQuestions"><p class="notice">Add questions using the button below.</p></div>'+
-      '<button onclick="tgmsAdminAddExamQuestion()">➕ Add Question</button> <button class="primary" onclick="tgmsAdminPublishBuiltExam()">🚀 Publish All-in-One Test</button></div>'+
-      '<div class="tgms-feature-card"><h3>Published Exams</h3>'+store.get("TGMS_PUBLISHED_EXAMS",[]).map(e=>'<div class="tgms-resource"><b>'+esc(e.name)+'</b><p>'+e.questions.length+' questions • '+esc((e.subjects||[]).join(", "))+'</p></div>').join("")+'</div>';
+      '<label><input id="aeCamera" type="checkbox"> Camera Required</label>'+
+      '<p class="tgms-small">Camera-required exams use the fixed 5-second grace period.</p>'+
+      '<h3>📚 Approved Question Bank</h3>'+
+      '<p class="tgms-small">Click <b>Add</b> beside a question to put it into this All-in-One Test. You can add as many approved questions as needed.</p>'+
+      '<div id="aeQuestions"></div>'+
+      '<button class="primary" onclick="tgmsAdminPublishBuiltExam()">🚀 Publish Unit Test</button></div>'+
+      '<div class="tgms-feature-card"><h3>📋 Published Tests</h3>'+
+      (published.length?published.map(e=>'<div class="tgms-resource"><b>'+esc(e.name)+'</b><p>'+e.questions.length+' questions • '+esc((e.subjects||[]).join(", "))+'</p></div>').join(""):'<p class="notice">No tests published yet.</p>')+
+      '</div>';
       window.tgmsAdminExamQuestions=[];
+      window.tgmsAdminRenderQuestionBank();
     }
     if(view==="resources"){
       box.innerHTML='<div class="tgms-feature-card"><h3>▶️ Lectures & 🧪 Practicals</h3><p>Resources are stored per subject + lesson. Each item contains a title, an information/description field and a link. Multiple items can be added.</p>'+
@@ -4367,18 +4375,60 @@ document.addEventListener("DOMContentLoaded",function(){
     window.tgmsAdminExamQuestions.push(q);
     const box=document.getElementById("aeQuestions");box.innerHTML=window.tgmsAdminExamQuestions.map((x,i)=>'<div class="tgms-resource"><b>Q'+(i+1)+'.</b> '+esc(x.text)+' <span class="tgms-chip">'+esc(x.subject)+'</span> <span class="tgms-chip">'+esc(x.lesson)+'</span></div>').join("");
   };
+
+  window.tgmsAdminRenderQuestionBank=function(){
+    const box=document.getElementById("aeQuestions"); if(!box)return;
+    const bank=store.get("TGMS_APPROVED_QUESTION_BANK",[]);
+    const selected=window.tgmsAdminExamQuestions||[];
+    box.innerHTML=(bank.length?bank.map((q,i)=>{
+      const already=selected.some(x=>x.id===q.id);
+      return '<div class="tgms-bank-item"><div><b>Q'+(i+1)+'. '+esc(q.text)+'</b>'+
+      '<p class="tgms-small">'+esc(q.subject||"")+' • '+esc(q.lesson||"")+' • '+Number(q.marks||1)+' mark(s)</p></div>'+
+      '<button '+(already?'disabled':'')+' onclick="tgmsAdminAddApprovedQuestion('+i+')">'+(already?'✓ Added':'➕ Add')+'</button></div>';
+    }).join(""):'<div class="notice">No approved questions are available yet. Approve teacher submissions first.</div>')+
+    '<h3>Selected for this test: '+selected.length+'</h3>'+
+    (selected.length?selected.map((q,i)=>'<div class="tgms-resource tgms-selected-q"><b>'+(i+1)+'. '+esc(q.text)+'</b><p class="tgms-small">'+esc(q.subject||"")+' • '+esc(q.lesson||"")+'</p><button onclick="tgmsAdminRemoveApprovedQuestion('+i+')">Remove</button></div>').join(""):'<p class="tgms-small">Nothing selected yet.</p>');
+  };
+
+  window.tgmsAdminAddApprovedQuestion=function(i){
+    const bank=store.get("TGMS_APPROVED_QUESTION_BANK",[]);
+    const q=bank[i]; if(!q)return;
+    window.tgmsAdminExamQuestions=window.tgmsAdminExamQuestions||[];
+    if(!window.tgmsAdminExamQuestions.some(x=>x.id===q.id)){
+      window.tgmsAdminExamQuestions.push(q);
+    }
+    tgmsAdminRenderQuestionBank();
+  };
+
+  window.tgmsAdminRemoveApprovedQuestion=function(i){
+    window.tgmsAdminExamQuestions.splice(i,1);
+    tgmsAdminRenderQuestionBank();
+  };
+
   window.tgmsAdminPublishBuiltExam=function(){
-    const e={id:uid(),name:aeExamName.value.trim(),subjects:aeExamSubjects.value.split(",").map(x=>x.trim()).filter(Boolean),lessons:aeExamLessons.value.split(",").map(x=>x.trim()).filter(Boolean),timePerQuestion:Number(aeTime.value||2),cameraRequired:aeCamera.checked,questions:window.tgmsAdminExamQuestions||[],publishedAt:new Date().toISOString()};
-    if(!e.name||e.questions.length===0){alert("Add at least one question.");return}
-    const a=store.get("TGMS_PUBLISHED_EXAMS",[]);a.push(e);store.set("TGMS_PUBLISHED_EXAMS",a);alert("✅ All-in-One Test published.");tgmsAdminRender("exams");
+    const selected=window.tgmsAdminExamQuestions||[];
+    const e={id:uid(),name:aeExamName.value.trim(),subjects:aeExamSubjects.value.split(",").map(x=>x.trim()).filter(Boolean),
+      lessons:aeExamLessons.value.split(",").map(x=>x.trim()).filter(Boolean),timePerQuestion:Number(aeTime.value||2),
+      cameraRequired:aeCamera.checked,questions:selected,publishedAt:new Date().toISOString()};
+    if(!e.name||selected.length===0){alert("Select at least one approved question from the Question Bank.");return}
+    if(e.lessons.length<1){alert("Enter the lesson(s) covered by this examination.");return}
+    const a=store.get("TGMS_PUBLISHED_EXAMS",[]);a.push(e);store.set("TGMS_PUBLISHED_EXAMS",a);
+    alert("✅ Unit Test created from approved questions.");
+    tgmsAdminRender("exams");
   };
 
   window.tgmsAdminApproveFeatureExam=function(id){
     const p=store.get("TGMS_PENDING_FEATURE_EXAMS",[]);
     const i=p.findIndex(x=>x.id===id);if(i<0)return;
-    const e=p.splice(i,1)[0];e.publishedAt=new Date().toISOString();
-    const pub=store.get("TGMS_PUBLISHED_EXAMS",[]);pub.push(e);
-    store.set("TGMS_PENDING_FEATURE_EXAMS",p);store.set("TGMS_PUBLISHED_EXAMS",pub);tgmsAdminRender("submissions");
+    const e=p.splice(i,1)[0];
+    const bank=store.get("TGMS_APPROVED_QUESTION_BANK",[]);
+    (e.questions||[]).forEach(q=>{
+      const copy={...q,id:q.id||uid(),sourceExam:e.name,teacher:e.teacher,status:"approved",approvedAt:new Date().toISOString()};
+      if(!bank.some(x=>x.id===copy.id)) bank.push(copy);
+    });
+    store.set("TGMS_PENDING_FEATURE_EXAMS",p);
+    store.set("TGMS_APPROVED_QUESTION_BANK",bank);
+    tgmsAdminRender("submissions");
   };
   window.tgmsAdminRejectFeatureExam=function(id){
     store.set("TGMS_PENDING_FEATURE_EXAMS",store.get("TGMS_PENDING_FEATURE_EXAMS",[]).filter(x=>x.id!==id));tgmsAdminRender("submissions");
@@ -4464,4 +4514,44 @@ document.addEventListener("DOMContentLoaded",function(){
   });
 })();
 </script>
+
+<style id="tgms-exam-accordion-css">
+.tgms-assessment-card{border:1px solid #dbe5ef;border-radius:14px;margin:10px 0;background:#fff;overflow:hidden}
+.tgms-assessment-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;cursor:pointer}
+.tgms-assessment-head:hover{background:#f6f9fc}
+.tgms-assessment-body{display:none;padding:0 14px 14px;border-top:1px solid #e7edf4}
+.tgms-assessment-card.open .tgms-assessment-body{display:block}
+.tgms-chevron{font-size:18px;font-weight:800}
+.tgms-bank-item{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #e2e8f0;border-radius:10px;padding:10px;margin:7px 0;background:#f8fbff}
+.tgms-selected-q{border-left:4px solid #123e72;padding-left:10px}
+</style>
+
+<script id="tgms-assessment-accordion-fix">
+(function(){
+  function makeAssessmentCards(){
+    document.querySelectorAll('#adminPanel .assessment-card, #adminPanel .assessment-item, #adminPanel .assessment').forEach(function(el){
+      if(el.dataset.tgmsAccordionDone)return;
+      el.dataset.tgmsAccordionDone="1";
+      const title=el.querySelector('h3,h4,.assessment-title,summary');
+      if(!title)return;
+      let body=[];
+      Array.from(el.children).forEach(function(c){if(c!==title && !c.classList.contains('tgms-assessment-head'))body.push(c)});
+      if(!body.length)return;
+      const head=document.createElement('div');
+      head.className='tgms-assessment-head';
+      head.innerHTML='<span>'+title.textContent+'</span><span class="tgms-chevron">⌄</span>';
+      const content=document.createElement('div');content.className='tgms-assessment-body';
+      body.forEach(c=>content.appendChild(c));
+      el.innerHTML=''; el.classList.add('tgms-assessment-card'); el.appendChild(head); el.appendChild(content);
+      head.addEventListener('click',function(){
+        el.classList.toggle('open');
+        head.querySelector('.tgms-chevron').textContent=el.classList.contains('open')?'⌃':'⌄';
+      });
+    });
+  }
+  window.tgmsRefreshAssessmentAccordions=makeAssessmentCards;
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(makeAssessmentCards,300);});
+})();
+</script>
+
 </body></html>
