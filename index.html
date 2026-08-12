@@ -496,7 +496,7 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 
       <div class="card" style="margin:10px 0">
         <label><b>📰 School News</b></label>
-        <textarea id="adminEditNews" readonly placeholder="Enter today's school news..."></textarea>
+        <textarea id="adminEditNews" placeholder="Enter today's school news..."></textarea>
         <div class="content-editor-actions">
           <button type="button" onclick="adminEditDailyField('news')">✏️ Edit News</button>
           <button type="button" class="primary" onclick="adminSaveDailyField('news')">💾 Save News</button>
@@ -506,7 +506,7 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 
       <div class="card" style="margin:10px 0">
         <label><b>📅 Important Day</b></label>
-        <textarea id="adminEditDay" readonly placeholder="Enter today's important day..."></textarea>
+        <textarea id="adminEditDay" placeholder="Enter today's important day..."></textarea>
         <div class="content-editor-actions">
           <button type="button" onclick="adminEditDailyField('importantDay')">✏️ Edit Important Day</button>
           <button type="button" class="primary" onclick="adminSaveDailyField('importantDay')">💾 Save Important Day</button>
@@ -516,7 +516,7 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 
       <div class="card" style="margin:10px 0">
         <label><b>📢 Announcement</b></label>
-        <textarea id="adminEditAnnouncement" readonly placeholder="Enter today's announcement..."></textarea>
+        <textarea id="adminEditAnnouncement" placeholder="Enter today's announcement..."></textarea>
         <div class="content-editor-actions">
           <button type="button" onclick="adminEditDailyField('announcement')">✏️ Edit Announcement</button>
           <button type="button" class="primary" onclick="adminSaveDailyField('announcement')">💾 Save Announcement</button>
@@ -3687,7 +3687,7 @@ function adminSyncDailyEditor(){
   if(document.getElementById("adminEditAnnouncement")) document.getElementById("adminEditAnnouncement").value=ann;
 }
 
-function adminEditDailyField(field){
+window.adminEditDailyField = function(field){
   const ids={news:"adminEditNews",importantDay:"adminEditDay",announcement:"adminEditAnnouncement"};
   const id=ids[field];
   const el=document.getElementById(id);
@@ -3697,7 +3697,7 @@ function adminEditDailyField(field){
   el.style.outline="2px solid #123e72";
 }
 
-async function adminSaveDailyField(field){
+window.adminSaveDailyField = async function(field){
   const ids={news:"adminEditNews",importantDay:"adminEditDay",announcement:"adminEditAnnouncement"};
   const statusIds={news:"adminEditNewsStatus",importantDay:"adminEditDayStatus",announcement:"adminEditAnnouncementStatus"};
   const id=ids[field], statusId=statusIds[field];
@@ -3724,7 +3724,7 @@ async function adminSaveDailyField(field){
   }
 }
 
-async function adminSaveAllDailyFields(){
+window.adminSaveAllDailyFields = async function(){
   const status=document.getElementById("adminDailyUpdateStatus");
   if(status){status.style.display="block";status.textContent="Publishing all 3...";}
   try{
@@ -3741,6 +3741,19 @@ async function adminSaveAllDailyFields(){
     console.error(e);
   }
 }
+
+// Guaranteed admin editor wiring (works even if inline handlers are restricted).
+document.addEventListener("DOMContentLoaded",function(){
+  const map={
+    "adminEditNews":["news","adminSaveDailyField"],
+    "adminEditDay":["importantDay","adminSaveDailyField"],
+    "adminEditAnnouncement":["announcement","adminSaveDailyField"]
+  };
+  Object.keys(map).forEach(function(id){
+    const el=document.getElementById(id);
+    if(el) el.readOnly=false;
+  });
+});
 
 async function publish(){
   const s=$("pubStatus"); if(s){s.style.display="block";s.textContent="Publishing...";}
