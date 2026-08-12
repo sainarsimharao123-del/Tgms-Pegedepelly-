@@ -3961,4 +3961,507 @@ document.addEventListener("DOMContentLoaded",function(){
 })();
 </script>
 
+<style id="tgms-feature-suite-css">
+/* ===== TGMS FEATURE SUITE V1 ===== */
+.tgms-feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.tgms-feature-card{background:#fff;border:1px solid #dbe5ef;border-radius:16px;padding:15px;margin:10px 0}
+.tgms-feature-card h3{margin-top:0;color:#123e72}
+.tgms-progress{height:16px;background:#e5edf6;border-radius:999px;overflow:hidden;margin:8px 0}
+.tgms-progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#123e72,#2b74ba);border-radius:999px;transition:width .3s}
+.tgms-chip{display:inline-block;padding:5px 9px;border-radius:999px;background:#eef5ff;color:#123e72;font-weight:700;margin:3px}
+.tgms-small{font-size:12px;color:#64748b}
+.tgms-resource{border:1px solid #dce5ef;border-radius:13px;padding:12px;margin:8px 0;background:#f8fbff}
+.tgms-resource a{display:inline-block;margin-top:8px;padding:9px 12px;background:#123e72;color:#fff;border-radius:9px;text-decoration:none;font-weight:700}
+.tgms-qbox{border:1px solid #dce5ef;border-radius:13px;padding:13px;margin:10px 0;background:#fff}
+.tgms-option{display:block;padding:10px;border:1px solid #ccd7e4;border-radius:9px;margin:6px 0;cursor:pointer}
+.tgms-option:hover{background:#f5f9ff}
+.tgms-incident{border-left:5px solid #b42318;background:#fff1f0;padding:10px;border-radius:9px;margin:8px 0}
+.tgms-success{border-left:5px solid #16803c;background:#edf9f1;padding:10px;border-radius:9px;margin:8px 0}
+.tgms-sticky-exam{position:sticky;top:8px;z-index:50;background:#fff;border:1px solid #dce5ef;border-radius:13px;padding:10px;margin-bottom:10px}
+@media(max-width:650px){.tgms-feature-grid{grid-template-columns:1fr}}
+</style>
+
+<!-- ===== TGMS FEATURE SUITE V1 ===== -->
+<section id="tgmsStudentHubPlus">
+  <button type="button" onclick="studentShow('home')">← Home</button>
+  <div class="card">
+    <h2>🚀 TGMS Student Hub</h2>
+    <p>Learning, practice, EAPCET, examinations and digital progress.</p>
+    <div class="tgms-feature-grid">
+      <button class="primary" onclick="tgmsOpenProgress()">📊 Digital Progress</button>
+      <button onclick="tgmsOpenCurriculum()">📚 Complete Syllabus</button>
+      <button onclick="tgmsOpenEapcet()">🎯 EAPCET</button>
+      <button onclick="tgmsOpenPractice()">📝 Practice Mode</button>
+      <button onclick="tgmsOpenExams()">💻 Digital Examinations</button>
+      <button onclick="tgmsOpenNotifications()">🔔 Notifications</button>
+    </div>
+  </div>
+  <div id="tgmsPlusContent"></div>
+</section>
+
+<section id="tgmsAdminSuite">
+  <button type="button" onclick="studentShow('adminPanel')">← Admin Panel</button>
+  <div class="teacher-panel">
+    <h2>🛠️ TGMS Advanced Administrator</h2>
+    <p>Manage EAPCET, teacher submissions, exams, resources and site updates.</p>
+    <div class="tgms-feature-grid">
+      <button class="primary" onclick="tgmsAdminRender('dashboard')">📊 Dashboard</button>
+      <button onclick="tgmsAdminRender('eapcet')">🎯 EAPCET Question Bank</button>
+      <button onclick="tgmsAdminRender('submissions')">📨 Teacher Approvals</button>
+      <button onclick="tgmsAdminRender('exams')">📝 Create All-in-One Exam</button>
+      <button onclick="tgmsAdminRender('resources')">▶️ Lectures & Practicals</button>
+      <button onclick="tgmsAdminRender('updates')">🔔 Site Update Notice</button>
+    </div>
+    <div id="tgmsAdminSuiteContent"></div>
+  </div>
+</section>
+
+<section id="tgmsTeacherSuite">
+  <button type="button" onclick="studentShow('teacherPanel')">← Teacher Panel</button>
+  <div class="teacher-panel">
+    <h2>🧑‍🏫 Advanced Teacher Submission</h2>
+    <p>Submit questions to the administrator. Students cannot see submitted questions until approval.</p>
+    <div id="tgmsTeacherSuiteContent"></div>
+  </div>
+</section>
+
+<script>
+/* TGMS FEATURE SUITE V1 */
+(function(){
+  const curriculum = {
+    "Maths A":[
+      "Sets and Relations","Functions","Sequences and Series","Mathematical Induction","Matrices",
+      "Addition of Vectors","Product of Vectors","Trigonometric Ratios and Transformations",
+      "Trigonometric Equations","Inverse Trigonometric Functions","Hyperbolic Functions","Properties of Triangles"
+    ],
+    "Maths B":[
+      "Locus","Transformation of Axes","The Straight Line","Pair of Straight Lines",
+      "Introduction to Three Dimensional Coordinate Geometry","Direction Cosines and Direction Ratios",
+      "The Plane","Limits and Continuity","Differentiation","Applications of Derivatives"
+    ],
+    "Chemistry":[
+      "Atomic Structure","Classification of Elements & Periodicity in Properties",
+      "Chemical Bonding & Molecular Structure","Stoichiometry","Thermodynamics",
+      "Chemical Equilibrium & Acids-Bases","The s-Block Elements","The p-Block Elements – Group 13",
+      "The p-Block Elements – Group 14",
+      "Organic Chemistry – Some Basic Principles & Techniques and Hydrocarbons"
+    ],
+    "Physics":[
+      "Physical World and Measurement","Motion Along a Straight Line","Motion in a Plane",
+      "Laws of Motion","Work, Energy and Power","System of Particles and Rotational Motion",
+      "Oscillations","Gravitation","Mechanical Properties of Solids","Mechanical Properties of Fluids",
+      "Thermal Properties of Matter","Thermodynamics","Kinetic Theory","Physics of Emerging Technologies"
+    ],
+    "English Lessons":[
+      "Keep Going — Edgar Guest","Happiness — Carl Sandburg","The Beggar — Dr. Ammangi Venugopal",
+      "The Nobel Nature — Ben Jonson","Father, Dear Father — Raj Kinger",
+      "The Green Champion — Thimmakka — Internet","The First Four Minutes — Roger Bannister",
+      "Box and Cox (One-act Play) — John Maddison Morton","Playing the Game — Arthur Mee",
+      "The Five Boons of Life — Mark Twain","The Short-sighted Brothers — Folklore",
+      "The Dinner Party — Mona Gardner"
+    ],
+    "Telugu Lessons":[
+      "Telugu Lesson 1","Telugu Lesson 2","Telugu Lesson 3","Telugu Lesson 4",
+      "Telugu Lesson 5","Telugu Lesson 6","Telugu Lesson 7","Telugu Lesson 8",
+      "Telugu Lesson 9","Telugu Lesson 10","Telugu Lesson 11","Telugu Lesson 12",
+      "Telugu Lesson 13","Telugu Lesson 14"
+    ]
+  };
+
+  const store = {
+    get(k,d){try{return JSON.parse(localStorage.getItem(k)) ?? d}catch(e){return d}},
+    set(k,v){localStorage.setItem(k,JSON.stringify(v));return v}
+  };
+  const esc = s => String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+  const uid = () => "tgms_"+Date.now()+"_"+Math.random().toString(36).slice(2,8);
+  const student = () => sessionStorage.getItem("tgmsStudentUser") || "student";
+  const role = () => sessionStorage.getItem("tgmsRole") || "";
+  const pct = (n,d) => d ? Math.max(0,Math.min(100,Math.round(n/d*100))) : 0;
+
+  window.tgmsOpenPlus = function(){ studentShow("tgmsStudentHubPlus"); tgmsOpenProgress(); };
+  window.tgmsOpenProgress = function(){
+    studentShow("tgmsStudentHubPlus");
+    const data=store.get("TGMS_PROGRESS_"+student(),{});
+    const subjects=Object.keys(curriculum);
+    const overall=subjects.reduce((a,s)=>a+(Number(data[s]||0)),0);
+    const total=subjects.length*100;
+    document.getElementById("tgmsPlusContent").innerHTML =
+      '<div class="tgms-feature-card"><h3>📊 Your Digital Progress</h3>'+
+      '<div class="tgms-progress"><i style="width:'+pct(overall,total)+'%"></i></div>'+
+      '<h2>'+pct(overall,total)+'%</h2><p class="tgms-small">Learning completion based on lesson progress recorded in the Student Hub.</p></div>'+
+      '<div class="tgms-feature-grid">'+subjects.map(s=>
+      '<div class="tgms-feature-card"><b>'+esc(s)+'</b><div class="tgms-progress"><i style="width:'+Number(data[s]||0)+'%"></i></div><b>'+Number(data[s]||0)+'%</b></div>'
+      ).join("")+'</div>';
+  };
+
+  window.tgmsMarkProgress = function(subject,percent){
+    const d=store.get("TGMS_PROGRESS_"+student(),{});
+    d[subject]=Math.max(0,Math.min(100,Number(percent)||0));
+    store.set("TGMS_PROGRESS_"+student(),d);
+    tgmsOpenProgress();
+  };
+
+  window.tgmsOpenCurriculum=function(){
+    studentShow("tgmsStudentHubPlus");
+    document.getElementById("tgmsPlusContent").innerHTML=
+      '<div class="tgms-feature-card"><h3>📚 Complete Syllabus</h3>'+
+      Object.entries(curriculum).map(([s,arr])=>
+        '<details class="chapter"><summary>'+esc(s)+' <span>'+arr.length+' lessons</span></summary>'+
+        arr.map((x,i)=>'<div class="tgms-resource"><b>'+(i+1)+'. '+esc(x)+'</b>'+
+        '<p class="tgms-small">Resources for this lesson can include notes, multiple YouTube lectures and practical links. Each external link will display its description before the link.</p>'+
+        '<button onclick="tgmsOpenLessonResources('+JSON.stringify(s)+','+JSON.stringify(x)+')">Open Lesson</button></div>').join("")+
+        '</details>'
+      ).join("")+'</div>';
+  };
+
+  window.tgmsOpenLessonResources=function(subject,lesson){
+    const key="TGMS_RESOURCES_"+subject+"_"+lesson;
+    const d=store.get(key,{videos:[],practicals:[]});
+    document.getElementById("tgmsPlusContent").innerHTML=
+      '<div class="tgms-feature-card"><h3>📖 '+esc(lesson)+'</h3><span class="tgms-chip">'+esc(subject)+'</span>'+
+      '<h3>▶️ YouTube Lectures</h3>'+
+      (d.videos.length?d.videos.map(v=>'<div class="tgms-resource"><b>'+esc(v.title)+'</b><p>'+esc(v.info)+'</p><a target="_blank" rel="noopener" href="'+esc(v.url)+'">▶️ Open YouTube Lecture</a></div>').join(""):'<p class="notice">No lectures added yet.</p>')+
+      '<h3>🧪 Practicals / External Resources</h3>'+
+      (d.practicals.length?d.practicals.map(v=>'<div class="tgms-resource"><b>'+esc(v.title)+'</b><p>'+esc(v.info)+'</p><a target="_blank" rel="noopener" href="'+esc(v.url)+'">🔗 Open Practical</a></div>').join(""):'<p class="notice">No practical links added yet.</p>')+
+      '<button onclick="tgmsOpenCurriculum()">← Back to Syllabus</button></div>';
+  };
+
+  window.tgmsOpenEapcet=function(){
+    studentShow("tgmsStudentHubPlus");
+    const qs=store.get("TGMS_EAPCET",[]);
+    document.getElementById("tgmsPlusContent").innerHTML=
+      '<div class="tgms-feature-card"><h3>🎯 EAPCET Question Bank</h3>'+
+      '<p>Administrator-controlled practice questions.</p>'+
+      (qs.length?qs.map((q,i)=>'<div class="tgms-qbox"><b>Q'+(i+1)+'. '+esc(q.text)+'</b>'+
+      '<p><span class="tgms-chip">'+esc(q.subject)+'</span> <span class="tgms-chip">'+esc(q.topic||"General")+'</span></p>'+
+      (q.options||[]).map((o,j)=>'<div class="tgms-option">'+String.fromCharCode(65+j)+'. '+esc(o)+'</div>').join("")+
+      '<details><summary>Show answer & explanation</summary><div class="answer"><b>Answer:</b> '+esc((q.options||[])[Number(q.answer)]||"")+'<br>'+esc(q.explanation||"No explanation added.")+'</div></details></div>').join("")
+      :'<div class="notice">No EAPCET questions have been published yet.</div>')+'</div>';
+  };
+
+  window.tgmsOpenPractice=function(){
+    studentShow("tgmsStudentHubPlus");
+    const qs=store.get("TGMS_EAPCET",[]);
+    const first=qs.slice(0,20);
+    document.getElementById("tgmsPlusContent").innerHTML=
+      '<div class="tgms-feature-card"><h3>📝 Practice Mode</h3>'+
+      (first.length?first.map((q,i)=>'<div class="tgms-qbox"><b>Q'+(i+1)+'. '+esc(q.text)+'</b>'+
+      (q.options||[]).map((o,j)=>'<label class="tgms-option"><input type="radio" name="p'+i+'" value="'+j+'"> '+String.fromCharCode(65+j)+'. '+esc(o)+'</label>').join("")+
+      '<button onclick="tgmsCheckPractice('+i+')">Check Answer</button><div id="presult'+i+'"></div></div>').join("")
+      :'<div class="notice">Add EAPCET questions from the Administrator panel to use Practice Mode.</div>')+'</div>';
+    window.tgmsPracticeSet=first;
+  };
+  window.tgmsCheckPractice=function(i){
+    const q=(window.tgmsPracticeSet||[])[i]; if(!q)return;
+    const chosen=document.querySelector('input[name="p'+i+'"]:checked');
+    const box=document.getElementById("presult"+i);
+    if(!chosen){box.innerHTML='<div class="notice">Choose an answer first.</div>';return}
+    const ok=Number(chosen.value)===Number(q.answer);
+    box.innerHTML=ok?'<div class="tgms-success">✅ Correct!</div>':'<div class="tgms-incident">❌ Incorrect. Correct answer: '+esc((q.options||[])[Number(q.answer)]||"")+'</div>';
+  };
+
+  window.tgmsOpenExams=function(){
+    studentShow("tgmsStudentHubPlus");
+    const exams=store.get("TGMS_PUBLISHED_EXAMS",[]);
+    document.getElementById("tgmsPlusContent").innerHTML=
+      '<div class="tgms-feature-card"><h3>💻 Digital Examinations</h3>'+
+      (exams.length?exams.map(e=>'<div class="tgms-feature-card"><h3>'+esc(e.name)+'</h3>'+
+      '<p><b>Subjects:</b> '+esc((e.subjects||[]).join(", "))+'</p><p><b>Lessons:</b> '+esc((e.lessons||[]).join(", "))+'</p>'+
+      '<p>'+e.questions.length+' questions • '+esc(e.duration||"Not specified")+'</p>'+
+      '<p>📷 Camera: '+(e.cameraRequired?"Required":"Not required")+'</p>'+
+      '<button class="primary" onclick="tgmsStartFeatureExam('+JSON.stringify(e.id)+')">Start Exam</button></div>').join("")
+      :'<div class="notice">No published digital examinations yet.</div>')+'</div>';
+  };
+
+  let activeExam=null, activeIndex=0, activeAnswers=[], examTimer=null, cameraStream=null, cameraMissingTimer=null;
+
+  window.tgmsStartFeatureExam=function(id){
+    const exams=store.get("TGMS_PUBLISHED_EXAMS",[]);
+    const e=exams.find(x=>x.id===id); if(!e)return;
+    if(store.get("TGMS_EXAM_DONE_"+id+"_"+student(),false)){alert("This examination has already been submitted.");return}
+    activeExam=e; activeIndex=0; activeAnswers=new Array(e.questions.length).fill(null);
+    if(e.cameraRequired){ tgmsRequestExamCamera(startFeatureExamAfterCamera); }
+    else startFeatureExamAfterCamera();
+  };
+
+  function startFeatureExamAfterCamera(){
+    if(!activeExam)return;
+    studentShow("tgmsFeatureExamRunner");
+    tgmsRenderFeatureExam();
+  }
+
+  function tgmsRequestExamCamera(cb){
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      tgmsCameraIncident("Camera API unavailable"); return;
+    }
+    navigator.mediaDevices.getUserMedia({video:true,audio:false}).then(stream=>{
+      cameraStream=stream; clearTimeout(cameraMissingTimer); cb();
+    }).catch(()=>tgmsCameraIncident("Camera permission denied or unavailable"));
+  }
+
+  function tgmsCameraIncident(reason){
+    const incidents=store.get("TGMS_CAMERA_INCIDENTS",[]);
+    incidents.push({id:uid(),student:student(),exam:activeExam?.name||"",reason,time:new Date().toISOString()});
+    store.set("TGMS_CAMERA_INCIDENTS",incidents);
+    if(activeExam) store.set("TGMS_EXAM_CANCELLED_"+activeExam.id+"_"+student(),true);
+    if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}
+    clearInterval(examTimer); clearTimeout(cameraMissingTimer);
+    alert("📷 Camera requirement was not satisfied. The examination has been cancelled and the Administrator has been notified on this device.");
+    studentShow("home");
+  }
+
+  function watchCamera(){
+    if(!activeExam?.cameraRequired || !cameraStream)return;
+    const v=document.getElementById("tgmsExamCamera");
+    if(!v)return;
+    cameraMissingTimer=setTimeout(()=>{
+      if(!cameraStream || cameraStream.getVideoTracks().some(t=>t.readyState!=="live")) tgmsCameraIncident("Camera became unavailable");
+    },5000);
+  }
+
+  function tgmsRenderFeatureExam(){
+    if(!activeExam)return;
+    clearInterval(examTimer);
+    const q=activeExam.questions[activeIndex];
+    document.getElementById("tgmsFeatureExamTitle").textContent=activeExam.name;
+    document.getElementById("tgmsFeatureExamMeta").textContent="Lessons: "+(activeExam.lessons||[]).join(", ");
+    document.getElementById("tgmsFeatureExamCounter").textContent="Question "+(activeIndex+1)+" of "+activeExam.questions.length;
+    let h='<div class="tgms-qbox"><h3>Q'+(activeIndex+1)+'. '+esc(q.text)+'</h3>'+
+      (q.options||[]).map((o,i)=>'<label class="approved-option"><input type="radio" name="featureAns" value="'+i+'" '+(activeAnswers[activeIndex]===i?"checked":"")+' onchange="tgmsSelectFeatureAnswer('+i+')"> '+String.fromCharCode(65+i)+'. '+esc(o)+'</label>').join("")+
+      '</div>';
+    document.getElementById("tgmsFeatureExamQuestion").innerHTML=h;
+    document.getElementById("tgmsFeatureExamNext").textContent=activeIndex===activeExam.questions.length-1?"Submit Examination ✓":"Next →";
+    const seconds=Math.max(1,Number(activeExam.timePerQuestion||1))*60;
+    let remaining=seconds;
+    document.getElementById("tgmsFeatureExamTimer").textContent=remaining+"s";
+    examTimer=setInterval(()=>{
+      remaining--; document.getElementById("tgmsFeatureExamTimer").textContent=remaining+"s";
+      if(remaining<=0){clearInterval(examTimer); if(activeIndex===activeExam.questions.length-1)tgmsFinishFeatureExam();else{activeIndex++;tgmsRenderFeatureExam()}}
+    },1000);
+    if(cameraStream){
+      const v=document.getElementById("tgmsExamCamera"); v.srcObject=cameraStream; v.play().catch(()=>{});
+      watchCamera();
+    }
+  }
+
+  window.tgmsSelectFeatureAnswer=function(i){activeAnswers[activeIndex]=i};
+  window.tgmsFeatureExamNext=function(){
+    if(activeIndex===activeExam.questions.length-1)tgmsFinishFeatureExam();else{activeIndex++;tgmsRenderFeatureExam()}
+  };
+  window.tgmsFeatureExamPrev=function(){if(activeIndex>0){activeIndex--;tgmsRenderFeatureExam()}};
+
+  window.tgmsFinishFeatureExam=function(){
+    if(!activeExam)return;
+    clearInterval(examTimer); clearTimeout(cameraMissingTimer);
+    if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}
+    let score=0,max=0,wrong=[],correct=[],unattempted=[];
+    activeExam.questions.forEach((q,i)=>{
+      const m=Number(q.marks||1); max+=m;
+      if(activeAnswers[i]===null||activeAnswers[i]===undefined)unattempted.push(i);
+      else if(Number(activeAnswers[i])===Number(q.answer)){score+=m;correct.push(i)}
+      else wrong.push(i);
+    });
+    const result={id:uid(),student:student(),examId:activeExam.id,exam:activeExam.name,score,maxMarks:max,percentage:max?Number((score/max*100).toFixed(1)):0,wrong,correct,unattempted,submittedAt:new Date().toISOString()};
+    store.set("TGMS_EXAM_RESULT_"+activeExam.id+"_"+student(),result);
+    store.set("TGMS_EXAM_DONE_"+activeExam.id+"_"+student(),true);
+    const d=store.get("TGMS_PROGRESS_"+student(),{});
+    (activeExam.subjects||[]).forEach(s=>d[s]=Math.max(Number(d[s]||0),result.percentage));
+    store.set("TGMS_PROGRESS_"+student(),d);
+    document.getElementById("tgmsFeatureExamQuestion").innerHTML=
+      '<div class="tgms-success"><h2>🎉 Examination Submitted</h2><p><b>'+score+' / '+max+' ('+result.percentage+'%)</b></p>'+
+      '<p>❌ Wrong: '+wrong.length+' &nbsp; ✅ Correct: '+correct.length+' &nbsp; ⚪ Unattempted: '+unattempted.length+'</p></div>'+
+      '<h3>❌ Questions Attempted Wrong</h3>'+
+      (wrong.length?wrong.map(i=>'<div class="tgms-qbox"><b>Q'+(i+1)+'. '+esc(activeExam.questions[i].text)+'</b><p><span class="tgms-chip">'+esc(activeExam.questions[i].subject||"")+'</span> <span class="tgms-chip">'+esc(activeExam.questions[i].lesson||"")+'</span></p><p>Your answer: '+esc((activeExam.questions[i].options||[])[activeAnswers[i]]||"")+'</p><p>Correct answer: '+esc((activeExam.questions[i].options||[])[Number(activeExam.questions[i].answer)]||"")+'</p><p>'+esc(activeExam.questions[i].explanation||"No explanation provided.")+'</p></div>').join(""):'<p class="tgms-success">No wrong answers. Excellent!</p>');
+    document.getElementById("tgmsFeatureExamNext").style.display="none";
+    document.getElementById("tgmsFeatureExamPrev").style.display="none";
+  };
+
+  window.tgmsOpenNotifications=function(){
+    studentShow("tgmsStudentHubPlus");
+    const n=store.get("TGMS_SITE_NOTIFICATIONS",[]);
+    document.getElementById("tgmsPlusContent").innerHTML='<div class="tgms-feature-card"><h3>🔔 Notifications</h3>'+
+      (n.length?n.map(x=>'<div class="tgms-resource"><b>'+esc(x.title)+'</b><p>'+esc(x.message)+'</p><span class="tgms-small">'+esc(x.time||"")+'</span></div>').join(""):'<div class="notice">No site updates yet.</div>')+'</div>';
+  };
+
+  function injectStudentButtons(){
+    const home=document.getElementById("home"); if(!home||document.getElementById("tgmsPlusHomeCard"))return;
+    const card=document.createElement("div"); card.className="card"; card.id="tgmsPlusHomeCard";
+    card.innerHTML='<h2>🚀 Digital Learning Hub</h2><p>Access your progress, complete syllabus, EAPCET, practice and digital examinations.</p><div class="grid">'+
+      '<button class="primary" onclick="tgmsOpenPlus()">📊 Open Student Hub</button>'+
+      '<button onclick="tgmsOpenEapcet()">🎯 EAPCET</button>'+
+      '<button onclick="tgmsOpenExams()">💻 Digital Examinations</button>'+
+      '<button onclick="tgmsOpenNotifications()">🔔 Updates</button></div>';
+    home.insertBefore(card,home.querySelector("#englishTeluguCard")||home.lastElementChild);
+  }
+
+  window.tgmsOpenFeatureAdmin=function(){studentShow("tgmsAdminSuite");tgmsAdminRender("dashboard")};
+
+  window.tgmsAdminRender=function(view){
+    studentShow("tgmsAdminSuite");
+    const box=document.getElementById("tgmsAdminSuiteContent");
+    if(view==="dashboard"){
+      box.innerHTML='<div class="tgms-feature-card"><h3>📊 Administrator Dashboard</h3>'+
+      '<div class="tgms-feature-grid"><div class="tgms-feature-card"><b>EAPCET Questions</b><h2>'+store.get("TGMS_EAPCET",[]).length+'</h2></div>'+
+      '<div class="tgms-feature-card"><b>Pending Exams</b><h2>'+store.get("TGMS_PENDING_FEATURE_EXAMS",[]).length+'</h2></div>'+
+      '<div class="tgms-feature-card"><b>Published Exams</b><h2>'+store.get("TGMS_PUBLISHED_EXAMS",[]).length+'</h2></div>'+
+      '<div class="tgms-feature-card"><b>Camera Incidents</b><h2>'+store.get("TGMS_CAMERA_INCIDENTS",[]).length+'</h2></div></div></div>';
+    }
+    if(view==="eapcet"){
+      box.innerHTML='<div class="tgms-feature-card"><h3>🎯 Add EAPCET Question</h3>'+
+      '<label>Subject</label><select id="aeSubject"><option>Mathematics</option><option>Physics</option><option>Chemistry</option></select>'+
+      '<label>Topic</label><input id="aeTopic" placeholder="Chapter/topic">'+
+      '<label>Question</label><textarea id="aeText" placeholder="Enter question"></textarea>'+
+      '<label>Options A-D</label><input id="aeA"><input id="aeB"><input id="aeC"><input id="aeD">'+
+      '<label>Correct option (0=A, 1=B, 2=C, 3=D)</label><input id="aeAns" type="number" min="0" max="3" value="0">'+
+      '<label>Explanation</label><textarea id="aeExp"></textarea>'+
+      '<button class="primary" onclick="tgmsAdminAddEapcet()">➕ Add Question</button></div>'+
+      '<div class="tgms-feature-card"><h3>Published Questions</h3>'+store.get("TGMS_EAPCET",[]).map((q,i)=>
+      '<div class="tgms-qbox"><b>'+esc(q.subject)+' — '+esc(q.topic||"General")+'</b><p>'+esc(q.text)+'</p><button onclick="tgmsAdminDeleteEapcet('+i+')">🗑️ Delete</button></div>').join("")+'</div>';
+    }
+    if(view==="submissions"){
+      const p=store.get("TGMS_PENDING_FEATURE_EXAMS",[]);
+      box.innerHTML='<div class="tgms-feature-card"><h3>📨 Teacher Submissions</h3>'+
+      (p.length?p.map(e=>'<div class="approval-item"><b>'+esc(e.name)+'</b><p>Teacher: '+esc(e.teacher)+' | Subjects: '+esc((e.subjects||[]).join(", "))+'</p><p>Lessons: '+esc((e.lessons||[]).join(", "))+'</p><p>'+e.questions.length+' questions</p><button class="primary" onclick="tgmsAdminApproveFeatureExam('+JSON.stringify(e.id)+')">✅ Approve & Publish</button> <button onclick="tgmsAdminRejectFeatureExam('+JSON.stringify(e.id)+')">❌ Reject</button></div>').join(""):'<div class="notice">No pending submissions.</div>')+'</div>';
+    }
+    if(view==="exams"){
+      box.innerHTML='<div class="tgms-feature-card"><h3>📝 Create All-in-One Test</h3>'+
+      '<p>Combine Telugu, English, Maths, Physics and Chemistry in one examination.</p>'+
+      '<label>Exam Name</label><input id="aeExamName" value="TGMS All-in-One Test 1">'+
+      '<label>Subjects (comma separated)</label><input id="aeExamSubjects" value="Telugu, English, Maths, Physics, Chemistry">'+
+      '<label>Lessons (comma separated)</label><input id="aeExamLessons" placeholder="Select or type 2 or more lessons">'+
+      '<label>Time per question (minutes)</label><input id="aeTime" type="number" min="1" value="2">'+
+      '<label><input id="aeCamera" type="checkbox"> Camera Required</label><p class="tgms-small">Camera-required exams use a fixed 5-second grace period if the camera becomes unavailable.</p>'+
+      '<div id="aeQuestions"><p class="notice">Add questions using the button below.</p></div>'+
+      '<button onclick="tgmsAdminAddExamQuestion()">➕ Add Question</button> <button class="primary" onclick="tgmsAdminPublishBuiltExam()">🚀 Publish All-in-One Test</button></div>'+
+      '<div class="tgms-feature-card"><h3>Published Exams</h3>'+store.get("TGMS_PUBLISHED_EXAMS",[]).map(e=>'<div class="tgms-resource"><b>'+esc(e.name)+'</b><p>'+e.questions.length+' questions • '+esc((e.subjects||[]).join(", "))+'</p></div>').join("")+'</div>';
+      window.tgmsAdminExamQuestions=[];
+    }
+    if(view==="resources"){
+      box.innerHTML='<div class="tgms-feature-card"><h3>▶️ Lectures & 🧪 Practicals</h3><p>Resources are stored per subject + lesson. Each item contains a title, an information/description field and a link. Multiple items can be added.</p>'+
+      '<label>Subject</label><select id="arSubject">'+Object.keys(curriculum).map(s=>'<option>'+esc(s)+'</option>').join("")+'</select>'+
+      '<label>Lesson</label><input id="arLesson" placeholder="Exact lesson name">'+
+      '<label>Type</label><select id="arType"><option value="videos">YouTube Lecture</option><option value="practicals">Practical / External Link</option></select>'+
+      '<label>Title</label><input id="arTitle">'+
+      '<label>What is inside this link?</label><textarea id="arInfo" placeholder="Explain what the student will find before the link."></textarea>'+
+      '<label>Link</label><input id="arUrl" placeholder="https://...">'+
+      '<button class="primary" onclick="tgmsAdminSaveResource()">💾 Save Resource</button></div>';
+    }
+    if(view==="updates"){
+      box.innerHTML='<div class="tgms-feature-card"><h3>🔔 Publish Student Update</h3>'+
+      '<label>Title</label><input id="anTitle" value="New TGMS Student Hub Update">'+
+      '<label>Message</label><textarea id="anMessage" placeholder="Tell students what changed..."></textarea>'+
+      '<button class="primary" onclick="tgmsAdminPublishNotice()">📢 Publish Notification</button></div>';
+    }
+  };
+
+  window.tgmsAdminAddEapcet=function(){
+    const q={id:uid(),subject:aeSubject.value,topic:aeTopic.value.trim(),text:aeText.value.trim(),options:[aeA.value,aeB.value,aeC.value,aeD.value],answer:Number(aeAns.value),explanation:aeExp.value.trim()};
+    if(!q.text||q.options.some(x=>!x)){alert("Fill the question and all four options.");return}
+    const a=store.get("TGMS_EAPCET",[]);a.push(q);store.set("TGMS_EAPCET",a);tgmsAdminRender("eapcet");
+  };
+  window.tgmsAdminDeleteEapcet=function(i){const a=store.get("TGMS_EAPCET",[]);a.splice(i,1);store.set("TGMS_EAPCET",a);tgmsAdminRender("eapcet")};
+
+  window.tgmsAdminAddExamQuestion=function(){
+    const q={text:prompt("Question text:"),options:[prompt("Option A:"),prompt("Option B:"),prompt("Option C:"),prompt("Option D:")],answer:Number(prompt("Correct option 0-3:","0")),marks:Number(prompt("Marks:","1")),subject:prompt("Subject:","Physics"),lesson:prompt("Lesson/chapter:","")};
+    if(!q.text||q.options.some(x=>!x)){alert("Question cancelled/incomplete.");return}
+    window.tgmsAdminExamQuestions.push(q);
+    const box=document.getElementById("aeQuestions");box.innerHTML=window.tgmsAdminExamQuestions.map((x,i)=>'<div class="tgms-resource"><b>Q'+(i+1)+'.</b> '+esc(x.text)+' <span class="tgms-chip">'+esc(x.subject)+'</span> <span class="tgms-chip">'+esc(x.lesson)+'</span></div>').join("");
+  };
+  window.tgmsAdminPublishBuiltExam=function(){
+    const e={id:uid(),name:aeExamName.value.trim(),subjects:aeExamSubjects.value.split(",").map(x=>x.trim()).filter(Boolean),lessons:aeExamLessons.value.split(",").map(x=>x.trim()).filter(Boolean),timePerQuestion:Number(aeTime.value||2),cameraRequired:aeCamera.checked,questions:window.tgmsAdminExamQuestions||[],publishedAt:new Date().toISOString()};
+    if(!e.name||e.questions.length===0){alert("Add at least one question.");return}
+    const a=store.get("TGMS_PUBLISHED_EXAMS",[]);a.push(e);store.set("TGMS_PUBLISHED_EXAMS",a);alert("✅ All-in-One Test published.");tgmsAdminRender("exams");
+  };
+
+  window.tgmsAdminApproveFeatureExam=function(id){
+    const p=store.get("TGMS_PENDING_FEATURE_EXAMS",[]);
+    const i=p.findIndex(x=>x.id===id);if(i<0)return;
+    const e=p.splice(i,1)[0];e.publishedAt=new Date().toISOString();
+    const pub=store.get("TGMS_PUBLISHED_EXAMS",[]);pub.push(e);
+    store.set("TGMS_PENDING_FEATURE_EXAMS",p);store.set("TGMS_PUBLISHED_EXAMS",pub);tgmsAdminRender("submissions");
+  };
+  window.tgmsAdminRejectFeatureExam=function(id){
+    store.set("TGMS_PENDING_FEATURE_EXAMS",store.get("TGMS_PENDING_FEATURE_EXAMS",[]).filter(x=>x.id!==id));tgmsAdminRender("submissions");
+  };
+
+  window.tgmsAdminSaveResource=function(){
+    const subject=arSubject.value,lesson=arLesson.value.trim();if(!lesson){alert("Enter the lesson name.");return}
+    const key="TGMS_RESOURCES_"+subject+"_"+lesson,d=store.get(key,{videos:[],practicals:[]});
+    const item={id:uid(),title:arTitle.value.trim(),info:arInfo.value.trim(),url:arUrl.value.trim()};
+    if(!item.title||!item.info||!item.url){alert("Enter title, description and link.");return}
+    d[arType.value].push(item);store.set(key,d);alert("✅ Resource saved.");
+  };
+  window.tgmsAdminPublishNotice=function(){
+    const n=store.get("TGMS_SITE_NOTIFICATIONS",[]);
+    n.unshift({id:uid(),title:anTitle.value.trim(),message:anMessage.value.trim(),time:new Date().toLocaleString()});
+    store.set("TGMS_SITE_NOTIFICATIONS",n);alert("✅ Students will see the update in Notifications.");
+  };
+
+  window.tgmsOpenAdminFeatureSuite=function(){studentShow("tgmsAdminSuite");tgmsAdminRender("dashboard")};
+
+  window.tgmsOpenTeacherFeatureSuite=function(){
+    studentShow("tgmsTeacherSuite");
+    const subject=sessionStorage.getItem("tgmsTeacherSubject")||"";
+    document.getElementById("tgmsTeacherSuiteContent").innerHTML=
+      '<div class="tgms-feature-card"><h3>📨 Submit Questions for Admin Approval</h3>'+
+      '<p><b>Teacher subject:</b> '+esc(subject||"Not detected")+'</p>'+
+      '<label>Exam name</label><input id="ftExamName" value="Digital Test">'+
+      '<label>Lessons covered (2 or more allowed)</label><input id="ftLessons" placeholder="Lesson 1, Lesson 2">'+
+      '<label>Camera required?</label><select id="ftCamera"><option value="false">No</option><option value="true">Yes</option></select>'+
+      '<div id="ftQuestions"></div><button onclick="tgmsTeacherAddFeatureQuestion()">➕ Add Question</button>'+
+      '<button class="primary" onclick="tgmsTeacherSubmitFeatureExam()">📨 Submit to Administrator</button></div>';
+    window.tgmsTeacherFeatureQuestions=[];
+  };
+  window.tgmsTeacherAddFeatureQuestion=function(){
+    const q={text:prompt("Question text:"),options:[prompt("Option A:"),prompt("Option B:"),prompt("Option C:"),prompt("Option D:")],answer:Number(prompt("Correct option 0-3:","0")),marks:Number(prompt("Marks:","1")),subject:sessionStorage.getItem("tgmsTeacherSubject")||"General",lesson:prompt("Lesson/chapter:","")};
+    if(!q.text||q.options.some(x=>!x)){alert("Question incomplete.");return}
+    window.tgmsTeacherFeatureQuestions.push(q);
+    document.getElementById("ftQuestions").innerHTML=window.tgmsTeacherFeatureQuestions.map((x,i)=>'<div class="tgms-resource"><b>Q'+(i+1)+'.</b> '+esc(x.text)+' — '+esc(x.lesson)+'</div>').join("");
+  };
+  window.tgmsTeacherSubmitFeatureExam=function(){
+    const e={id:uid(),name:ftExamName.value.trim(),teacher:sessionStorage.getItem("tgmsTeacherUser")||"Teacher",subjects:[sessionStorage.getItem("tgmsTeacherSubject")||"General"],lessons:ftLessons.value.split(",").map(x=>x.trim()).filter(Boolean),cameraRequired:ftCamera.value==="true",timePerQuestion:2,questions:window.tgmsTeacherFeatureQuestions||[]};
+    if(!e.name||e.questions.length===0||e.lessons.length===0){alert("Enter exam name, at least one question and the lesson(s).");return}
+    const a=store.get("TGMS_PENDING_FEATURE_EXAMS",[]);a.push(e);store.set("TGMS_PENDING_FEATURE_EXAMS",a);alert("✅ Submitted. Students will not see it until Administrator approval.");tgmsOpenTeacherFeatureSuite();
+  };
+
+  function injectAdminTeacherButtons(){
+    const ap=document.getElementById("adminPanel"),tp=document.getElementById("teacherPanel");
+    if(ap&&!document.getElementById("tgmsAdminSuiteBtn")){
+      const b=document.createElement("button");b.id="tgmsAdminSuiteBtn";b.className="primary";b.textContent="🛠️ Open Advanced Admin Controls";b.onclick=tgmsOpenAdminFeatureSuite;
+      ap.querySelector(".teacher-panel")?.insertBefore(b,ap.querySelector(".teacher-panel").children[2]||null);
+    }
+    if(tp&&!document.getElementById("tgmsTeacherSuiteBtn")){
+      const b=document.createElement("button");b.id="tgmsTeacherSuiteBtn";b.className="primary";b.textContent="📨 Advanced Question Submission";b.onclick=tgmsOpenTeacherFeatureSuite;
+      tp.querySelector(".teacher-panel")?.insertBefore(b,tp.querySelector(".teacher-panel").children[2]||null);
+    }
+  }
+
+  function injectExamRunner(){
+    if(document.getElementById("tgmsFeatureExamRunner"))return;
+    const s=document.createElement("section");s.id="tgmsFeatureExamRunner";
+    s.innerHTML='<button onclick="studentShow(\'tgmsStudentHubPlus\')">← Exit</button><div class="tgms-sticky-exam"><b id="tgmsFeatureExamTitle"></b><div id="tgmsFeatureExamMeta" class="tgms-small"></div><span id="tgmsFeatureExamTimer"></span><p id="tgmsFeatureExamCounter"></p></div>'+
+      '<video id="tgmsExamCamera" autoplay muted playsinline style="position:fixed;right:10px;bottom:10px;width:150px;height:110px;object-fit:cover;border-radius:12px;border:2px solid #123e72;background:#111;display:none"></video>'+
+      '<div id="tgmsFeatureExamQuestion"></div><div class="grid"><button id="tgmsFeatureExamPrev" onclick="tgmsFeatureExamPrev()">← Previous</button><button class="primary" id="tgmsFeatureExamNext" onclick="tgmsFeatureExamNext()">Next →</button></div>';
+    document.body.appendChild(s);
+  }
+
+  document.addEventListener("DOMContentLoaded",function(){
+    injectStudentButtons();injectAdminTeacherButtons();injectExamRunner();
+    // Replace outdated visible Physics/Maths chapter maps with the exact syllabus supplied in this conversation.
+    const physics=document.getElementById("physics");
+    if(physics){
+      const card=physics.querySelector(".card");
+      if(card){
+        card.innerHTML='<h3>⚡ Physics — Updated Syllabus</h3>'+curriculum["Physics"].map((x,i)=>'<details class="chapter"><summary>'+(i+1)+'. '+esc(x)+'</summary><p>Lesson resources, multiple YouTube lectures and practical links can be managed by the Administrator.</p></details>').join("");
+      }
+    }
+    const maths=document.getElementById("maths");
+    if(maths){
+      const cards=maths.querySelectorAll(".card");
+      if(cards[0])cards[0].innerHTML='<h3>Mathematics 1A — Updated Syllabus</h3>'+curriculum["Maths A"].map((x,i)=>'<details class="chapter"><summary>'+(i+1)+'. '+esc(x)+'</summary><p>Lesson resources can be added by the Administrator.</p></details>').join("");
+      if(cards[1])cards[1].innerHTML='<h3>Mathematics 1B — Updated Syllabus</h3>'+curriculum["Maths B"].map((x,i)=>'<details class="chapter"><summary>'+(i+1)+'. '+esc(x)+'</summary><p>Lesson resources can be added by the Administrator.</p></details>').join("");
+    }
+  });
+})();
+</script>
 </body></html>
