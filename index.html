@@ -3400,7 +3400,7 @@ window.tgmsSetDaily = async function(payload){
 window.tgmsGetLessonResources = async function(subject, lesson){
   try{
     const key=encodeURIComponent(subject)+'__'+encodeURIComponent(lesson);
-    const snap=await get(ref(rtdb,'lessonResources/'+key));
+    const snap=await get(ref(rtdb,'dailyUpdate/lessonResources/'+key));
     const d=snap.exists()?snap.val():null;
     return (d && typeof d==='object') ? d : {videos:[],practicals:[]};
   }catch(e){
@@ -3410,7 +3410,7 @@ window.tgmsGetLessonResources = async function(subject, lesson){
 };
 window.tgmsSetLessonResources = async function(subject, lesson, data){
   const key=encodeURIComponent(subject)+'__'+encodeURIComponent(lesson);
-  await set(ref(rtdb,'lessonResources/'+key),data);
+  await set(ref(rtdb,'dailyUpdate/lessonResources/'+key),data);
   return data;
 };
 
@@ -4033,6 +4033,14 @@ document.addEventListener("DOMContentLoaded",function(){
       '<button onclick="tgmsOpenCurriculum()">← Back to Syllabus</button></div>';
   };
 
+  // Dedicated lesson-video entry point used by all subject lesson buttons.
+  // This keeps the video action separate and visible from the lesson accordion.
+  window.tgmsOpenLessonVideos=function(subject,lesson){
+    if(typeof window.tgmsOpenLessonResources==='function'){
+      return window.tgmsOpenLessonResources(subject,lesson);
+    }
+  };
+
   window.tgmsOpenEapcet=function(){
     studentShow("tgmsStudentHubPlus");
     const qs=store.get("TGMS_EAPCET",[]);
@@ -4438,7 +4446,8 @@ document.addEventListener("DOMContentLoaded",function(){
       await window.tgmsSetLessonResources(subject,lesson,d);
     }catch(err){
       console.error("TGMS resource save failed:",err);
-      alert("❌ The link could not be saved to Firebase. Check Firebase Realtime Database rules/connection and try again.");
+      const msg=(err&&err.message)?err.message:String(err||"Unknown Firebase error");
+      alert("❌ Link could not be saved. Firebase said: "+msg);
       return;
     }
 
@@ -4516,24 +4525,78 @@ document.addEventListener("DOMContentLoaded",function(){
 
   document.addEventListener("DOMContentLoaded",function(){
     injectStudentButtons();injectAdminTeacherButtons();injectExamRunner();
-    // Replace outdated visible Physics/Maths chapter maps with the exact syllabus supplied in this conversation.
+    // Render every academic lesson with a permanently visible Video Explanation button.
+    // The button is outside the <details> accordion, so students can see it immediately.
+    const lessonBlock = (subject, lesson, description) =>
+      '<div class="chapter tgms-subject-lesson">'+
+      '<details>'+
+      '<summary>'+esc(lesson)+'</summary>'+
+      '<p>'+esc(description||'Lesson resources can be added by the Administrator.')+'</p>'+
+      '</details>'+
+      '<div class="tgms-lesson-actions">'+
+      '<button type="button" class="primary tgms-video-lesson-btn" onclick="tgmsOpenLessonVideos('+JSON.stringify(subject)+','+JSON.stringify(lesson)+')">🎥 Video Explanation</button>'+
+      '</div>'+
+      '</div>';
+
     const physics=document.getElementById("physics");
     if(physics){
       const card=physics.querySelector(".card");
       if(card){
-        card.innerHTML='<h3>⚡ Physics — Updated Syllabus</h3>'+curriculum["Physics"].map((x,i)=>'<details class="chapter"><summary>'+(i+1)+'. '+esc(x)+'</summary><p>Lesson resources, multiple YouTube lectures and practical links can be managed by the Administrator.</p></details>').join("");
+        card.innerHTML='<h3>⚡ Physics — Updated Syllabus</h3>'+curriculum["Physics"].map(x=>lessonBlock("Physics",x,"Lesson resources, multiple YouTube lectures and practical links can be managed by the Administrator.")).join("");
+      }
+    }
+    const chemistry=document.getElementById("chem");
+    if(chemistry){
+      const card=chemistry.querySelector(".card");
+      if(card){
+        card.innerHTML='<h3>🧪 Chemistry — Updated Syllabus</h3>'+curriculum["Chemistry"].map(x=>lessonBlock("Chemistry",x,"Lesson resources, multiple YouTube lectures and practical links can be managed by the Administrator.")).join("");
       }
     }
     const maths=document.getElementById("maths");
     if(maths){
       const cards=maths.querySelectorAll(".card");
-      if(cards[0])cards[0].innerHTML='<h3>Mathematics 1A — Updated Syllabus</h3>'+curriculum["Maths A"].map((x,i)=>'<details class="chapter"><summary>'+(i+1)+'. '+esc(x)+'</summary><p>Lesson resources can be added by the Administrator.</p></details>').join("");
-      if(cards[1])cards[1].innerHTML='<h3>Mathematics 1B — Updated Syllabus</h3>'+curriculum["Maths B"].map((x,i)=>'<details class="chapter"><summary>'+(i+1)+'. '+esc(x)+'</summary><p>Lesson resources can be added by the Administrator.</p></details>').join("");
+      if(cards[0])cards[0].innerHTML='<h3>Mathematics 1A — Updated Syllabus</h3>'+curriculum["Maths A"].map(x=>lessonBlock("Maths A",x,"Lesson resources, multiple YouTube lectures and practical links can be managed by the Administrator.")).join("");
+      if(cards[1])cards[1].innerHTML='<h3>Mathematics 1B — Updated Syllabus</h3>'+curriculum["Maths B"].map(x=>lessonBlock("Maths B",x,"Lesson resources, multiple YouTube lectures and practical links can be managed by the Administrator.")).join("");
+    }
+
+    // English and Telugu lesson buttons are also explicitly video buttons.
+    document.querySelectorAll('#english_lessons_lessons .chapter').forEach(function(ch){
+      const b=ch.querySelector('button[onclick*="tgmsOpenLessonResources"]');
+      if(b){
+        const m=b.getAttribute('onclick').match(/tgmsOpenLessonResources\((['"])(.*?)\1,\s*(['"])(.*?)\3\)/);
+        if(m){
+          b.textContent='🎥 Video Explanation';
+          b.className='primary tgms-video-lesson-btn';
+          b.setAttribute('onclick','tgmsOpenLessonVideos("English Lessons",'+JSON.stringify(m[4])+')');
+        }
+      }
+    });
+    const teluguLessons=document.getElementById('telugu_lessons_lessons');
+    if(teluguLessons){
+      teluguLessons.querySelectorAll('.chapter').forEach(function(ch){
+        const b=ch.querySelector('button[onclick*="tgmsOpenLessonResources"]');
+        if(b){
+          const m=b.getAttribute('onclick').match(/tgmsOpenLessonResources\((['"])(.*?)\1,\s*(['"])(.*?)\3\)/);
+          if(m){
+            b.textContent='🎥 Video Explanation';
+            b.className='primary tgms-video-lesson-btn';
+            b.setAttribute('onclick','tgmsOpenLessonVideos("Telugu Lessons",'+JSON.stringify(m[4])+')');
+          }
+        }
+      });
     }
   });
 })();
 </script>
 
+
+<style id="tgms-visible-lesson-video-buttons">
+.tgms-subject-lesson{margin:10px 0;padding:10px;border:1px solid #dbe5ef;border-radius:12px;background:#fff}
+.tgms-subject-lesson details{margin:0}
+.tgms-subject-lesson summary{font-weight:700;cursor:pointer;padding:6px 2px}
+.tgms-lesson-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.tgms-video-lesson-btn{display:inline-block!important;visibility:visible!important;opacity:1!important;cursor:pointer!important}
+</style>
 <style id="tgms-exam-accordion-css">
 .tgms-assessment-card{border:1px solid #dbe5ef;border-radius:14px;margin:10px 0;background:#fff;overflow:hidden}
 .tgms-assessment-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;cursor:pointer}
