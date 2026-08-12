@@ -289,7 +289,7 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 <button onclick="studentLogout()">🚪<br>Logout</button>
 <button type="button" onclick="studentShow('news')">📰<br>School News</button><button type="button" onclick="studentShow('days')">📅<br>Important Day</button>
 <button type="button" onclick="studentShow('chem')">🧪<br>Chemistry</button><button type="button" onclick="studentShow('physics')">⚛️<br>Physics</button>
-<button type="button" onclick="studentShow('maths')">📐<br>Mathematics</button><button type="button" onclick="studentShow('practical')">🔬<br>40 Practicals</button>
+<button type="button" onclick="studentShow('maths')">📐<br>Mathematics</button><button type="button" onclick="studentShow('practical')">🔬<br>40 Practicals</button><button type="button" onclick="studentShow('eapcetPage')">🎯<br>EAPCET</button>
 <button type="button" onclick="studentShow('questions')">📝<br>180 Answered Questions</button><button type="button" onclick="studentShow('jee')">🎯<br>JEE Preparation</button>
 <button type="button" onclick="studentShow('study')">📚<br>Study Plan</button><button type="button" onclick="studentShow('admin')">⚙️<br>Admin</button>
 </div>
@@ -307,13 +307,6 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 
 </div>
 
-<div class="card" id="tgmsSeparateStudentTools">
-  <h2>🎓 Student Tools</h2>
-  <p>Open your progress and EAPCET pages separately.</p>
-  <div class="grid">
-    <button type="button" class="primary" onclick="tgmsOpenProgressPage()">📊 Progress</button>
-    <button type="button" onclick="tgmsOpenEapcetPage()">🎯 EAPCET</button>
-  </div>
 </div>
 
 <div class="card" id="unitTestMarksHomeCard">
@@ -650,6 +643,15 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 </section>
 
 
+
+<section id="eapcetPage">
+  <button type="button" onclick="studentShow('home')">← Home</button>
+  <div class="card">
+    <h2>🎯 EAPCET Preparation</h2>
+    <p><b>Inter 1st Year EAPCET Practice</b></p>
+    <div id="eapcetContent"></div>
+  </div>
+</section>
 
 <section id="practical">
   <button type="button" onclick="studentShow('home')">← Home</button>
@@ -3861,7 +3863,12 @@ document.addEventListener("DOMContentLoaded",function(){
 </style>
 
 <!-- ===== TGMS FEATURE SUITE V1 ===== -->
-<section id="tgmsStudentHubPlus" style="display:none!important;"></section>
+<section id="tgmsLessonResourcePage">
+  <button type="button" onclick="tgmsOpenCurriculum()">← Back to Lessons</button>
+  <div id="tgmsLessonResourceContent" class="card">
+    <div class="notice">Select a lesson to view its videos.</div>
+  </div>
+</section>
 
 
 <section id="tgmsProgressPage">
@@ -3870,15 +3877,6 @@ document.addEventListener("DOMContentLoaded",function(){
     <h2>📊 My Progress</h2>
     <p>Track your subject-wise learning progress.</p>
     <div id="tgmsProgressPageContent"></div>
-  </div>
-</section>
-
-<section id="tgmsEapcetPage">
-  <button type="button" onclick="studentShow('home')">← Home</button>
-  <div class="card">
-    <h2>🎯 EAPCET</h2>
-    <p>Practice EAPCET questions and preparation resources.</p>
-    <div id="tgmsEapcetPageContent"></div>
   </div>
 </section>
 
@@ -4009,6 +4007,30 @@ document.addEventListener("DOMContentLoaded",function(){
       ).join("")+'</div>';
   };
 
+  
+window.tgmsRenderEapcet=function(){
+  const box=document.getElementById("eapcetContent");
+  if(!box)return;
+  let qs=[];
+  try{qs=JSON.parse(localStorage.getItem("TGMS_EAPCET")||"[]")}catch(e){qs=[]}
+  if(!Array.isArray(qs)||!qs.length){
+    box.innerHTML='<div class="notice">No EAPCET questions have been published yet.</div>';
+    return;
+  }
+  box.innerHTML=qs.map(function(q,i){
+    return '<div class="chapter">'+
+      '<h3>Question '+(i+1)+'</h3>'+
+      '<p>'+esc(q.question||q.q||"")+'</p>'+
+      (q.options?'<div>'+q.options.map(function(o,j){return '<p>'+(String.fromCharCode(65+j))+'. '+esc(o)+'</p>'}).join("")+'</div>':'')+
+      (q.answer||q.correct?'<div class="answer"><b>Answer:</b> '+esc(q.answer||q.correct)+'</div>':'')+
+      '</div>';
+  }).join("");
+};
+window.tgmsOpenEapcetPage=function(){
+  studentShow("eapcetPage");
+  tgmsRenderEapcet();
+};
+
   window.tgmsOpenProgressPage=function(){
     studentShow("tgmsProgressPage");
     const data=store.get("TGMS_PROGRESS_"+student(),{});
@@ -4043,14 +4065,14 @@ document.addEventListener("DOMContentLoaded",function(){
   };
 
   window.tgmsOpenLessonResources=async function(subject,lesson){
-    const box=document.getElementById("tgmsPlusContent");
+    const box=document.getElementById("tgmsLessonResourceContent");
     if(!box)return;
 
     // Always open the lesson page immediately, even while Firebase is loading.
-    studentShow("tgmsStudentHubPlus");
+    studentShow("tgmsLessonResourcePage");
     box.innerHTML=
       '<div class="tgms-feature-card">'+
-      '<button type="button" onclick="tgmsOpenCurriculum()">← Back to Syllabus</button>'+
+      '<button type="button" onclick="tgmsOpenCurriculum()">← Back to Lessons</button>'+
       '<h2>📖 '+esc(lesson)+'</h2>'+
       '<span class="tgms-chip">'+esc(subject)+'</span>'+
       '<div class="notice" id="tgmsLessonLoading">⏳ Loading video resources...</div>'+
@@ -4122,7 +4144,7 @@ document.addEventListener("DOMContentLoaded",function(){
 
     box.innerHTML=
       '<div class="tgms-feature-card">'+
-      '<button type="button" onclick="tgmsOpenCurriculum()">← Back to Syllabus</button>'+
+      '<button type="button" onclick="tgmsOpenCurriculum()">← Back to Lessons</button>'+
       '<h2>📖 '+esc(lesson)+'</h2>'+
       '<span class="tgms-chip">'+esc(subject)+'</span>'+
       '<h3>🎥 Video Explanations ('+d.videos.length+')</h3>'+
