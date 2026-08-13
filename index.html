@@ -152,7 +152,7 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 <div id="tgmsLoginGate" class="tgms-login-gate">
   <div class="tgms-login-box">
     <div class="tgms-login-logo">🎓</div>
-    <h1>TGMS STUDENT HUB</h1>
+    <h1>TGMS PEGedePelly</h1>
     <p>TGMS Pegedepelly</p>
     <p class="tgms-login-subtitle">Official School Learning Portal</p>
 
@@ -261,7 +261,7 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 
 <section id="roleSelection" class="active">
   <div class="card role-select-card">
-    <h1>🏫 TGMS Student Hub</h1>
+    <h1>🏫 TGMS Pegedepelly</h1>
     <h2>Welcome</h2>
     <p>Please select your login type.</p>
     <div class="role-grid">
@@ -273,7 +273,7 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
 </section>
 
 
-<header><h1>TGMS STUDENT HUB</h1><p>TGMS Pegedepelly • Teacher-Ready Learning Edition</p></header>
+<header><h1>TGMS PEGedePelly</h1><p>TGMS Pegedepelly • Teacher-Ready Learning Edition</p></header>
 <main>
 <section id="home">
 <div class="principal-hero">
@@ -281,7 +281,7 @@ input,textarea{width:100%;padding:12px;border:1px solid #ccd4e0;border-radius:10
   <div class="principal-text">
     <h2>Welcome to TG Model School, Pegedepelly</h2>
     <h3>Principal</h3><p><b>Sri. Prabhakar Reddy</b><br><span>Principal, TGMS Pegedepelly</span></p>
-    <p>We warmly welcome you to the TGMS Student Hub — a learning portal created to support our students in academics, practical learning, school updates and preparation.</p>
+    <p>We warmly welcome you to the TGMS Pegedepelly — a learning portal created to support our students in academics, practical learning, school updates and preparation.</p>
   </div>
 </div>
 <div class="card"><h2>🎓 Welcome</h2><p>A structured learning portal for TGMS Pegedepelly students: syllabus maps, chapter revision, 180 answered practice questions, 40 practical guides and JEE-oriented preparation.</p><div class="stats"><div class="stat"><b>180</b><br>Answered Questions</div><div class="stat"><b>40</b><br>Experiments</div><div class="stat"><b>3</b><br>Live School Updates</div></div><div class="notice"><b>Academic note:</b> The syllabus map follows Telangana Board annual-plan material for 2025–26. Teachers/college should verify any later official revision before using it as an examination authority.</div></div>
@@ -3370,7 +3370,7 @@ document.addEventListener("DOMContentLoaded",function(){
 </script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, getIdToken } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
@@ -3410,26 +3410,33 @@ window.tgmsLessonResourceKey=function(subject,lesson){
   const bytes=new TextEncoder().encode(raw);
   return "k_"+Array.from(bytes).map(b=>b.toString(16).padStart(2,"0")).join("");
 };
+window.tgmsLessonLocalKey=function(subject,lesson){
+  return "TGMS_SHARED_RESOURCE_"+window.tgmsLessonResourceKey(subject,lesson);
+};
+window.tgmsReadLessonLocal=function(subject,lesson){
+  try{
+    const d=JSON.parse(localStorage.getItem(window.tgmsLessonLocalKey(subject,lesson))||"null");
+    if(d&&typeof d==="object") return {
+      videos:Array.isArray(d.videos)?d.videos:[],
+      practicals:Array.isArray(d.practicals)?d.practicals:[]
+    };
+  }catch(e){}
+  return null;
+};
+window.tgmsWriteLessonLocal=function(subject,lesson,data){
+  try{
+    localStorage.setItem(window.tgmsLessonLocalKey(subject,lesson),JSON.stringify({
+      videos:Array.isArray(data.videos)?data.videos:[],
+      practicals:Array.isArray(data.practicals)?data.practicals:[],
+      updatedAt:Date.now()
+    }));
+  }catch(e){}
+};
+
 window.tgmsGetLessonResources=async function(subject,lesson){
   const key=window.tgmsLessonResourceKey(subject,lesson);
   const empty={videos:[],practicals:[]};
 
-  // Try the mirror first because it is the simplest shared student/admin path.
-  let firstError=null;
-  try{
-    const snap=await get(ref(rtdb,"lessonResources/"+key));
-    if(snap.exists()){
-      const d=snap.val();
-      if(d&&typeof d==="object"){
-        return {
-          videos:Array.isArray(d.videos)?d.videos:[],
-          practicals:Array.isArray(d.practicals)?d.practicals:[]
-        };
-      }
-    }
-  }catch(e){firstError=e;}
-
-  // Then try the original dailyUpdate path for older records.
   try{
     const snap=await get(ref(rtdb,"dailyUpdate/lessonResources/"+key));
     if(snap.exists()){
@@ -3441,26 +3448,19 @@ window.tgmsGetLessonResources=async function(subject,lesson){
         };
       }
     }
+    return empty;
   }catch(e){
-    if(firstError) console.warn("TGMS both resource reads failed:",firstError,e);
+    const local=window.tgmsReadLessonLocal(subject,lesson);
+    if(local) return local;
+    return {
+      videos:[],
+      practicals:[],
+      _readError:true,
+      _readErrorMessage:e&&e.message?e.message:String(e||"Firebase read failed")
+    };
   }
-
-  // Legacy local fallback.
-  try{
-    const local=JSON.parse(localStorage.getItem("TGMS_RESOURCES_"+subject+"_"+lesson)||"null");
-    if(local&&typeof local==="object"){
-      return {
-        videos:Array.isArray(local.videos)?local.videos:[],
-        practicals:Array.isArray(local.practicals)?local.practicals:[]
-      };
-    }
-  }catch(e){}
-
-  if(firstError){
-    return {videos:[],practicals:[],_readError:true,_readErrorMessage:firstError.message||String(firstError)};
-  }
-  return empty;
 };
+
 window.tgmsSetLessonResources=async function(subject,lesson,data){
   const key=window.tgmsLessonResourceKey(subject,lesson);
   const payload={
@@ -3471,12 +3471,19 @@ window.tgmsSetLessonResources=async function(subject,lesson,data){
     updatedAt:Date.now()
   };
 
-  // Canonical shared location.
+  // The database rules require the Firebase-authenticated administrator
+  // account. Refresh the ID token before writing so a stale/expired token
+  // cannot cause a misleading PERMISSION_DENIED error.
+  const user=auth.currentUser;
+  if(!user) throw new Error("ADMIN_NOT_AUTHENTICATED");
+  const email=String(user.email||"").trim().toLowerCase();
+  if(email!=="tgmspgpl@gmail.com") throw new Error("ADMIN_EMAIL_MISMATCH");
+  await getIdToken(user,true);
+
+  // Single canonical location. The current Firebase rules protect this
+  // path through the authenticated administrator account.
   await set(ref(rtdb,"dailyUpdate/lessonResources/"+key),payload);
-
-  // Mirror used by the student reader. Both Admin and Student use the same key.
-  await set(ref(rtdb,"lessonResources/"+key),payload);
-
+  window.tgmsWriteLessonLocal(subject,lesson,payload);
   return payload;
 };
 
@@ -3523,6 +3530,7 @@ function showGate(){
 window.tgmsFirebaseLogin = async function(expectedRole,email,password,statusEl){
   try{
     const cred=await signInWithEmailAndPassword(auth,email,password);
+    await getIdToken(cred.user,true);
     const profile=await readProfile(cred.user.uid);
 
     // Normalize Firebase role values so accidental capitalization/whitespace
@@ -4249,7 +4257,7 @@ window.tgmsOpenEapcetPage=function(){
     }
     if(view==="updates"){
       box.innerHTML='<div class="tgms-feature-card"><h3>🔔 Publish Student Update</h3>'+
-      '<label>Title</label><input id="anTitle" value="New TGMS Student Hub Update">'+
+      '<label>Title</label><input id="anTitle" value="New TGMS Pegedepelly Update">'+
       '<label>Message</label><textarea id="anMessage" placeholder="Tell students what changed..."></textarea>'+
       '<button class="primary" onclick="tgmsAdminPublishNotice()">📢 Publish Notification</button></div>';
     }
