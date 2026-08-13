@@ -4527,7 +4527,7 @@ window.tgmsOpenEapcetPage=function(){
     document.body.appendChild(s);
   }
 
-  document.addEventListener("DOMContentLoaded",function(){
+  function tgmsInitAcademicUI(){
     injectAdminTeacherButtons();injectExamRunner();
     // Render every academic lesson with a permanently visible Video Explanation button.
     // The button is outside the <details> accordion, so students can see it immediately.
@@ -4589,14 +4589,26 @@ window.tgmsOpenEapcetPage=function(){
         const b=ch.querySelector('button');
         if(!b)return;
         const title=ch.querySelector('h3')?.textContent||'';
-        const lesson=title.replace(/^\\d+\\.\\s*/,'').trim();
+        const lesson=title.replace(/^\d+\.\s*/,'').trim();
         b.textContent='🎥 Video Explanation';
         b.className='primary tgms-video-lesson-btn';
-        b.onclick=function(){ tgmsOpenLessonResources('Telugu Lessons',lesson); };
+        b.onclick=function(ev){if(ev)ev.preventDefault();window.tgmsOpenLessonResources('Telugu Lessons',lesson);return false;};
       });
     }
 
-  });
+    // Re-bind the three main subject buttons directly. This avoids depending on
+    // any older studentShow wrapper that may exist elsewhere in the page.
+    [['physics','Physics'],['chem','Chemistry'],['maths','Mathematics']].forEach(function(pair){
+      const b=Array.from(document.querySelectorAll('button')).find(function(x){
+        const t=(x.textContent||'').trim();
+        return (pair[0]==='physics'&&t.includes('Physics')) || (pair[0]==='chem'&&t.includes('Chemistry')) || (pair[0]==='maths'&&t.includes('Mathematics'));
+      });
+      if(b)b.onclick=function(ev){if(ev)ev.preventDefault();document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));const target=document.getElementById(pair[0]);if(target){target.classList.add('active');window.scrollTo(0,0);}return false;};
+    });
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',tgmsInitAcademicUI,{once:true});
+  else tgmsInitAcademicUI();
 })();
 </script>
 
