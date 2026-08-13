@@ -3436,29 +3436,35 @@ window.tgmsWriteLessonLocal=function(subject,lesson,data){
 window.tgmsGetLessonResources=async function(subject,lesson){
   const key=window.tgmsLessonResourceKey(subject,lesson);
   const empty={videos:[],practicals:[]};
+  const norm=v=>String(v??"").normalize("NFKC").replace(/\u00a0/g," ").replace(/\s+/g," ").trim();
+  const matches=d=>d&&typeof d==="object"&&norm(d.subject)===norm(subject)&&norm(d.lesson)===norm(lesson);
+  const pack=d=>({videos:Array.isArray(d.videos)?d.videos:[],practicals:Array.isArray(d.practicals)?d.practicals:[]});
 
   try{
-    // Read the canonical location first.
-    const snap=await get(ref(rtdb,"dailyUpdate/lessonResources/"+key));
-    if(snap.exists()){
-      const d=snap.val();
-      if(d&&typeof d==="object"){
-        return {
-          videos:Array.isArray(d.videos)?d.videos:[],
-          practicals:Array.isArray(d.practicals)?d.practicals:[]
-        };
-      }
-    }
+    // 1) Read the current canonical hashed location.
+    let snap=await get(ref(rtdb,"dailyUpdate/lessonResources/"+key));
+    if(snap.exists() && snap.val() && typeof snap.val()==="object") return pack(snap.val());
 
-    // Compatibility fallback for resources saved by older TGMS versions.
-    const mirror=await get(ref(rtdb,"lessonResources/"+key));
-    if(mirror.exists()){
-      const d=mirror.val();
-      if(d&&typeof d==="object"){
-        return {
-          videos:Array.isArray(d.videos)?d.videos:[],
-          practicals:Array.isArray(d.practicals)?d.practicals:[]
-        };
+    // 2) Read the older mirror hashed location.
+    let mirror=await get(ref(rtdb,"lessonResources/"+key));
+    if(mirror.exists() && mirror.val() && typeof mirror.val()==="object") return pack(mirror.val());
+
+    // 3) IMPORTANT: older builds may have used a different lesson-key format.
+    // Scan the lesson resource collections and match the stored subject+lesson.
+    // This makes existing links visible even when the key format changed.
+    for(const path of ["dailyUpdate/lessonResources","lessonResources"]){
+      try{
+        const all=await get(ref(rtdb,path));
+        if(all.exists()){
+          const obj=all.val();
+          if(obj && typeof obj==="object"){
+            for(const child of Object.values(obj)){
+              if(matches(child)) return pack(child);
+            }
+          }
+        }
+      }catch(scanError){
+        console.warn("TGMS resource scan failed for "+path,scanError);
       }
     }
 
@@ -3466,25 +3472,19 @@ window.tgmsGetLessonResources=async function(subject,lesson){
     if(local) return local;
     return empty;
   }catch(e){
-    // If the canonical read fails, try the compatibility mirror and then local cache.
+    // Try the broad compatibility scan even if one exact read failed.
     try{
-      const mirror=await get(ref(rtdb,"lessonResources/"+key));
-      if(mirror.exists()){
-        const d=mirror.val();
-        if(d&&typeof d==="object") return {
-          videos:Array.isArray(d.videos)?d.videos:[],
-          practicals:Array.isArray(d.practicals)?d.practicals:[]
-        };
+      for(const path of ["dailyUpdate/lessonResources","lessonResources"]){
+        const all=await get(ref(rtdb,path));
+        const obj=all.exists()?all.val():null;
+        if(obj && typeof obj==="object"){
+          for(const child of Object.values(obj)) if(matches(child)) return pack(child);
+        }
       }
     }catch(ignore){}
     const local=window.tgmsReadLessonLocal(subject,lesson);
     if(local) return local;
-    return {
-      videos:[],
-      practicals:[],
-      _readError:true,
-      _readErrorMessage:e&&e.message?e.message:String(e||"Firebase read failed")
-    };
+    return {videos:[],practicals:[],_readError:true,_readErrorMessage:e&&e.message?e.message:String(e||"Firebase read failed")};
   }
 };
 
@@ -4572,6 +4572,15 @@ window.tgmsOpenEapcetPage=function(){
       b.textContent='🎥 Video Explanation';
       b.className='primary tgms-video-lesson-btn';
       b.onclick=function(){ tgmsOpenLessonResources('English Lessons',lesson); };
+    });
+
+    // Navigation safety: ensure the main subject buttons always use the global
+    // studentShow handler, even if an older script has replaced a button handler.
+    document.querySelectorAll('button[onclick="studentShow(\'physics\')"],button[onclick="studentShow(\'chem\')"],button[onclick="studentShow(\'maths\')"]').forEach(function(b){
+      const target=b.getAttribute('onclick').match(/studentShow\('([^']+)'\)/)?.[1];
+      if(target){
+        b.onclick=function(ev){if(ev)ev.preventDefault();window.studentShow(target);return false;};
+      }
     });
 
     const teluguLessons=document.getElementById('telugu_lessons_lessons');
