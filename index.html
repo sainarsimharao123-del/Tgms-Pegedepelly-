@@ -3438,6 +3438,7 @@ window.tgmsGetLessonResources=async function(subject,lesson){
   const empty={videos:[],practicals:[]};
 
   try{
+    // Read the canonical location first.
     const snap=await get(ref(rtdb,"dailyUpdate/lessonResources/"+key));
     if(snap.exists()){
       const d=snap.val();
@@ -3448,8 +3449,34 @@ window.tgmsGetLessonResources=async function(subject,lesson){
         };
       }
     }
+
+    // Compatibility fallback for resources saved by older TGMS versions.
+    const mirror=await get(ref(rtdb,"lessonResources/"+key));
+    if(mirror.exists()){
+      const d=mirror.val();
+      if(d&&typeof d==="object"){
+        return {
+          videos:Array.isArray(d.videos)?d.videos:[],
+          practicals:Array.isArray(d.practicals)?d.practicals:[]
+        };
+      }
+    }
+
+    const local=window.tgmsReadLessonLocal(subject,lesson);
+    if(local) return local;
     return empty;
   }catch(e){
+    // If the canonical read fails, try the compatibility mirror and then local cache.
+    try{
+      const mirror=await get(ref(rtdb,"lessonResources/"+key));
+      if(mirror.exists()){
+        const d=mirror.val();
+        if(d&&typeof d==="object") return {
+          videos:Array.isArray(d.videos)?d.videos:[],
+          practicals:Array.isArray(d.practicals)?d.practicals:[]
+        };
+      }
+    }catch(ignore){}
     const local=window.tgmsReadLessonLocal(subject,lesson);
     if(local) return local;
     return {
@@ -3483,6 +3510,11 @@ window.tgmsSetLessonResources=async function(subject,lesson,data){
   // Single canonical location. The current Firebase rules protect this
   // path through the authenticated administrator account.
   await set(ref(rtdb,"dailyUpdate/lessonResources/"+key),payload);
+  // Mirror the same resource at the shared lessonResources path so older
+  // student/lesson readers can also find videos without changing the rules.
+  try{ await set(ref(rtdb,"lessonResources/"+key),payload); }catch(mirrorError){
+    console.warn("TGMS lesson resource mirror write failed:",mirrorError);
+  }
   window.tgmsWriteLessonLocal(subject,lesson,payload);
   return payload;
 };
@@ -4143,7 +4175,7 @@ window.tgmsOpenEapcetPage=function(){
           else if(u.pathname.startsWith("/shorts/")) id=u.pathname.split("/")[2]||"";
           else if(u.pathname.startsWith("/embed/")) id=u.pathname.split("/")[2]||"";
         }
-        return id ? "https://www.youtube.com/embed/"+encodeURIComponent(id) : "";
+        return id ? "https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id)+"?rel=0" : "";
       }catch(e){return "";}
     }
 
@@ -4161,7 +4193,7 @@ window.tgmsOpenEapcetPage=function(){
             '<a class="primary tgms-video-open-link" target="_blank" rel="noopener noreferrer" href="'+esc(url)+'">▶️ Open Video</a>'+
             '</div>';
         }).join("")
-      : '<div class="notice">🎥 No video has been added to this lesson yet.</div>';
+      : '<div class="notice">🎥 No video has been added to this lesson yet.<br><small>Lesson: '+esc(lesson)+'</small><br><button type="button" class="primary" onclick="tgmsOpenLessonResources('+JSON.stringify(subject)+','+JSON.stringify(lesson)+')">🔄 Refresh Videos</button></div>';
 
     const practicalHtml=d.practicals.length
       ? d.practicals.map((v,i)=>
