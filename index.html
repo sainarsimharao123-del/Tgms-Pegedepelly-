@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07111f">
+  <title>TGMS Pegedepally Hub | Under Revamp</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      min-height:100vh;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:#fff;
+      background:
+        radial-gradient(circle at 15% 20%,rgba(0,212,255,.16),transparent 28%),
+        radial-gradient(circle at 85% 75%,rgba(124,58,237,.18),transparent 30%),
+        linear-gradient(135deg,#050914,#0b1628 55%,#10172c);
+      display:flex;align-items:center;justify-content:center;
+      overflow:hidden;padding:24px;
+    }
+    body:before,body:after{
+      content:"";position:fixed;border-radius:50%;filter:blur(2px);
+      border:1px solid rgba(255,255,255,.08);pointer-events:none;
+    }
+    body:before{width:420px;height:420px;top:-180px;right:-120px}
+    body:after{width:330px;height:330px;bottom:-170px;left:-100px}
+    .card{
+      width:min(900px,100%);
+      position:relative;
+      padding:58px 38px 42px;
+      text-align:center;
+      border:1px solid rgba(255,255,255,.13);
+      border-radius:32px;
+      background:rgba(255,255,255,.055);
+      backdrop-filter:blur(22px);
+      box-shadow:0 30px 100px rgba(0,0,0,.42);
+      animation:appear .8s ease both;
+    }
+    .badge{
+      display:inline-flex;align-items:center;gap:9px;
+      padding:9px 16px;border-radius:999px;
+      background:rgba(255,193,7,.1);
+      border:1px solid rgba(255,193,7,.28);
+      color:#ffd76a;font-size:13px;font-weight:700;
+      letter-spacing:.7px;text-transform:uppercase;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:50%;background:#ffd76a;
+      box-shadow:0 0 14px #ffd76a;animation:pulse 1.5s infinite;
+    }
+    .logo{
+      width:92px;height:92px;margin:28px auto 24px;
+      border-radius:27px;display:grid;place-items:center;
+      font-size:34px;font-weight:900;
+      background:linear-gradient(135deg,#00c6ff,#7c3aed);
+      box-shadow:0 18px 45px rgba(0,198,255,.22);
+      border:1px solid rgba(255,255,255,.2);
+    }
+    h1{font-size:clamp(42px,8vw,76px);line-height:.98;letter-spacing:-3px}
+    h1 span{
+      background:linear-gradient(90deg,#fff,#83e8ff,#c4b5fd);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .school{
+      margin-top:16px;color:#b9c6d8;font-size:18px;font-weight:600;
+    }
+    .message{
+      max-width:650px;margin:24px auto 0;
+      color:#9eacc0;font-size:16px;line-height:1.7;
+    }
+    .progress{
+      max-width:580px;margin:34px auto 0;text-align:left;
+    }
+    .progress-top{display:flex;justify-content:space-between;color:#cbd5e1;font-size:13px;font-weight:700;margin-bottom:10px}
+    .track{height:9px;border-radius:20px;background:rgba(255,255,255,.09);overflow:hidden}
+    .fill{
+      width:68%;height:100%;border-radius:20px;
+      background:linear-gradient(90deg,#00c6ff,#7c3aed);
+      box-shadow:0 0 20px rgba(0,198,255,.35);
+      animation:loading 2.4s ease-in-out infinite alternate;
+    }
+    .features{
+      margin:38px auto 0;display:grid;grid-template-columns:repeat(3,1fr);
+      gap:12px;max-width:680px;
+    }
+    .feature{
+      padding:17px 12px;border-radius:18px;
+      background:rgba(255,255,255,.045);
+      border:1px solid rgba(255,255,255,.08);
+      color:#b7c3d4;font-size:13px;font-weight:650;
+    }
+    .feature b{display:block;color:#fff;font-size:15px;margin-bottom:5px}
+    footer{margin-top:35px;color:#64748b;font-size:12px}
+    @keyframes pulse{50%{opacity:.35;transform:scale(.75)}}
+    @keyframes appear{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+    @keyframes loading{from{width:64%}to{width:73%}}
+    @media(max-width:620px){
+      .card{padding:42px 20px 30px;border-radius:25px}
+      h1{letter-spacing:-2px}
+      .school{font-size:15px}
+      .message{font-size:14px}
+      .features{grid-template-columns:1fr}
+      .logo{width:78px;height:78px;font-size:29px}
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="badge"><span class="dot"></span> System Revamp in Progress</div>
+
+    <div class="logo">TG</div>
+
+    <h1>We're <span>Revamping.</span></h1>
+
+    <div class="school">TGMS Pegedepally Hub</div>
+
+    <p class="message">
+      Our platform is currently undergoing a major upgrade.
+      We're rebuilding the experience to make it faster, cleaner,
+      smarter, and better for our students and staff.
+    </p>
+
+    <section class="progress" aria-label="Revamp progress">
+      <div class="progress-top">
+        <span>Platform Upgrade</span>
+        <span>In Progress</span>
+      </div>
+      <div class="track"><div class="fill"></div></div>
+    </section>
+
+    <section class="features">
+      <div class="feature"><b>⚡ Faster</b>Improved performance</div>
+      <div class="feature"><b>🎓 Smarter</b>Better student tools</div>
+      <div class="feature"><b>🔐 Better</b>Enhanced platform</div>
+    </section>
+
+    <footer>© 2026 TGMS Pegedepally Hub · A better platform is coming.</footer>
+  </main>
+</body>
+</html>
