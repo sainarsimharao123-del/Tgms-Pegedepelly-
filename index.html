@@ -1,0 +1,2219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TGMS Pegadapally | Institutional Web Campus</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    @media print {
+      body * { visibility: hidden; }
+      #printable-area, #printable-area * { visibility: visible; }
+      #printable-area { position: fixed; left: 0; top: 0; width: 100%; border: 2px solid #000; padding: 25px; }
+    }
+    .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen text-[13px] antialiased selection:bg-indigo-600 selection:text-white">
+
+  <!-- TOP INSTITUTIONAL NAVIGATION -->
+  <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-8 h-20 flex items-center justify-between sticky top-0 z-40 shadow-xs">
+    <div class="flex items-center space-x-3 cursor-pointer" onclick="goView('home')">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-indigo-900 to-indigo-700 flex items-center justify-center text-white font-black text-base shadow-md shadow-indigo-950/20 border border-white/20">
+        TG
+      </div>
+      <div>
+        <div class="flex items-center space-x-1.5">
+          <span class="text-[9px] uppercase tracking-wider font-extrabold px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-700 border border-amber-300">Govt of Telangana</span>
+          <span class="text-[9px] text-slate-500 font-semibold uppercase">Estd. Model School</span>
+        </div>
+        <h1 class="text-xs sm:text-sm font-black text-slate-900 tracking-tight leading-tight">TELANGANA MODEL SCHOOL & JR. COLLEGE</h1>
+        <p class="text-[10px] text-slate-500 font-medium">Pegadapally Mandal, Jagtial District, Telangana</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center space-x-3">
+      <button id="btn-login-open" class="bg-gradient-to-r from-indigo-900 to-indigo-800 hover:from-indigo-800 hover:to-indigo-700 text-white font-bold px-4 py-2 rounded-xl shadow-xs transition-all active:scale-95 flex items-center space-x-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+        <span>Portal Login</span>
+      </button>
+      <div id="user-badge" class="hidden flex items-center space-x-2.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl shadow-xs">
+        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+        <span id="user-label" class="font-bold text-slate-800 text-xs"></span>
+        <button id="btn-logout" class="bg-rose-50 hover:bg-rose-100 text-rose-600 px-2 py-0.5 rounded-lg font-bold text-[11px] transition-colors">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto p-4 sm:p-6 space-y-8">
+        <!-- HOME HERO & CAMPUS PROFILE -->
+    <div id="view-home" class="space-y-8">
+
+      <!-- Executive Header Banner -->
+      <div class="bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900 text-white p-6 sm:p-8 rounded-3xl shadow-xl border border-white/10 relative overflow-hidden">
+        <div class="absolute -right-16 -top-16 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
+          
+          <!-- Principal Portrait Box -->
+          <div class="flex flex-col items-center shrink-0">
+            <div class="w-36 h-44 sm:w-40 sm:h-48 rounded-2xl overflow-hidden border-2 border-amber-400/80 shadow-2xl bg-slate-800">
+              <img src="images/principal.jpg" alt="Principal Sri Prabhakar Reddy Kotha" class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300" onerror="this.src='images/principal.png'">
+            </div>
+            <div class="mt-2.5 text-center">
+              <h4 class="font-extrabold text-sm text-amber-300 tracking-tight">Prabhakar Reddy Kotha</h4>
+              <p class="text-[11px] text-slate-300 font-medium">Principal & Institutional Head</p>
+              <span class="inline-block mt-1 text-[9px] bg-white/10 text-slate-200 px-2 py-0.5 rounded-full border border-white/15">M.Sc, B.Ed</span>
+            </div>
+          </div>
+
+          <!-- Institutional Vision & Welcome Statement -->
+          <div class="space-y-3.5 text-center md:text-left">
+            <div class="inline-flex items-center space-x-2 bg-amber-400/20 text-amber-300 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider border border-amber-400/30">
+              <span>🌟 Center of Academic Excellence</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-white leading-tight">Welcome to Telangana Model School & Junior College, Pegadapally</h2>
+            <p class="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-2xl font-normal">
+              Committed to providing holistic education through English medium instruction under the Department of School Education, Government of Telangana. We foster future innovators through experiential STEM education, values-aligned leadership, and state-of-the-art technological learning environments.
+            </p>
+            <div class="pt-2 flex flex-wrap gap-2 justify-center md:justify-start">
+              <span class="bg-indigo-900/60 border border-indigo-400/30 text-indigo-200 px-3 py-1 rounded-lg text-[11px] font-semibold">U-DISE: 36030300109</span>
+              <span class="bg-indigo-900/60 border border-indigo-400/30 text-indigo-200 px-3 py-1 rounded-lg text-[11px] font-semibold">Grades: VI to XII (Intermediate)</span>
+              <span class="bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 px-3 py-1 rounded-lg text-[11px] font-semibold">Affiliated to BIE & DSE Telangana</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campus Infrastructure & Pillars Grid -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-black text-base text-slate-900 tracking-tight">World-Class Campus Infrastructure</h3>
+            <p class="text-xs text-slate-500 font-medium">Equipped with modernized learning laboratories and dedicated academic wings</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Card 1: ATL -->
+          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all hover:border-indigo-300 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center font-black text-lg">🤖</div>
+              <h4 class="font-extrabold text-sm text-slate-900">Atal Tinkering Lab (ATL)</h4>
+              <p class="text-slate-600 text-xs leading-relaxed">NITI Aayog supported innovation hub with 3D printers, robotics kits, sensors, and IoT prototyping setups for student innovators.</p>
+            </div>
+            <span class="mt-4 text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-1 rounded-lg inline-block border border-amber-200 w-fit">STEM Prototyping</span>
+          </div>
+
+          <!-- Card 2: ICT Computer Lab -->
+          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all hover:border-indigo-300 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center font-black text-lg">💻</div>
+              <h4 class="font-extrabold text-sm text-slate-900">Digital ICT Computer Lab</h4>
+              <p class="text-slate-600 text-xs leading-relaxed">High-speed networked systems providing hands-on coding, computer applications, digital skill certification, and online competitive tests.</p>
+            </div>
+            <span class="mt-4 text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded-lg inline-block border border-blue-200 w-fit">Broadband Connected</span>
+          </div>
+
+          <!-- Card 3: Science Labs -->
+          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all hover:border-indigo-300 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-black text-lg">🔬</div>
+              <h4 class="font-extrabold text-sm text-slate-900">Integrated Science Labs</h4>
+              <p class="text-slate-600 text-xs leading-relaxed">Comprehensive physics, chemistry, botany, and zoology practical labs fostering scientific inquiry and experimental observation.</p>
+            </div>
+            <span class="mt-4 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg inline-block border border-emerald-200 w-fit">Fully Equipped</span>
+          </div>
+
+          <!-- Card 4: Qualified Faculty -->
+          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all hover:border-indigo-300 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center font-black text-lg">🎓</div>
+              <h4 class="font-extrabold text-sm text-slate-900">Expert Faculty Roster</h4>
+              <p class="text-slate-600 text-xs leading-relaxed">Team of 21 highly qualified Post-Graduate Teachers (PGT) and Trained Graduate Teachers (TGT) driving academic success.</p>
+            </div>
+            <span class="mt-4 text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-1 rounded-lg inline-block border border-purple-200 w-fit">21 Specialist Staff</span>
+          </div>
+        </div>
+      </div>
+            <!-- Inter-House Science Cup Live Tally -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+          <div>
+            <h3 class="font-black text-base text-slate-900 tracking-tight">Inter-House Science Cup Leaderboard (2026)</h3>
+            <p class="text-xs text-slate-500">Live merit points tally across academic, athletic, and science exhibitions</p>
+          </div>
+          <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 w-fit">● Real-time Cloud Sync</span>
+        </div>
+        <div id="houses-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+      </div>
+
+      <!-- Press Clippings and News Wall -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+        <div>
+          <h3 class="font-black text-base text-slate-900 tracking-tight">Daily Institutional Press & Media Wall</h3>
+          <p class="text-xs text-slate-500">Official newspaper features, academic accomplishments, and school community news</p>
+        </div>
+        <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+      </div>
+
+    </div>
+        <!-- STUDENT PORTAL INTERFACE -->
+    <div id="view-student" class="hidden space-y-6">
+
+      <!-- Student Banner -->
+      <div class="bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-900 text-white p-6 rounded-3xl shadow-lg border border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div class="space-y-1">
+          <div class="flex items-center space-x-2">
+            <span id="stu-class" class="text-[10px] bg-amber-400 text-slate-950 px-2.5 py-0.5 rounded-full font-extrabold uppercase"></span>
+            <span id="stu-house-tag" class="text-[10px] bg-indigo-700/80 text-white px-2.5 py-0.5 rounded-full font-semibold border border-indigo-500/30"></span>
+          </div>
+          <h2 id="stu-name" class="text-xl sm:text-2xl font-black text-white tracking-tight mt-1"></h2>
+          <p class="text-slate-400 text-xs">Official Student Portal • Telangana Model School Pegadapally</p>
+        </div>
+        <div class="flex gap-2">
+          <button id="btn-join-house" onclick="openHouseJoinModal()" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3.5 py-2 rounded-xl text-xs transition-all shadow-xs">Join House</button>
+          <button onclick="printStudentId()" class="bg-white/10 hover:bg-white/20 text-white px-3.5 py-2 rounded-xl font-bold text-xs border border-white/20 transition-all">Print Hall Ticket</button>
+        </div>
+      </div>
+
+      <!-- Student Navigation Tabs -->
+      <div class="flex border-b border-slate-200 gap-2 overflow-x-auto pb-1 text-xs font-bold text-slate-600 scrollbar-none">
+        <button onclick="switchStuTab('competitive')" id="stab-competitive" class="text-indigo-900 border-b-2 border-indigo-900 pb-2 px-3 shrink-0 font-extrabold">🎯 Competitive Exams</button>
+        <button onclick="switchStuTab('materials')" id="stab-materials" class="pb-2 px-3 shrink-0 hover:text-indigo-900">📚 Subject Files</button>
+        <button onclick="switchStuTab('updates')" id="stab-updates" class="pb-2 px-3 shrink-0 hover:text-indigo-900">📢 Daily Announcements</button>
+        <button onclick="switchStuTab('exams')" id="stab-exams" class="pb-2 px-3 shrink-0 hover:text-indigo-900">💻 Digital Exams</button>
+        <button onclick="switchStuTab('marks')" id="stab-marks" class="pb-2 px-3 shrink-0 hover:text-indigo-900">📊 Report Card</button>
+        <button onclick="switchStuTab('query')" id="stab-query" class="pb-2 px-3 shrink-0 hover:text-indigo-900">✍️ Principal Desk Query</button>
+      </div>
+
+      <!-- Competitive Entrance Wing -->
+      <div id="sview-competitive" class="stu-subview space-y-4">
+        <div class="bg-gradient-to-r from-amber-500/10 via-amber-400/5 to-transparent p-5 rounded-2xl border border-amber-200">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="font-black text-sm sm:text-base text-slate-900">Competitive Entrance & Scholarship Coaching Desk</h3>
+              <p class="text-xs text-slate-600 mt-0.5">Official syllabus materials, formula handbooks, and past papers tailored to your class.</p>
+            </div>
+            <span id="stu-comp-badge" class="bg-indigo-950 text-amber-300 font-extrabold px-3 py-1 rounded-xl text-xs border border-amber-400/30"></span>
+          </div>
+        </div>
+        <div id="stu-competitive-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
+        
+        <div id="comp-files-box" class="pt-4 border-t border-slate-200 hidden space-y-3 bg-white p-5 rounded-2xl border shadow-xs">
+          <div class="flex justify-between items-center">
+            <span class="font-extrabold text-sm text-indigo-950" id="comp-files-label">Question Papers</span>
+            <button onclick="document.getElementById('comp-files-box').classList.add('hidden')" class="text-indigo-600 hover:text-indigo-900 font-bold text-xs">✕ Close Drawer</button>
+          </div>
+          <div id="comp-files-list" class="space-y-2"></div>
+        </div>
+      </div>
+            <!-- Curriculum Subjects & Files -->
+      <div id="sview-materials" class="stu-subview hidden space-y-4">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="font-black text-sm sm:text-base text-indigo-950">Curriculum Subjects & Reference Documents</h3>
+              <p class="text-xs text-slate-500">Tap any subject to view study guides, chapter notes, and teacher uploaded files</p>
+            </div>
+            <span id="stu-materials-class-badge" class="bg-indigo-50 text-indigo-900 px-3 py-1 rounded-xl text-xs font-extrabold border border-indigo-100"></span>
+          </div>
+          <div id="stu-subjects-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+          
+          <div id="selected-subject-files-box" class="pt-4 border-t border-slate-200 hidden space-y-3">
+            <div class="flex justify-between items-center bg-indigo-50/70 p-3 rounded-xl border border-indigo-100">
+              <span class="font-extrabold text-indigo-950 text-xs" id="current-opened-subject-label">Subject Files</span>
+              <button onclick="document.getElementById('selected-subject-files-box').classList.add('hidden')" class="text-indigo-700 font-bold text-xs">✕ Close</button>
+            </div>
+            <div id="subject-specific-files-list" class="space-y-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daily Announcements -->
+      <div id="sview-updates" class="stu-subview hidden space-y-3">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
+          <h3 class="font-black text-base text-indigo-950">Official Institutional Circulars</h3>
+          <div id="stu-daily-updates-list" class="space-y-3"></div>
+        </div>
+      </div>
+
+      <!-- Online Digital Examinations -->
+      <div id="sview-exams" class="stu-subview hidden space-y-4">
+        <div id="exam-catalog" class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
+          <h3 class="font-black text-base text-indigo-950">Active Digital Examinations</h3>
+          <div id="stu-exams-list" class="space-y-2.5"></div>
+        </div>
+
+        <div id="exam-active-panel" class="hidden bg-white p-6 rounded-3xl border border-indigo-200 shadow-md space-y-5">
+          <div class="flex justify-between items-center bg-slate-950 text-white p-4 rounded-2xl">
+            <div>
+              <h3 id="active-exam-title" class="font-black text-sm sm:text-base"></h3>
+              <p class="text-[10px] text-amber-300 font-medium">Proctored Session: Tab-switching or obscuring camera triggers auto-failure.</p>
+            </div>
+            <video id="proctor-video" autoplay playsinline muted class="w-24 h-18 bg-black rounded-xl border border-white/20 object-cover shrink-0"></video>
+          </div>
+          <div id="active-exam-questions" class="space-y-4"></div>
+          <button onclick="submitStudentExam()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold py-3 rounded-xl shadow-xs transition-all">Submit & Grade Examination</button>
+        </div>
+
+        <div id="exam-result-panel" class="hidden bg-white p-6 rounded-3xl border border-emerald-400 shadow-sm space-y-3 text-center">
+          <h3 class="text-base font-black text-slate-900">Examination Session Concluded</h3>
+          <div id="exam-result-details" class="text-sm font-semibold"></div>
+          <button onclick="printScoreCard()" class="bg-indigo-900 hover:bg-indigo-800 text-white font-bold px-5 py-2.5 rounded-xl text-xs shadow-xs">Download / Print Official Score Card</button>
+        </div>
+      </div>
+
+      <!-- Student Marks & Performance -->
+      <div id="sview-marks" class="stu-subview hidden space-y-3">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
+          <h3 class="font-black text-base text-indigo-950">Evaluation Records & Subject Marks</h3>
+          <div id="stu-marks-table" class="space-y-3"></div>
+        </div>
+      </div>
+
+      <!-- Student Query to Principal -->
+      <div id="sview-query" class="stu-subview hidden space-y-3">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+          <div>
+            <h3 class="font-black text-base text-indigo-950">Direct Communication to Principal's Desk</h3>
+            <p class="text-xs text-slate-500">Submit academic queries, infrastructural requests, or guidance notes directly to Sri Prabhakar Reddy Kotha</p>
+          </div>
+          <form id="form-stu-query" class="space-y-3">
+            <input id="query-subject" placeholder="Subject / Query Heading" class="w-full p-3 border border-slate-200 rounded-xl text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 transition-all" required>
+            <textarea id="query-body" rows="4" placeholder="Detail your message here..." class="w-full p-3 border border-slate-200 rounded-xl text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 transition-all" required></textarea>
+            <button type="submit" class="bg-indigo-900 hover:bg-indigo-800 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs shadow-xs transition-all">Transmit Query to Principal Sir</button>
+          </form>
+          <div class="pt-4 border-t border-slate-200">
+            <h4 class="font-bold text-xs text-slate-800 mb-2">Previous Inquiries & Official Responses</h4>
+            <div id="stu-query-history" class="space-y-2"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+        <!-- FACULTY & TEACHER WORKSTATION -->
+    <div id="view-teacher" class="hidden space-y-6">
+
+      <!-- Faculty Top Header -->
+      <div class="bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-900 text-white p-6 rounded-3xl shadow-lg border border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <span id="teach-badge" class="text-[10px] bg-amber-400 text-slate-950 px-3 py-0.5 rounded-full font-extrabold tracking-wide uppercase"></span>
+          <h2 id="teach-name" class="text-xl sm:text-2xl font-black text-white mt-1"></h2>
+          <p class="text-slate-400 text-xs">Faculty Portal • Department of Education, TGMS Pegadapally</p>
+        </div>
+        <button onclick="enableMobileNotifications()" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl font-bold text-xs border border-white/20 flex items-center space-x-2 transition-all">
+          <span>🔔</span>
+          <span>Enable Timetable Mobile Alarms</span>
+        </button>
+      </div>
+
+      <!-- Teacher Navigation Tabs -->
+      <div class="flex border-b border-slate-200 gap-2 overflow-x-auto pb-1 text-xs font-bold text-slate-600 scrollbar-none">
+        <button onclick="switchTeachTab('period')" id="ttab-period" class="text-indigo-900 border-b-2 border-indigo-900 pb-2 px-3 shrink-0 font-extrabold">⏱️ Mark Period Complete</button>
+        <button onclick="switchTeachTab('attendance')" id="ttab-attendance" class="pb-2 px-3 shrink-0 hover:text-indigo-900">📋 Class Attendance</button>
+        <button onclick="switchTeachTab('marks')" id="ttab-marks" class="pb-2 px-3 shrink-0 hover:text-indigo-900">📝 Subject Marks Entry</button>
+        <button onclick="switchTeachTab('uploads')" id="ttab-uploads" class="pb-2 px-3 shrink-0 hover:text-indigo-900">📁 Upload Chapter Notes</button>
+      </div>
+
+      <!-- Period Completion Tracker -->
+      <div id="tview-period" class="teach-subview space-y-4">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+          <div>
+            <h3 class="font-black text-base text-indigo-950">Timetable Session & Period Completion Logger</h3>
+            <p class="text-xs text-slate-500">Record your period completion timestamp directly to the Principal's monitoring dashboard</p>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="font-bold text-slate-700 text-xs">Allotted Period:</label>
+              <select id="t-period-num" class="w-full p-2.5 border rounded-xl font-semibold bg-slate-50 mt-1">
+                <option value="Period 1">Period 1 (09:15 - 10:00)</option>
+                <option value="Period 2">Period 2 (10:00 - 10:45)</option>
+                <option value="Period 3">Period 3 (11:00 - 11:45)</option>
+                <option value="Period 4">Period 4 (11:45 - 12:30)</option>
+                <option value="Period 5">Period 5 (01:15 - 02:00)</option>
+                <option value="Period 6">Period 6 (02:00 - 02:45)</option>
+                <option value="Period 7">Period 7 (02:55 - 03:35)</option>
+                <option value="Period 8">Period 8 (03:35 - 04:15)</option>
+              </select>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 text-xs">Class Section:</label>
+              <select id="t-period-class" class="w-full p-2.5 border rounded-xl font-semibold bg-slate-50 mt-1"></select>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 text-xs">Subject Handled:</label>
+              <select id="t-period-sub" class="w-full p-2.5 border rounded-xl font-semibold bg-slate-50 mt-1"></select>
+            </div>
+          </div>
+          <button onclick="logPeriodComplete()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold py-3 rounded-xl shadow-xs transition-all flex items-center justify-center space-x-2">
+            <span>✓</span>
+            <span>Record & Mark Period Complete</span>
+          </button>
+          
+          <div class="pt-4 border-t border-slate-200">
+            <h4 class="font-bold text-xs text-slate-800 mb-2">My Completed Periods Log (Today)</h4>
+            <div id="t-period-history" class="space-y-1.5 max-h-48 overflow-y-auto"></div>
+          </div>
+        </div>
+      </div>
+            <!-- Class Teacher Exclusive Attendance -->
+      <div id="tview-attendance" class="teach-subview hidden space-y-4">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="font-black text-base text-indigo-950">Daily Student Attendance Registry</h3>
+              <p class="text-xs text-slate-500">Restricted privilege: Granted strictly to designated Class Teachers (1st Period Faculty)</p>
+            </div>
+            <span id="t-att-class-badge" class="bg-amber-100 text-amber-900 px-3 py-1 rounded-xl font-extrabold text-xs border border-amber-200"></span>
+          </div>
+          <div id="t-att-students-list" class="space-y-2 max-h-80 overflow-y-auto pr-1"></div>
+          <button id="t-att-btn-save" onclick="saveClassAttendance()" class="w-full bg-indigo-900 hover:bg-indigo-800 text-white font-extrabold py-3 rounded-xl shadow-xs transition-all">Submit Official Daily Attendance to Cloud</button>
+        </div>
+      </div>
+
+      <!-- Restricted Subject Marks Entry -->
+      <div id="tview-marks" class="teach-subview hidden space-y-4">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+          <div>
+            <h3 class="font-black text-base text-indigo-950">Subject Marks Desk (Strictly Allotted Subjects Only)</h3>
+            <p class="text-xs text-slate-500">Auto-capped validations: FA/Month-End (20M) • SA/Languages (80M) • Maths/Sci (60M)</p>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="font-bold text-slate-700 text-xs">Class:</label>
+              <select id="tm-class" onchange="loadTeacherStudents()" class="w-full p-2.5 border rounded-xl font-semibold bg-slate-50 mt-1"></select>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 text-xs">Assessment Exam:</label>
+              <select id="tm-exam" onchange="updateTeacherMaxMarks()" class="w-full p-2.5 border rounded-xl font-semibold bg-slate-50 mt-1"></select>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 text-xs">My Subject:</label>
+              <select id="tm-sub" onchange="updateTeacherMaxMarks()" class="w-full p-2.5 border rounded-xl font-semibold bg-slate-50 mt-1"></select>
+            </div>
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 text-xs">Student:</label>
+            <select id="tm-student" class="w-full p-2.5 border rounded-xl font-semibold bg-slate-50 mt-1"></select>
+          </div>
+          <div class="flex items-center space-x-3 pt-2">
+            <span class="font-bold text-xs text-slate-800">Enter Marks:</span>
+            <input type="number" id="tm-val" placeholder="0" class="w-28 p-2.5 border rounded-xl font-black text-right text-indigo-900 bg-white shadow-inner">
+            <span id="tm-max-label" class="text-slate-500 font-bold text-xs"></span>
+          </div>
+          <button onclick="saveTeacherMarks()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold py-3 rounded-xl shadow-xs transition-all">Save & Publish Marks to Student Report Card</button>
+        </div>
+      </div>
+
+      <!-- Teacher File Upload Desk -->
+      <div id="tview-uploads" class="teach-subview hidden space-y-4">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+          <div>
+            <h3 class="font-black text-base text-indigo-950">Publish Chapter Notes & Learning Materials</h3>
+            <p class="text-xs text-slate-500">Upload PDF drive links or digital notes for your allotted subjects</p>
+          </div>
+          <form id="form-teacher-upload" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="font-bold text-slate-700 text-xs">Class:</label>
+              <select id="tu-class" class="w-full p-2.5 border rounded-xl font-semibold bg-slate-50 mt-1" required></select>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 text-xs">Assigned Subject:</label>
+              <select id="tu-sub" class="w-full p-2.5 border rounded-xl font-semibold bg-slate-50 mt-1" required></select>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 text-xs">Chapter / Unit Title:</label>
+              <input id="tu-title" placeholder="e.g. Real Numbers - Chapter Notes" class="w-full p-2.5 border rounded-xl bg-slate-50 mt-1" required>
+            </div>
+            <div class="sm:col-span-3">
+              <label class="font-bold text-slate-700 text-xs">Google Drive or Document PDF URL:</label>
+              <input id="tu-url" placeholder="https://drive.google.com/..." class="w-full p-2.5 border rounded-xl bg-slate-50 mt-1" required>
+            </div>
+            <button type="submit" class="sm:col-span-3 bg-indigo-900 hover:bg-indigo-800 text-white font-extrabold py-3 rounded-xl shadow-xs transition-all">Publish to Student Class Drawer</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+        <!-- ADMIN HEADQUARTERS -->
+    <div id="view-admin" class="hidden space-y-6">
+
+      <!-- Admin Top Banner -->
+      <div class="bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-900 text-white p-6 rounded-3xl shadow-lg border border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight">Principal's Administrative Headquarters</h2>
+          <div class="flex items-center space-x-2 mt-1">
+            <span class="text-xs text-slate-300">Holiday Broadcast:</span>
+            <button id="btn-toggle-holiday" onclick="toggleHolidayMode()" class="px-3 py-1 rounded-full text-[11px] font-extrabold bg-slate-700 text-white transition-all">Checking...</button>
+          </div>
+        </div>
+        <button id="btn-broadcast" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold px-4 py-2 rounded-xl text-xs shadow-xs transition-all">📢 Post Campus Update</button>
+      </div>
+
+      <!-- Admin Navigation Tabs -->
+      <div class="flex border-b border-slate-200 gap-2 overflow-x-auto pb-1 text-xs font-bold text-slate-600 scrollbar-none">
+        <button onclick="switchAdmTab('substitution')" id="atab-substitution" class="px-3.5 py-1.5 bg-amber-600 text-slate-950 rounded-xl font-extrabold shrink-0 shadow-xs">🔄 Substitution & SMS</button>
+        <button onclick="switchAdmTab('students')" id="atab-students" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl shrink-0">Students (471)</button>
+        <button onclick="switchAdmTab('marks')" id="atab-marks" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl shrink-0">Marks Control</button>
+        <button onclick="switchAdmTab('whatsapp')" id="atab-whatsapp" class="px-3.5 py-1.5 bg-emerald-700 text-white rounded-xl shrink-0">📱 WhatsApp Broadcast</button>
+        <button onclick="switchAdmTab('uploads')" id="atab-uploads" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl shrink-0">Upload Subject Files</button>
+        <button onclick="switchAdmTab('comp-uploads')" id="atab-comp-uploads" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl shrink-0">Competitive Papers</button>
+        <button onclick="switchAdmTab('houses')" id="atab-houses" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl shrink-0">House Approvals</button>
+        <button onclick="switchAdmTab('exams')" id="atab-exams" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl shrink-0">Exam Builder</button>
+        <button onclick="switchAdmTab('queries')" id="atab-queries" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl shrink-0">Principal Queries</button>
+      </div>
+
+      <!-- Substitution & Direct SMS Desk (Method 1) -->
+      <div id="apanel-substitution" class="admin-panel space-y-4">
+        <div class="bg-amber-50/80 border border-amber-300 p-6 rounded-3xl shadow-xs space-y-4">
+          <div class="flex items-center space-x-3">
+            <span class="text-2xl">🔄</span>
+            <div>
+              <h3 class="font-black text-sm sm:text-base text-amber-950">Faculty Substitution Desk (1-Tap Cellular SMS)</h3>
+              <p class="text-xs text-amber-800">Assign substitution classes and dispatch direct SMS to the teacher's phone</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <div>
+              <label class="font-bold text-slate-700 text-xs">Absent / On-Leave Teacher:</label>
+              <select id="sub-absent-teacher" class="w-full p-2.5 border rounded-xl font-semibold bg-white mt-1"></select>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 text-xs">Class & Section:</label>
+              <select id="sub-class" class="w-full p-2.5 border rounded-xl font-semibold bg-white mt-1"></select>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 text-xs">Period:</label>
+              <select id="sub-period" class="w-full p-2.5 border rounded-xl font-semibold bg-white mt-1">
+                <option value="Period 1 (09:15 - 10:00)">Period 1 (09:15 - 10:00)</option>
+                <option value="Period 2 (10:00 - 10:45)">Period 2 (10:00 - 10:45)</option>
+                <option value="Period 3 (11:00 - 11:45)">Period 3 (11:00 - 11:45)</option>
+                <option value="Period 4 (11:45 - 12:30)">Period 4 (11:45 - 12:30)</option>
+                <option value="Period 5 (01:15 - 02:00)">Period 5 (01:15 - 02:00)</option>
+                <option value="Period 6 (02:00 - 02:45)">Period 6 (02:00 - 02:45)</option>
+                <option value="Period 7 (02:55 - 03:35)">Period 7 (02:55 - 03:35)</option>
+                <option value="Period 8 (03:35 - 04:15)">Period 8 (03:35 - 04:15)</option>
+              </select>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 text-xs">Substitute Teacher:</label>
+              <select id="sub-assign-teacher" class="w-full p-2.5 border rounded-xl font-semibold bg-white mt-1"></select>
+            </div>
+          </div>
+
+          <div>
+            <label class="font-bold text-slate-700 text-xs">Principal's Instructions / Notes:</label>
+            <input id="sub-notes" placeholder="e.g. Please conduct study hour / maintain discipline" class="w-full p-2.5 border rounded-xl bg-white mt-1 text-xs">
+          </div>
+
+          <div class="flex gap-3">
+            <button onclick="dispatchSubstitutionSMS()" class="w-1/2 bg-indigo-900 hover:bg-indigo-800 text-white font-extrabold py-3 rounded-xl shadow-xs transition-all flex items-center justify-center space-x-1.5">
+              <span>📱 Send Direct SMS</span>
+            </button>
+            <button onclick="dispatchSubstitutionWhatsApp()" class="w-1/2 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold py-3 rounded-xl shadow-xs transition-all flex items-center justify-center space-x-1.5">
+              <span>💬 Send via WhatsApp</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
+          <div class="flex justify-between items-center">
+            <h4 class="font-black text-sm text-indigo-950">Faculty Mobile Number Directory</h4>
+            <span class="text-[11px] text-slate-500">Tap any teacher to update phone number</span>
+          </div>
+          <div id="admin-teacher-phone-list" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 max-h-56 overflow-y-auto pr-1"></div>
+        </div>
+      </div>
+            <!-- Students Records List (471) -->
+      <div id="apanel-students" class="admin-panel hidden space-y-4">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
+          <input type="text" id="adm-search" placeholder="Search by student name, class, or username..." class="w-full p-3 border border-slate-200 rounded-xl text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 transition-all">
+          <div class="max-h-80 overflow-y-auto border rounded-2xl">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 sticky top-0 border-b"><tr><th class="p-3 font-extrabold">Student Name</th><th class="p-3 font-extrabold">Class</th><th class="p-3 font-extrabold">User / Pass</th><th class="p-3 font-extrabold">House</th><th class="p-3 text-right font-extrabold">Action</th></tr></thead>
+              <tbody id="adm-tbody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Marks Master Desk -->
+      <div id="apanel-marks" class="admin-panel hidden space-y-4">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="font-black text-base text-indigo-950">Master Academic Marks Console</h3>
+              <p class="text-xs text-slate-500">Direct evaluation overrides with automatic subject ceiling checks</p>
+            </div>
+            <span class="text-[10px] bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-bold border border-indigo-200">FA: 20M • SA: 80M / 60M</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <select id="marks-select-class" onchange="loadStudentsForMarks()" class="p-2.5 border rounded-xl font-semibold bg-slate-50"></select>
+            <select id="marks-select-exam" onchange="renderMarksFields()" class="p-2.5 border rounded-xl font-semibold bg-slate-50"></select>
+            <select id="marks-select-student" onchange="populateExistingMarks()" class="p-2.5 border rounded-xl font-semibold bg-slate-50"></select>
+          </div>
+          <div id="marks-subjects-container" class="space-y-2 pt-3 border-t"></div>
+          <button onclick="saveStudentMarks()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold py-3 rounded-xl shadow-xs transition-all">Save & Sync to Cloud Database</button>
+        </div>
+      </div>
+
+      <!-- WhatsApp Broadcast Hub -->
+      <div id="apanel-whatsapp" class="admin-panel hidden space-y-4">
+        <div class="bg-emerald-50/80 border border-emerald-300 p-6 rounded-3xl shadow-xs space-y-4">
+          <div class="flex items-center space-x-3">
+            <span class="text-2xl">📱</span>
+            <div>
+              <h3 class="font-black text-base text-emerald-950">1-Click WhatsApp Parent & Student Broadcast</h3>
+              <p class="text-xs text-emerald-800">Generate formatted official notices and dispatch to class WhatsApp groups</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="font-bold text-slate-700 text-xs">Target Section:</label>
+              <select id="wa-select-class" class="w-full p-2.5 border rounded-xl font-semibold bg-white mt-1"></select>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 text-xs">Notice Category:</label>
+              <select id="wa-select-template" onchange="applyWhatsAppTemplate()" class="w-full p-2.5 border rounded-xl font-semibold bg-white mt-1">
+                <option value="marks">📝 Academic Marks & Results Announcement</option>
+                <option value="exam">💻 New Online Digital Exam Deployed</option>
+                <option value="comp">🎯 POLYCET / NMMS / JEE / NEET Material</option>
+                <option value="general">📢 General Campus Announcement</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 text-xs">Message Template (Editable):</label>
+            <textarea id="wa-message-body" rows="6" class="w-full p-3 border rounded-xl bg-white font-mono text-xs leading-relaxed mt-1" required></textarea>
+          </div>
+          <button onclick="dispatchWhatsAppBroadcast()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3 rounded-xl flex items-center justify-center space-x-2 shadow-xs transition-all">
+            <span>🚀 Open WhatsApp & Transmit Notice</span>
+          </button>
+        </div>
+      </div>
+            <!-- Admin Upload Subject Files -->
+      <div id="apanel-uploads" class="admin-panel hidden space-y-4">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+          <h4 class="font-black text-sm text-indigo-950">Publish Curriculum Subject Study Materials</h4>
+          <form id="form-mat" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <select id="m-cls" onchange="syncUploadSubjectsDropdown()" class="p-2.5 border rounded-xl font-semibold bg-slate-50" required></select>
+            <select id="m-sub" class="p-2.5 border rounded-xl font-semibold bg-slate-50" required></select>
+            <input id="m-tit" placeholder="Chapter / Document Title" class="p-2.5 border rounded-xl bg-slate-50" required>
+            <input id="m-url" placeholder="Google Drive or PDF Link" class="p-2.5 border rounded-xl bg-slate-50" required>
+            <button class="sm:col-span-4 bg-indigo-900 hover:bg-indigo-800 text-white font-extrabold py-3 rounded-xl shadow-xs transition-all">Publish to Selected Class Section</button>
+          </form>
+        </div>
+        
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+          <h4 class="font-black text-sm text-indigo-950">Post Newspaper Clipping or Media Photo</h4>
+          <form id="form-gal" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input id="g-cap" placeholder="Newspaper Headline / Caption" class="p-2.5 border rounded-xl bg-slate-50" required>
+            <input id="g-url" placeholder="Direct Image URL" class="p-2.5 border rounded-xl bg-slate-50" required>
+            <button class="sm:col-span-2 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold py-3 rounded-xl shadow-xs transition-all">Publish to Homepage Media Wall</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Upload Competitive Entrance Materials -->
+      <div id="apanel-comp-uploads" class="admin-panel hidden space-y-4">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+          <h4 class="font-black text-sm text-amber-700">Upload POLYCET / NMMS / JEE / NEET / EAPCET Question Papers</h4>
+          <form id="form-comp-upload" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <select id="comp-up-cls" onchange="syncCompUploadDropdown()" class="p-2.5 border rounded-xl font-semibold bg-slate-50" required></select>
+            <select id="comp-up-exam" class="p-2.5 border rounded-xl font-semibold bg-slate-50" required></select>
+            <input id="comp-up-title" placeholder="Paper / Practice Set Title" class="p-2.5 border rounded-xl bg-slate-50" required>
+            <input id="comp-up-url" placeholder="Google Drive or PDF Link" class="p-2.5 border rounded-xl bg-slate-50" required>
+            <button class="sm:col-span-4 bg-amber-600 hover:bg-amber-500 text-slate-950 font-black py-3 rounded-xl shadow-xs transition-all">Publish Competitive Paper</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- House Approvals -->
+      <div id="apanel-houses" class="admin-panel hidden space-y-4">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
+          <h3 class="font-black text-base text-indigo-950">Science House Enrollment Verification</h3>
+          <div id="admin-house-requests" class="space-y-2"></div>
+        </div>
+      </div>
+
+      <!-- Interactive Exam Builder -->
+      <div id="apanel-exams" class="admin-panel hidden space-y-4">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+          <h3 class="font-black text-base text-indigo-950">Interactive Digital Exam Builder</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <select id="build-exam-class" onchange="syncExamSubjectsDropdown()" class="p-2.5 border rounded-xl bg-slate-50 font-semibold" required></select>
+            <select id="build-exam-sub" class="p-2.5 border rounded-xl bg-slate-50 font-semibold" required></select>
+            <input id="build-exam-title" placeholder="Exam Title (e.g. FA-2 Objective Quiz)" class="p-2.5 border rounded-xl bg-slate-50 font-semibold" required>
+          </div>
+          
+          <div class="p-4 border rounded-2xl bg-slate-50 space-y-3">
+            <div class="font-extrabold text-xs flex justify-between items-center text-slate-800">
+              <span>Question Draft (<span id="draft-count-label">0 Questions Staged</span>)</span>
+            </div>
+            <input id="q-input-text" placeholder="Type Question statement..." class="w-full p-2.5 border rounded-xl bg-white text-xs">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <input id="q-input-a" placeholder="Option A" class="p-2 border rounded-xl bg-white text-xs">
+              <input id="q-input-b" placeholder="Option B" class="p-2 border rounded-xl bg-white text-xs">
+              <input id="q-input-c" placeholder="Option C" class="p-2 border rounded-xl bg-white text-xs">
+              <input id="q-input-d" placeholder="Option D" class="p-2 border rounded-xl bg-white text-xs">
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="font-bold text-xs text-slate-700">Correct Option:</span>
+              <select id="q-input-correct" class="p-2 border rounded-xl bg-white font-extrabold text-xs">
+                <option value="A">Option A</option>
+                <option value="B">Option B</option>
+                <option value="C">Option C</option>
+                <option value="D">Option D</option>
+              </select>
+              <button type="button" onclick="stageDraftQuestion()" class="bg-indigo-900 hover:bg-indigo-800 text-white font-extrabold px-4 py-2 rounded-xl text-xs ml-auto shadow-xs">+ Add Question</button>
+            </div>
+          </div>
+          
+          <div id="staged-questions-preview" class="space-y-2"></div>
+          <button onclick="deployStagedExam()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold py-3 rounded-xl shadow-xs transition-all">Deploy Complete Examination to Students</button>
+        </div>
+      </div>
+
+      <!-- Admin Principal Queries Review Desk -->
+      <div id="apanel-queries" class="admin-panel hidden space-y-4">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
+          <h3 class="font-black text-base text-indigo-950">Principal Desk - Student Inquiry Inbox</h3>
+          <div id="admin-queries-list" class="space-y-2.5"></div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+    <!-- MODAL: REDESIGNED PROFESSIONAL INSTITUTIONAL AUTHENTICATION -->
+  <div id="login-modal" class="hidden fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 sm:p-7 shadow-2xl border border-slate-100 space-y-4 relative">
+      
+      <!-- Modal Header -->
+      <div class="text-center space-y-1">
+        <div class="w-12 h-12 rounded-2xl bg-indigo-950 text-white flex items-center justify-center font-black text-base mx-auto shadow-md">
+          TG
+        </div>
+        <h3 class="font-black text-base text-slate-900 tracking-tight mt-2">Institutional Access Portal</h3>
+        <p class="text-slate-500 text-xs">Telangana Model School & Jr. College Pegadapally</p>
+      </div>
+
+      <!-- Role Selector Tabs -->
+      <div id="login-role-tabs" class="grid grid-cols-3 bg-slate-100 p-1 rounded-2xl text-center font-extrabold text-xs">
+        <button id="tab-s" class="py-1.5 rounded-xl bg-indigo-900 text-white shadow-xs transition-all">Student</button>
+        <button id="tab-t" class="py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all">Teacher</button>
+        <button id="tab-a" class="py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all">Admin</button>
+      </div>
+
+      <!-- Standard Credentials Stage -->
+      <form id="form-auth" class="space-y-3">
+        <div>
+          <label class="block font-bold text-slate-700 text-xs mb-1">Username / ID:</label>
+          <input id="login-u" placeholder="Enter clean username (e.g. shravani)" class="w-full p-3 border border-slate-200 rounded-xl text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 transition-all" required>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 text-xs mb-1">Password:</label>
+          <input id="login-p" type="password" placeholder="Enter password" class="w-full p-3 border border-slate-200 rounded-xl text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 transition-all" required>
+        </div>
+
+        <!-- Teacher Mobile Phone Entry (Revealed when Teacher tab active) -->
+        <div id="login-phone-box" class="hidden">
+          <label class="block font-bold text-slate-700 text-xs mb-1">Teacher Registered Mobile Number:</label>
+          <input id="login-phone" type="tel" maxlength="10" placeholder="10-Digit Mobile (e.g. 9876543210)" class="w-full p-3 border border-slate-200 rounded-xl text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 font-semibold transition-all">
+          <p class="text-[10px] text-slate-500 mt-1">Mobile number is verified and saved for period substitution alerts.</p>
+        </div>
+
+        <div id="login-err" class="text-rose-600 font-extrabold text-xs hidden"></div>
+
+        <button type="submit" id="btn-auth-submit" class="w-full bg-gradient-to-r from-indigo-900 to-indigo-800 hover:from-indigo-800 hover:to-indigo-700 text-white font-extrabold py-3 rounded-xl shadow-xs transition-all">
+          Sign In to Workspace
+        </button>
+        <button type="button" id="btn-login-close" class="w-full py-1.5 text-slate-400 hover:text-slate-600 font-bold text-xs transition-colors">
+          Cancel & Return
+        </button>
+      </form>
+
+      <!-- Simulated OTP Stage (For Faculty Login) -->
+      <form id="form-otp" class="hidden space-y-3">
+        <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-2xl text-center space-y-0.5">
+          <p class="text-xs text-indigo-950 font-extrabold">Faculty Mobile Verification</p>
+          <p class="text-[11px] text-slate-600">Enter the 6-digit OTP generated for: <span id="otp-mobile-label" class="font-extrabold text-slate-900"></span></p>
+        </div>
+        <input id="input-otp" type="number" placeholder="• • • • • •" class="w-full p-3 border border-slate-200 rounded-xl text-center tracking-widest font-black text-lg bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 transition-all" required>
+        <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold py-3 rounded-xl shadow-xs transition-all">
+          Validate OTP & Open Dashboard
+        </button>
+        <button type="button" onclick="cancelOtpLogin()" class="w-full py-1 text-slate-400 hover:text-slate-600 font-bold text-xs">
+          ← Back to Credentials
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Pre-loaded Science House Modal -->
+  <div id="house-modal" class="hidden fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white p-6 rounded-3xl max-w-xs w-full space-y-3 text-xs shadow-2xl">
+      <h3 class="font-black text-sm text-slate-900">Enroll in Science House</h3>
+      <p class="text-slate-500 text-[11px] leading-relaxed">Select your official science house. Institutional rule: 1 student = 1 house. Selection locks upon Principal approval.</p>
+      <select id="house-preloaded-select" class="w-full p-3 border rounded-xl font-bold bg-slate-50">
+        <option value="Dr. APJ Abdul Kalam House">Dr. APJ Abdul Kalam House</option>
+        <option value="Sir C. V. Raman House">Sir C. V. Raman House</option>
+        <option value="Albert Einstein House">Albert Einstein House</option>
+        <option value="Sir Isaac Newton House">Sir Isaac Newton House</option>
+      </select>
+      <div class="flex gap-2 pt-2">
+        <button onclick="submitHouseRequest()" class="w-1/2 bg-indigo-900 text-white font-extrabold py-2 rounded-xl">Submit</button>
+        <button onclick="document.getElementById('house-modal').classList.add('hidden')" class="w-1/2 bg-slate-100 font-bold py-2 rounded-xl">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="printable-area" class="hidden max-w-md mx-auto bg-white p-8 text-slate-900">
+    <div id="print-content"></div>
+  </div>
+
+  <!-- CORE SCRIPT LOGIC -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD68Rg-d4poC7ViGIF40sJHaC_JV0aQWTc",
+      authDomain: "tgms-pegedepelly-hub.firebaseapp.com",
+      databaseURL: "https://tgms-pegedepelly-hub-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "tgms-pegedepelly-hub",
+      storageBucket: "tgms-pegedepelly-hub.firebasestorage.app",
+      messagingSenderId: "665938484871",
+      appId: "1:665938484871:web:d26dec2486bdfddb0ae222"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+        const rawData = [
+      { c: "Class 6th - Section A", b: "6th", n: "ANNAMDAS KARTHIK VARMA|BEENAVENI HANSIKA|BOGA SATHWIK|BOGA VIGNESH|BURRA MANI DEEP|BYRA LAXMAN|BYRA RAM|CHINTHAPANDU RANADEEP|ERELLI ASHWITH|GUNTI NIRANJAN KUMAR|KALLEM SRIKANTH|KUNDELLA SAHARSHINI|MATETI HARI SHARAN|MATETI MURALI VARDHAN|MULKALA HIMANISH NANDHAN|PULLA DEEKSHITHA|RANGU REVANTH|SAMBARI GANESHWAR|SINGIREDDY VAMSHI KRISHNA REDDY|THADURI VISHWANJA" },
+      { c: "Class 7th - Section A", b: "7th", n: "ANEEF PASHA|ARUKUTA SHASWANTH|BANOTH AMULYA|BATHINI KAARTHIKEYA|DAVANAPELLI SRI CHAITRA|GOLLAPALLY REYHWIKA|GUNDLAPELLI MAHALAXMI|KADALA RITHVIK|LINGAMPELLI MANASWITH|MANDHA MANOJ|MARIKANTI VINODHA|MARRIPELLI MAHESH|MULKA MANOJ KUMAR|MUTHYALA SAVIYA|NAGAM SAGARIKA|ODNALA MAHARSHITHA|PABBALA AKSHITH KUMAR|RAGALLA VINAY|THOTA JESHWANTH|VILASAGARAM KARTHIK" },
+      { c: "Class 8th - Section A", b: "8th", n: "ADEPU VISHAL|AVUNOOTI HARSHITHA|BANDARI AKSHAYA|BANOTH LUCKY|BEDIGAM NISHANTH|BYRA SHIVA MALLIKARJUN|CHILUMULA DEEKSHITHA|DOBBALA PRATHIBA|DONTHARAVENI MANOHAR|DORAGANDLA KUMAR|DORAGANDLA RAMCHARAN|GOGULA GABBAR SINGH|JITTAVENI MANOJ|KOGILALA VAISHNAVI|KOGILALA VARSHA|KOMALLA LASYA|MANDA RAMCHARAN TEJA|MANDA SAI NIKHIL|SATHPADI VARUN|SEEGIRI ABHINAVA|SIGIRI NIROJ|THADAGONDA AKASH|THAMMALLA RAKESH KUMAR|THOTA HARI CHARAN|THOTLA MADHU" },
+      { c: "Class 9th - Section A", b: "9th", n: "ADAPELLY PRAJWALA|AGURLA MANOHAR|AILAVENI SAHASRIKA|AJMEERA VARSHINI|AJMIRA AJAY|BANDAPELLY RISHI|BATHINI SATWIKA|BEKKAM SHIVA KUMAR|BERA NISHWANTH|BODDULA MANITEJ|BONAGIRI KEERTHI PRIYA|DONTHARAVENI MANICHANDU|EDELLI DISHA|ELLANKI GOUTHAM|ERAVENI VAISHNAVI|GADAM SRINIDI|GADHE VYSHNAVI|GANGADHARA SRUJANA|GANNEBOINA SRUTHI|GATTU GAGAN DHEEP|GOGULA PALLAVI|GONE ROHITH|GUDIVANDULA VICTORIA|GUMPULA VYSHNAVI|KALLEM SUSHANTH KUMAR|KANDHUKALA JASHUVA KUMAR|KASHETTI VISHNU|KATLA RISHITH|KOLIPAKA BENARJI|KOMMOJU VISHWANI|KOTA RANADHEER|KOTHURI KETHAN|KUDUDHULA ROHAN TEJA|MADDELA NEEHAL|MAGENI SHRAVYA|MAMIDIPALLI HARSHA|MANDA ABHIRAM|MARAMPELLI SATHWIK|NAKKA SHIVAKUMAR|NEDARI SINDHU|PITTALA SRI VARSHITHA|PULI KARTHIK|PUNNAM AVANTHIKA|RACHARLA SRAVAN KUMAR|SEEGIRI PRANAY KUMAR|THULLA MANU SRI|UPPU AKSHAY KUMAR|VILASAGARAM RISHI" },
+      { c: "Class 9th - Section B", b: "9th", n: "ADIPELLY PRAVALIKA|AGURLA ARCHANA|AJMIRA VARSHINI|AJMIRA YUGENDAR|ARE SATWIKA|ARROJU PRAVASTHI|ARUKUTA RISHWANTH|BANOTH RAJESHWARI|BATHINI DEEKSHITHA|BEERLA AKSHARA|BEKKAM HANISH|BINAVENI HEMANTH|DOMMATI KARTHIK|DONAKONDA SHYAM KUMAR|GALIPELLY VISHNU TEJA|GANEBOINA HARSHA VARDHAN|GUGLOTHU KARTHIK|GUNDLAPELLY KETHESHWAR|JETTI MADHUMATHI|JETTI MAHESHWARI|KAMBALA ANUSHA|KARU RISHIKA|KOMALLA VIKAS|KOTHAPALLI ASHWITH KUMAR|KOTTURI THIRUMAL|KUNDELLA HARSHINI|LINGALA VARSHITHA|MADIGELA SAI HARSHITH|MALA AKSHAY KUMAR|MATETI GAYATRI|MODUMPALLY NAMAN TEJ|MOLOTH KAVYA|NADIMETLA PRANAV TEJA|NYATHA SAHITH|ORUGALA MANOJ|PALUMARU JANAJAGRUTHI|PANDUGA HEMALATHA|PATNURI GOUTHAM RAJ|RACHARLA HARSHAVARDHAN|RAGALLA SAHASRA|SAYYD IRFANA|SEEGIRI RUTHIK|SINGARAPU SHIVANJALI|SOORA SAI KUMAR|THATIPANDU SRI CHARAN|THODETI HARIKA|THOTA ASHWITH|THUMMANAPALLI HIMAJA|VARSHINI GANSH VANNAM" },
+      { c: "Class 10th - Section A", b: "10th", n: "ADUPA AKSHITH|AILAVENI ARCHANA|AJMIRA SHIVANI|BALIJAPELLI VARSHINI|BANDARI VARUN GOUD|BATTULA SHRUTHI|BHAIRA RAMCHARAN|BHUSARAPU SRIHANI|BOGA RAVITEJA|BOMMENA SANTHOSH|BYRA SHARANYA|CHATARLA HARIKA|DANDU SRI HARSHA|DHAVANAPELLY HIMA SRI|DOBBALA LOKESH|ELAGANDULA SIDDATRHA|GAJJI AKSHAYA|GAJJI ASRITHA|GAJULA DIVYA SRI|GALIPELLI ADITHYA|GANNEBOINA GANGOTHRI|GUNTUKULA ESWER|KADALA RITHWIKA|KOLIPAKA AKSHARA|KORRI NIKHIL|KOTA CHAKRIKA|MALA SRIJA|MANDALA SRI KRUTHIKA|MARRIKANTI SAHASRA|MD HARSHIYA ANJUM|MERUGU SAI PRIYA|MULKA SAI KRISHNA|PEPARLA HARSHA VARDHAN|PUNNAM ALEKHYA|PUNNAM SANJANA|RONDLA SRISHANK REDDY|SAMBARI HARISHWAR|SEEGIRI ANANDI|SRIKOTI SAHITHI|THODETI NAVYASRI|THOTA VYSHNAVI|THUKUNTLA MARUTHI RAO|VELMULA SHARANYA" },
+      { c: "Class 10th - Section B", b: "10th", n: "ADEPU VAISHNAVI|ADIGOPPULA ANUSH|ADUPA AKSHITH KUMAR|AMUDURTHI SRIVANI|BATHINI NIHARIKA|BEKKAM HARSHA VARDHAN|BODDULA SRI CHARAN|BODDULA SRI RAM|BOGA SRI HARSHINI|BYRA RISHITHA|CHATLA VIVEK|CHEVULA PRASHANTH|CHINTHAKINDHI NIHARIKA|DONTURAVENI AKSHAYA|DORAGANDLA ALEKYA|DUMMALA ASHWANTH|ENUGULA AKSHAYA|GAJJI VISHNU VARDHAN|GOKA MARUTHI|GOTLA SREEJA|GURIJALA LAKSHITHA|ITIKYALA ARAVIND|JETTI AKSHAYA|JITTAVENI PRANITH|KAMADRI AKSHITH|KASHETTI MANIDEEP|KODIDHELA VARSHITHA|KOLAPURI RISHVIK|KOLIPAKA GOUTHAM|KONTHAM HIMAVARSHINI|KYASA SAI CHARAN|MACHA KAVYA|MADDELA PAVANI|MALLARAPU NAVYASRI|NALUVALA KAVERI|PULI PRANAY TEJA|RAPELLY AVANTHIKA|SHIVARATHRI HARSHA|SUDAGONI RISHITH|THAMMALLA RANJITH KUMAR|THODETI SHASHI KUMAR|THUMMANAPELLY ASRITHA|UPPULANCHA HARSHITH|VUTKURI HARSHAVARDHAN REDDY" },
+      { c: "Inter 1st Year (MPC)", b: "Inter-MPC", n: "ADIGOPPULA HARIKA|AJMIRA KEERTANA|ARE SRIJA|BADINENI SHIVA SAI|BANOTHU HARSHA|BATHINI CHARAN|BIYALA SAI NARSIMHA RAO|BUSA SAMANVI|DOMMATI VAMSHI|DOODAM MAHALAXMI|ELLENKI SATHWIKA|GAJURAVENI MAHESHWARI|GANANTHULA NITHISHA|GANNAVENI PALLAVI|GUDURI SIRI|GUNDAVENI LAYA|JAKKULA SRIKANTH|JITTAVENI SRI LEKHA|KALWALA SALONI|KANDI VAISHNAVI|KANDI YOGESH|KATLA DINESH|KEDAM SUKUMAR|KOLIPAKA ABHILASH|KOLIPAKA KAMALAKAR|KOTHA SRUTHIKA|KUNCHE ASHWITH|MATETI MYTHRI|NAGAM MADHAVI|NALUVALA JYOTHI|NAMPALLY SAHITHI|NAREDLA SAI REDDY|PALUMARU VARSHINI|POTHUGANTI SUPRIYA|RACHAKONDA RAMADASU|RAGALLA SIDDESH|RANGU JASHWANTH|THOTLA AMULYA|VARALA RISHIKA|VARALA SATHWIKA|VENGALAPURAM RAJU" },
+      { c: "Inter 1st Year (BiPC)", b: "Inter-BiPC", n: "BADUGU GANGAJALA|BOLLAM HARIKA|DAVULA ARCHANA|GUNDOJE MANI DEEP|KAMBALA AKSHAYA|KANDLY SUJANI|KOTHAPELLY SHASWITHA|MAHESHUNI MANIDEEP|MAMIDI VAISHNAVI|MATHULAPURAM DIKSHITHA|PAPANAKA KEERTHANA|RANGU MANASHWINI|REGULA THRIVENI|SATHYAMANISH ERROJU|SINGIREDDY VAISHNAVI|THODETI HARSHITHA|VADLURI SAVEENA" },
+      { c: "Inter 1st Year (CEC)", b: "Inter-CEC", n: "ADEPU SHRUTHI|AJMEERA SUSHANTH|ALAKUNTLA UPENDAR|ALLAM KAVYA|ARUKULLA SANKEERTHANA|BANDARI KAVITHA|BURRA MADHU|DANALA GOUTHAMI|DOMMATI NANDINI|EDLA SHIVAKUMAR|GARIGE BHARATH RAJ|ILAVENI SIRICHANDANA|JAKKULA ANITHYA|JANGILI ANANTHA SAHITH|KATUKOJWALA SAI SHIVA|KAVATI SRIJA|KOGILA AJAY|KOLIPAKA RISHIK VARDHAN|KYASA SAIPRIYA|MALA GANGA RAJU|MANDA SRINIDHI|MYAKALA CHARAN|NERUVATLA NAKSHATHRA|ORAM SAI CHARAN|PALUMARU ABHIRAM|PALUMARU ARCHANA|PANNALA BHARGAV|PATNURI SHIVAMANI|PULI POOJA|PURUSHOTHAM MANOGNA|RACHAKONDA RAMU|RACHARLA SANDEEP KUMAR|RAMADUGU MANI CHARAN|SAMPANGI DEVA KRUPA|SATTA AKHIL|SUTHRAPU RANADEEP|TADAGONDA NISHANTH|THODETI AKSHAYA|THOUTU NIKHIL|UTTAM SINDHU VARSHINI|VEYYIKANDLA AKSHAYA" },
+      { c: "Inter 2nd Year (MPC)", b: "Inter-MPC", n: "ADEPU RAM CHARAN|AILAVENI HARIKA|AKKENAPALLY LASYA|ALLAKONDA ASHWITHA|ARUKUTA ABHINAYA|BANDARI ANUSHA|BANDARI GAYATHRI|BANDARI RAJASHEKAR|BANDARI SHARATH|BANDI SAHITHYA|BEENAVENI SHARANYA|BHASA HANSIKA|BHEEMANAPALLY POOJA|BODDU AKSHITHA|CHELLOJI KARTHIK|CHEVULA PRAVALIKA|CHIPIRISHETTI MANASA|DUSA VAISHNAVI|ERROJU HARSHITHA|GANGADHARA SWAPNA|GOLLAPELLI SANJANA|GUNDLAPELLY MAHESHWARI|ITHARAVENI LOKESH|ITIKYALA VARSHITHA|KALLEM SHRAVYA|KELLETI SHIVANI|KOTHA SATHWIKA|KOYYADA SIRICHANDANA|KUNA RASMITHA|KUNCHE SATHWIKA|KUNTALA AKSHAY KUMAR|MANNE SOHANA|MASOORI MRUNALITHA|MOHAMMAD MUBHARAK|PADIRE KAVYA SRI|PALUMARU ANJANASOUMYA|PEDDOLLA KAVYA|PITTALA ARCHANA|REBBESH SREEJA|SANDUPATLA MANOJ|SIDDULA REKHA|SINGASANI PAVANTEJA|UPPU KALYANI|VELMULA LAHARI" },
+      { c: "Inter 2nd Year (BiPC)", b: "Inter-BiPC", n: "ADEPU ASHWITHA|AILENI MADHUSUDHAN|AITHARAVENI VAISHNAVI|AJMIRA NIHARIKA|BHUSARAPU VARSHATHVIKA|BOGA GREESHMIKA|BOGA RANI|BOGA VYSHNAVI|CHINTHAKINDI CHANDANA|DAVA MADHUSRI|EAGA PRANITHA|ELAGANDULA GLORY GRACE|ENUGULA SRIJA|ETTEM MAMATHA|GADARLA AKSHITHA|GANTYALA SPANDANA|ITHARAVENI AISHWARYA|KATAKAM SATWIKA|KOLAPURI HARSHINI|NARUKULLA HARIKA|NARUKULLA NADEEKSHA|NOONE RAMYA|PANCHITHA RISHWITHA|PATTEM SAGAR|RACHAKONDA BHAVANI|SATTA VARSHA|SUDHAVENI HIMASINDHU|SUDHAVENI PRASHAMSHA|SUNKE ANUSHA|TEEGALA AKSHITHA|YELPULA SHARANYA" },
+      { c: "Inter 2nd Year (CEC)", b: "Inter-CEC", n: "ARELLI ABHINAY|BAINA SAI KUMAR|BANDARI RAJU|BEENAVENI SIDDARTHA|BEJJANKI JYOTHSNA|BOLLAM HANSIKA|BOMMENA SATHWIK|CHEVULAMADDI MAHESH|DUSA SHASHANK|EDUMYAKALA RANJITH KUMAR|GADDAM SAI CHANDU|GAJJI HARSHAVARDHAN|GANGADHARA SAMANTHA|GUMMADI CHANDANA|JAMBULA SIGMA|JITTABOYINA SINDHU|KARABUJA SAHITHYA|KODURI SRIRAM|KOPPULA HARSHITH|KOTA GANESH|KOTA KARTHIK|KUNA AKHILA|KURUMALLA SANJANA|KYASA RAGHUNANDHAN|KYASA VARUN|KYASA VIJAY|MADDELA SATHISH KUMAR|MAGENI SAI KRISHNA|MAHANKALI CHARAN|MANKALI ARAVIND|MASKAM JASHWANTH|MUNJA SATHWIKA|NANDI RISHIK VARDAN|OLLEM MANASA|PALUMARU SHIVA|PULI MAHENDAR|PUNNAM VIGNESH|RAGALLA SHARANYA|SATTA BHAVYA|THADAGONDA TANUSH|THATIPARTHI VISHNUVARDHAN|THOTA SAI CHANDHU|THOTLA GOUTHAM KUMAR|THOUTU ANAND|UPPU MAHESH|UPPU MANIKANTA|UTTAM RASHMITHA|VEMULA MOUNIKA" }
+    ];
+
+    // Master Faculty Allotments with Sandhya Rani Accountancy Coverage
+    const facultyList = [
+      { id: "T1", name: "Shravani", user: "shravani", classTeacherOf: "Class 6th - Section A", subjects: ["Telugu"] },
+      { id: "T2", name: "Mahesh", user: "mahesh", classTeacherOf: "Class 7th - Section A", subjects: ["Science", "Physical Science"] },
+      { id: "T3", name: "Srilatha", user: "srilatha", classTeacherOf: "Class 8th - Section A", subjects: ["English"] },
+      { id: "T4", name: "Chandra Lekha", user: "chandralekha", classTeacherOf: "Class 8th - Section B", subjects: ["Social Studies"] },
+      { id: "T5", name: "Ramadevi", user: "ramadevi", classTeacherOf: "Class 9th - Section A", subjects: ["English"] },
+      { id: "T6", name: "Ramesh", user: "ramesh", classTeacherOf: "Class 9th - Section B", subjects: ["Hindi", "Telugu"] },
+      { id: "T7", name: "Laxminarayana", user: "laxminarayana", classTeacherOf: "Class 10th - Section A", subjects: ["Biological Science", "Botany"] },
+      { id: "T8", name: "Lingagoud", user: "lingagoud", classTeacherOf: "Class 10th - Section B", subjects: ["Telugu"] },
+      { id: "T9", name: "Krishna", user: "krishna", classTeacherOf: "Inter 1st Year (MPC)", subjects: ["Mathematics", "Maths 1A/2A", "Maths 1B/2B"] },
+      { id: "T10", name: "Kavitha", user: "kavitha", classTeacherOf: "Inter 1st Year (BiPC)", subjects: ["Biological Science", "Zoology"] },
+      { id: "T11", name: "Sandhya Rani", user: "sandhyarani", classTeacherOf: "Inter 1st Year (CEC)", subjects: ["Commerce", "Accountancy", "Social Studies"] },
+      { id: "T12", name: "T. Thirupathi", user: "thirupathi", classTeacherOf: "Inter 2nd Year (MPC)", subjects: ["Telugu", "Maths 1A/2A", "Maths 1B/2B"] },
+      { id: "T13", name: "Arundathi", user: "arundathi", classTeacherOf: "Inter 2nd Year (CEC)", subjects: ["English"] },
+      { id: "T14", name: "Ramesh Kumar", user: "rameshkumar", classTeacherOf: null, subjects: ["Mathematics"] },
+      { id: "T15", name: "Sukanya", user: "sukanya", classTeacherOf: null, subjects: ["Hindi"] },
+      { id: "T16", name: "Jagruthi", user: "jagruthi", classTeacherOf: null, subjects: ["Physical Science", "Chemistry"] },
+      { id: "T17", name: "Ramarao", user: "ramarao", classTeacherOf: null, subjects: ["Physical Science", "Physics"] },
+      { id: "T18", name: "Sudhakar", user: "sudhakar", classTeacherOf: null, subjects: ["Political Science", "Civics", "Social Studies"] },
+      { id: "T19", name: "Anjaneyulu", user: "anjaneyulu", classTeacherOf: null, subjects: ["Economics", "Social Studies"] },
+      { id: "T20", name: "Jyothi", user: "jyothi", classTeacherOf: null, subjects: ["Vocational"] },
+      { id: "T21", name: "Latha", user: "latha", classTeacherOf: null, subjects: ["Vocational"] }
+    ];
+
+    let teacherPhoneDirectory = {};
+
+    const bellSchedule = [
+      { period: "Period 1", start: "09:15", end: "10:00" },
+      { period: "Period 2", start: "10:00", end: "10:45" },
+      { period: "Period 3", start: "11:00", end: "11:45" },
+      { period: "Period 4", start: "11:45", end: "12:30" },
+      { period: "Period 5", start: "13:15", end: "14:00" },
+      { period: "Period 6", start: "14:00", end: "14:45" },
+      { period: "Period 7", start: "14:55", end: "15:35" },
+      { period: "Period 8", start: "15:35", end: "16:15" }
+    ];
+
+    const subjectsMap = {
+      "school": ["Telugu", "English", "Hindi", "Mathematics", "Physical Science", "Biological Science", "Social Studies"],
+      "Inter-MPC": ["English", "Telugu/Sanskrit", "Mathematics 1A/2A", "Mathematics 1B/2B", "Physics", "Chemistry"],
+      "Inter-BiPC": ["English", "Telugu/Sanskrit", "Botany", "Zoology", "Physics", "Chemistry"],
+      "Inter-CEC": ["English", "Telugu/Sanskrit", "Civics", "Economics", "Commerce", "Accountancy"]
+    };
+
+    const competitiveMap = {
+      "school-lower": ["NMMS (National Means-cum-Merit)", "IIT / NEET School Foundation"],
+      "school-upper": ["POLYCET (Polytechnic Entrance)", "TSRJC-CET (Model Junior College Entrance)", "IIT / NEET School Foundation"],
+      "Inter-MPC": ["TG-EAPCET (Engineering)", "IIT-JEE (Mains & Advanced)", "BITSAT"],
+      "Inter-BiPC": ["NEET-UG (National Eligibility)", "TG-EAPCET (Agriculture & Pharmacy)"],
+      "Inter-CEC": ["CA Foundation Entrance", "CUET-UG (Central Universities)", "CLAT (Law Entrance)"]
+    };
+
+    function getMaxMarksForSubject(cls, ex, sub) {
+      if (ex.startsWith("FA-") || ex.startsWith("Month-End")) return 20;
+      if (!cls.includes("Inter")) return 80;
+      if (sub.includes("Math") || sub.includes("Physics") || sub.includes("Chemistry") || sub.includes("Botany") || sub.includes("Zoology")) return 60;
+      return 80;
+    }
+
+    function getSubjectsForClass(clsName) {
+      if (clsName.includes("MPC")) return subjectsMap["Inter-MPC"];
+      if (clsName.includes("BiPC")) return subjectsMap["Inter-BiPC"];
+      if (clsName.includes("CEC")) return subjectsMap["Inter-CEC"];
+      return subjectsMap.school;
+    }
+
+    function getCompetitiveForClass(clsName) {
+      if (clsName.includes("MPC")) return competitiveMap["Inter-MPC"];
+      if (clsName.includes("BiPC")) return competitiveMap["Inter-BiPC"];
+      if (clsName.includes("CEC")) return competitiveMap["Inter-CEC"];
+      if (clsName.includes("9th") || clsName.includes("10th")) return competitiveMap["school-upper"];
+      return competitiveMap["school-lower"];
+    }
+        let studentsDB = [];
+    let idx = 0;
+    rawData.forEach(g => {
+      g.n.split('|').forEach(name => {
+        const u = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+        studentsDB.push({ id: 'S' + idx++, name, class: g.c, base: g.b, username: u, password: u, house: 'Unassigned', houseReq: null });
+      });
+    });
+
+    let marksDB = {}, examsDB = [], queriesDB = [], materials = [], compMaterials = [], gallery = [], dailyUpdates = [], periodLogs = [];
+    let isHolidayToday = false;
+    let pendingTeacherSession = null;
+    let stagedQuestions = [];
+    let activeExam = null, activeMediaStream = null;
+    let blindTimer = null, isExamOngoing = false;
+    let houses = [
+      { name: "Sir C. V. Raman House", pts: 240, color: "from-blue-600 to-indigo-800" },
+      { name: "Albert Einstein House", pts: 265, color: "from-amber-500 to-amber-700" },
+      { name: "Sir Isaac Newton House", pts: 215, color: "from-emerald-600 to-teal-800" },
+      { name: "Dr. APJ Abdul Kalam House", pts: 290, color: "from-purple-600 to-indigo-900" }
+    ];
+
+    let loginRole = 'student', currentUser = null;
+
+    db.ref('marks').on('value', snap => {
+      marksDB = snap.val() || {};
+      if (currentUser && currentUser.role === 'student') renderStudentMarksView(currentUser.data);
+    });
+
+    db.ref('teacher_phones').on('value', snap => {
+      teacherPhoneDirectory = snap.val() || {};
+      if (currentUser && currentUser.role === 'admin') renderAdminTeacherPhoneList();
+    });
+
+    db.ref('settings/holiday').on('value', snap => {
+      const prev = isHolidayToday;
+      isHolidayToday = snap.val() === true;
+      const btn = document.getElementById('btn-toggle-holiday');
+      if (btn) {
+        btn.textContent = isHolidayToday ? "🌴 Holiday ON" : "🏫 Holiday OFF";
+        btn.className = isHolidayToday ? "px-3 py-1 rounded-full text-[11px] font-extrabold bg-amber-400 text-slate-950" : "px-3 py-1 rounded-full text-[11px] font-extrabold bg-slate-700 text-white";
+      }
+
+      if (currentUser && currentUser.role === 'teacher' && isHolidayToday && prev === false) {
+        pushPhoneNotification(
+          "🌴 TGMS Notice: Today is Declared a Holiday!",
+          "Principal Sir has marked today as a Holiday. Classes and automated period alarms are paused."
+        );
+      }
+    });
+
+    db.ref('period_logs').on('value', snap => {
+      periodLogs = Object.values(snap.val() || {});
+      if (currentUser && currentUser.role === 'teacher') renderTeacherPeriodHistory();
+    });
+
+    db.ref('credentials').on('value', snap => {
+      const creds = snap.val() || {};
+      for (let id in creds) {
+        const s = studentsDB.find(x => x.id === id);
+        if (s) {
+          if (creds[id].username) s.username = creds[id].username;
+          if (creds[id].password) s.password = creds[id].password;
+          if (creds[id].house) s.house = creds[id].house;
+          if (creds[id].houseReq !== undefined) s.houseReq = creds[id].houseReq;
+        }
+      }
+      if (currentUser && currentUser.role === 'admin') {
+        renderAdminStudents();
+        renderAdminHouseReqs();
+      }
+      if (currentUser && currentUser.role === 'student') {
+        const up = studentsDB.find(x => x.id === currentUser.data.id);
+        if (up) {
+          currentUser.data = up;
+          document.getElementById('stu-house-tag').textContent = 'House: ' + (up.house || 'Unassigned');
+          document.getElementById('btn-join-house').style.display = (up.house && up.house !== 'Unassigned') ? 'none' : 'block';
+        }
+      }
+    });
+
+    db.ref('queries').on('value', snap => {
+      queriesDB = Object.values(snap.val() || {});
+      if (currentUser && currentUser.role === 'admin') renderAdminQueries();
+      if (currentUser && currentUser.role === 'student') renderStudentQueriesHistory(currentUser.data);
+    });
+
+    db.ref('materials').on('value', snap => {
+      materials = Object.values(snap.val() || {});
+      if (currentUser && currentUser.role === 'student') renderPreloadedSubjectsGrid(currentUser.data);
+    });
+
+    db.ref('comp_materials').on('value', snap => {
+      compMaterials = Object.values(snap.val() || {});
+      if (currentUser && currentUser.role === 'student') renderCompetitiveCorner(currentUser.data);
+    });
+
+    db.ref('gallery').on('value', snap => {
+      gallery = Object.values(snap.val() || {});
+      renderGallery();
+    });
+
+    db.ref('daily_updates').on('value', snap => {
+      dailyUpdates = Object.values(snap.val() || {});
+      if (currentUser && currentUser.role === 'student') renderStudentDailyUpdates();
+    });
+
+    db.ref('mcq_exams').on('value', snap => {
+      examsDB = Object.values(snap.val() || {});
+      if (currentUser && currentUser.role === 'student') renderStudentExams(currentUser.data);
+    });
+        document.getElementById('btn-login-open').onclick = () => {
+      document.getElementById('login-modal').classList.remove('hidden');
+      resetLoginForms();
+    };
+    document.getElementById('btn-login-close').onclick = () => document.getElementById('login-modal').classList.add('hidden');
+    document.getElementById('btn-logout').onclick = () => { 
+      currentUser = null; 
+      document.getElementById('btn-login-open').classList.remove('hidden'); 
+      document.getElementById('user-badge').classList.add('hidden'); 
+      goView('home'); 
+    };
+    
+    document.getElementById('tab-s').onclick = function() { 
+      loginRole = 'student'; 
+      this.className = 'py-1.5 rounded-xl bg-indigo-900 text-white shadow-xs transition-all'; 
+      document.getElementById('tab-t').className = 'py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all'; 
+      document.getElementById('tab-a').className = 'py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all'; 
+      document.getElementById('login-phone-box').classList.add('hidden');
+    };
+    document.getElementById('tab-t').onclick = function() { 
+      loginRole = 'teacher'; 
+      this.className = 'py-1.5 rounded-xl bg-indigo-900 text-white shadow-xs transition-all'; 
+      document.getElementById('tab-s').className = 'py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all'; 
+      document.getElementById('tab-a').className = 'py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all'; 
+      document.getElementById('login-phone-box').classList.remove('hidden');
+    };
+    document.getElementById('tab-a').onclick = function() { 
+      loginRole = 'admin'; 
+      this.className = 'py-1.5 rounded-xl bg-indigo-900 text-white shadow-xs transition-all'; 
+      document.getElementById('tab-s').className = 'py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all'; 
+      document.getElementById('tab-t').className = 'py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all'; 
+      document.getElementById('login-phone-box').classList.add('hidden');
+    };
+
+    function resetLoginForms() {
+      document.getElementById('form-auth').classList.remove('hidden');
+      document.getElementById('form-otp').classList.add('hidden');
+      document.getElementById('login-role-tabs').classList.remove('hidden');
+      document.getElementById('login-err').classList.add('hidden');
+      document.getElementById('login-u').value = '';
+      document.getElementById('login-p').value = '';
+      document.getElementById('login-phone').value = '';
+      document.getElementById('input-otp').value = '';
+      pendingTeacherSession = null;
+    }
+
+    function cancelOtpLogin() {
+      resetLoginForms();
+    }
+
+    document.getElementById('btn-broadcast').onclick = () => {
+      const title = prompt("Enter Official Announcement Title:");
+      if (!title) return;
+      const msg = prompt("Enter Announcement Body Message:");
+      if (!msg) return;
+      const uid = Date.now().toString();
+      db.ref('daily_updates/' + uid).set({ id: uid, title, msg, date: new Date().toLocaleDateString('en-IN') });
+      alert("Institutional Circular broadcasted to all students live!");
+    };
+
+    function toggleHolidayMode() {
+      const nextState = !isHolidayToday;
+      db.ref('settings/holiday').set(nextState);
+      alert(nextState ? "Holiday Mode ACTIVATED! Timetable period alarms stopped." : "Holiday Mode DEACTIVATED. Timetable alarms active.");
+    }
+
+    document.getElementById('form-auth').onsubmit = function(e) {
+      e.preventDefault();
+      const u = document.getElementById('login-u').value.trim().toLowerCase();
+      const p = document.getElementById('login-p').value.trim();
+      const phone = document.getElementById('login-phone').value.trim();
+      const err = document.getElementById('login-err');
+
+      if (loginRole === 'admin') {
+        if (u === 'tgmspgpl' && p === 'tgms2026') {
+          currentUser = { role: 'admin' };
+          completeLogin('Principal Admin');
+          initAdminUI();
+          goView('admin');
+          return;
+        }
+        err.textContent = "Invalid Admin login credentials."; err.classList.remove('hidden'); return;
+      }
+
+      if (loginRole === 'teacher') {
+        const t = facultyList.find(x => x.user === u && (p === 'tgms@2026' || p === 'tgms2026'));
+        if (!t) {
+          err.textContent = "Invalid Faculty username or password."; 
+          err.classList.remove('hidden'); 
+          return;
+        }
+        if (!/^[6-9]\d{9}$/.test(phone)) {
+          err.textContent = "Please enter a valid 10-digit Indian mobile number.";
+          err.classList.remove('hidden');
+          return;
+        }
+
+        db.ref('teacher_phones/' + t.name).set(phone);
+
+        const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+        pendingTeacherSession = { teacher: t, phone: phone, otp: generatedOtp };
+
+        document.getElementById('form-auth').classList.add('hidden');
+        document.getElementById('login-role-tabs').classList.add('hidden');
+        document.getElementById('form-otp').classList.remove('hidden');
+        document.getElementById('otp-mobile-label').textContent = "+91 " + phone;
+        
+        alert(`SECURITY VERIFICATION:\nYour OTP is: ${generatedOtp}\n(Generated for Sri/Smt. ${t.name})`);
+        return;
+      }
+
+      const s = studentsDB.find(x => x.username === u && x.password === p);
+      if (s) {
+        currentUser = { role: 'student', data: s };
+        completeLogin(s.name);
+        initStudentUI();
+        goView('student');
+      } else {
+        err.textContent = "Invalid student credentials."; err.classList.remove('hidden');
+      }
+    };
+
+    document.getElementById('form-otp').onsubmit = function(e) {
+      e.preventDefault();
+      const enteredOtp = document.getElementById('input-otp').value.trim();
+      if (!pendingTeacherSession) return;
+
+      if (enteredOtp === pendingTeacherSession.otp) {
+        currentUser = { role: 'teacher', data: pendingTeacherSession.teacher, phone: pendingTeacherSession.phone };
+        completeLogin(pendingTeacherSession.teacher.name);
+        initTeacherUI();
+        goView('teacher');
+        enableMobileNotifications();
+      } else {
+        alert("Invalid OTP code! Please re-check the 6-digit number.");
+      }
+    };
+
+    function completeLogin(label) {
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('btn-login-open').classList.add('hidden');
+      document.getElementById('user-badge').classList.remove('hidden');
+      document.getElementById('user-label').textContent = label;
+      document.getElementById('login-err').classList.add('hidden');
+    }
+
+    function goView(v) {
+      ['home', 'student', 'teacher', 'admin'].forEach(x => document.getElementById('view-' + x).classList.add('hidden'));
+      document.getElementById('view-' + v).classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function switchStuTab(t) {
+      document.querySelectorAll('.stu-subview').forEach(p => p.classList.add('hidden'));
+      document.querySelectorAll('#view-student button[id^="stab-"]').forEach(b => { 
+        b.className = 'pb-2 px-3 shrink-0 text-slate-600 hover:text-indigo-900'; 
+      });
+      document.getElementById('sview-' + t).classList.remove('hidden');
+      document.getElementById('stab-' + t).className = 'text-indigo-900 border-b-2 border-indigo-900 pb-2 px-3 font-extrabold shrink-0';
+    }
+
+    function switchTeachTab(t) {
+      document.querySelectorAll('.teach-subview').forEach(p => p.classList.add('hidden'));
+      document.querySelectorAll('#view-teacher button[id^="ttab-"]').forEach(b => { 
+        b.className = 'pb-2 px-3 shrink-0 text-slate-600 hover:text-indigo-900'; 
+      });
+      document.getElementById('tview-' + t).classList.remove('hidden');
+      document.getElementById('ttab-' + t).className = 'text-indigo-900 border-b-2 border-indigo-900 pb-2 px-3 font-extrabold shrink-0';
+    }
+
+    function switchAdmTab(t) {
+      document.querySelectorAll('.admin-panel').forEach(p => p.classList.add('hidden'));
+      document.querySelectorAll('#view-admin button[id^="atab-"]').forEach(b => { 
+        if (b.id === 'atab-whatsapp') b.className = 'px-3.5 py-1.5 bg-emerald-700 text-white rounded-xl shrink-0';
+        else if (b.id === 'atab-substitution') b.className = 'px-3.5 py-1.5 bg-amber-600 text-slate-950 rounded-xl font-extrabold shrink-0 shadow-xs';
+        else b.className = 'px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl shrink-0 text-slate-700';
+      });
+      document.getElementById('apanel-' + t).classList.remove('hidden');
+      document.getElementById('atab-' + t).className = 'px-3.5 py-1.5 bg-indigo-900 text-white rounded-xl font-extrabold shrink-0 shadow-xs';
+    }
+        // Teacher Clock Watchdog & Native Phone Notifications
+    let lastPushedMinute = "";
+
+    function enableMobileNotifications() {
+      if (!("Notification" in window)) {
+        alert("System notifications not supported on this browser.");
+        return;
+      }
+      if (Notification.permission !== "granted") {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") alert("Mobile Timetable Alarms Active!");
+        });
+      } else {
+        alert("Mobile Timetable Alarms are already enabled.");
+      }
+    }
+
+    setInterval(() => {
+      if (!currentUser || currentUser.role !== 'teacher') return;
+      if (isHolidayToday || new Date().getDay() === 0) return; // Paused on Holidays/Sundays
+
+      const now = new Date();
+      const currentHHMM = now.toTimeString().slice(0, 5);
+      if (currentHHMM === lastPushedMinute) return;
+
+      bellSchedule.forEach(slot => {
+        if (currentHHMM === slot.start) {
+          lastPushedMinute = currentHHMM;
+          pushPhoneNotification(`🔔 ${slot.period} Started!`, `Respected ${currentUser.data.name}, your ${slot.period} session has commenced.`);
+        }
+
+        const [h, m] = slot.end.split(':').map(Number);
+        const wrapM = (m - 5 < 0) ? (m + 55) : (m - 5);
+        const wrapH = (m - 5 < 0) ? (h - 1) : h;
+        const wrapHHMM = `${String(wrapH).padStart(2, '0')}:${String(wrapM).padStart(2, '0')}`;
+
+        if (currentHHMM === wrapHHMM) {
+          lastPushedMinute = currentHHMM;
+          pushPhoneNotification(`⚠️ 5 Mins Left in ${slot.period}!`, `Please conclude and tap 'Mark Period Complete' to register timestamp.`);
+        }
+      });
+    }, 20000);
+
+    function pushPhoneNotification(title, message) {
+      if (!("Notification" in window) || Notification.permission !== "granted") return;
+      new Notification(title, {
+        body: message,
+        icon: "images/principal.jpg",
+        badge: "images/principal.jpg",
+        vibrate: [300, 100, 300],
+        tag: "tgms-period-alert",
+        renotify: true
+      });
+    }
+
+    // Teacher Dashboard Initialization
+    function initTeacherUI() {
+      const t = currentUser.data;
+      document.getElementById('teach-name').textContent = t.name;
+      document.getElementById('teach-badge').textContent = t.classTeacherOf ? `Class Teacher (${t.classTeacherOf})` : "Subject Faculty Member";
+
+      const pCls = document.getElementById('t-period-class');
+      const tmCls = document.getElementById('tm-class');
+      const tuCls = document.getElementById('tu-class');
+      pCls.innerHTML = ''; tmCls.innerHTML = ''; tuCls.innerHTML = '';
+
+      rawData.forEach(g => {
+        pCls.innerHTML += `<option value="${g.c}">${g.c}</option>`;
+        tmCls.innerHTML += `<option value="${g.c}">${g.c}</option>`;
+        tuCls.innerHTML += `<option value="${g.c}">${g.c}</option>`;
+      });
+
+      const pSub = document.getElementById('t-period-sub');
+      const tmSub = document.getElementById('tm-sub');
+      const tuSub = document.getElementById('tu-sub');
+      pSub.innerHTML = ''; tmSub.innerHTML = ''; tuSub.innerHTML = '';
+      t.subjects.forEach(s => {
+        pSub.innerHTML += `<option value="${s}">${s}</option>`;
+        tmSub.innerHTML += `<option value="${s}">${s}</option>`;
+        tuSub.innerHTML += `<option value="${s}">${s}</option>`;
+      });
+
+      const tmEx = document.getElementById('tm-exam');
+      tmEx.innerHTML = '';
+      ["FA-1", "FA-2", "FA-3", "FA-4", "SA-1", "SA-2", "Month-End Test 1", "Month-End Test 2", "Half-Yearly Exam", "Pre-Final"].forEach(e => {
+        tmEx.innerHTML += `<option value="${e}">${e}</option>`;
+      });
+
+      renderTeacherPeriodHistory();
+      initTeacherAttendanceDesk();
+      loadTeacherStudents();
+    }
+
+    function logPeriodComplete() {
+      const t = currentUser.data;
+      const period = document.getElementById('t-period-num').value;
+      const cls = document.getElementById('t-period-class').value;
+      const sub = document.getElementById('t-period-sub').value;
+      const timeStr = new Date().toLocaleDateString('en-IN') + ", " + new Date().toLocaleTimeString('en-IN');
+      const pid = Date.now().toString();
+
+      db.ref('period_logs/' + pid).set({
+        id: pid,
+        teacher: t.name,
+        period: period,
+        cls: cls,
+        sub: sub,
+        timestamp: timeStr
+      });
+      alert(`Period logged as complete at: ${timeStr}`);
+    }
+
+    function renderTeacherPeriodHistory() {
+      const el = document.getElementById('t-period-history');
+      if (!el) return;
+      el.innerHTML = '';
+      const myLogs = periodLogs.filter(l => l.teacher === currentUser.data.name);
+      if (!myLogs.length) { el.innerHTML = '<p class="text-slate-400 p-2">No periods recorded today.</p>'; return; }
+      myLogs.forEach(l => {
+        el.innerHTML += `<div class="p-3 border rounded-xl bg-slate-50 flex justify-between items-center text-xs"><span><b>${l.period}:</b> ${l.cls} (${l.sub})</span><span class="text-slate-500 font-bold">${l.timestamp}</span></div>`;
+      });
+    }
+
+    function initTeacherAttendanceDesk() {
+      const t = currentUser.data;
+      const badge = document.getElementById('t-att-class-badge');
+      const container = document.getElementById('t-att-students-list');
+      const saveBtn = document.getElementById('t-att-btn-save');
+
+      if (!t.classTeacherOf) {
+        badge.textContent = "Attendance Restricted";
+        container.innerHTML = '<div class="p-6 bg-slate-50 rounded-2xl text-center text-slate-500 font-semibold"><p>You are not assigned as a Class Teacher (1st Period Faculty).</p><p class="text-[11px] mt-1 text-slate-400">Student daily attendance entry is reserved strictly for designated Class Teachers.</p></div>';
+        saveBtn.classList.add('hidden');
+        return;
+      }
+
+      badge.textContent = t.classTeacherOf;
+      saveBtn.classList.remove('hidden');
+      container.innerHTML = '';
+
+      const matchedStudents = studentsDB.filter(s => s.class === t.classTeacherOf);
+      matchedStudents.forEach((s, i) => {
+        container.innerHTML += `
+          <div class="p-3 border rounded-xl bg-slate-50/70 hover:bg-slate-50 flex justify-between items-center text-xs">
+            <span>${i+1}. <b>${s.name}</b></span>
+            <div class="flex gap-4">
+              <label class="cursor-pointer font-extrabold text-emerald-700 flex items-center space-x-1"><input type="radio" name="att-${s.id}" value="P" checked class="accent-emerald-700"> <span>Present</span></label>
+              <label class="cursor-pointer font-extrabold text-rose-600 flex items-center space-x-1"><input type="radio" name="att-${s.id}" value="A" class="accent-rose-600"> <span>Absent</span></label>
+            </div>
+          </div>`;
+      });
+    }
+
+    function saveClassAttendance() {
+      const t = currentUser.data;
+      const dateKey = new Date().toISOString().split('T')[0];
+      const matchedStudents = studentsDB.filter(s => s.class === t.classTeacherOf);
+      const rec = {};
+
+      matchedStudents.forEach(s => {
+        const val = document.querySelector(`input[name="att-${s.id}"]:checked`).value;
+        rec[s.id] = val;
+      });
+
+      db.ref(`attendance/${t.classTeacherOf}/${dateKey}`).set({
+        teacher: t.name,
+        date: dateKey,
+        time: new Date().toLocaleTimeString('en-IN'),
+        records: rec
+      });
+
+      alert(`Official daily attendance recorded for ${t.classTeacherOf}!`);
+    }
+
+    function loadTeacherStudents() {
+      const cls = document.getElementById('tm-class').value;
+      const sSelect = document.getElementById('tm-student');
+      sSelect.innerHTML = '';
+      studentsDB.filter(s => s.class === cls).forEach(s => sSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`);
+      updateTeacherMaxMarks();
+    }
+
+    function updateTeacherMaxMarks() {
+      const cls = document.getElementById('tm-class').value;
+      const ex = document.getElementById('tm-exam').value;
+      const sub = document.getElementById('tm-sub').value;
+      const maxM = getMaxMarksForSubject(cls, ex, sub);
+      document.getElementById('tm-max-label').textContent = `(Maximum Allowed: ${maxM}M)`;
+    }
+
+    function saveTeacherMarks() {
+      const t = currentUser.data;
+      const cls = document.getElementById('tm-class').value;
+      const ex = document.getElementById('tm-exam').value;
+      const sub = document.getElementById('tm-sub').value;
+      const sId = document.getElementById('tm-student').value;
+      const val = parseFloat(document.getElementById('tm-val').value || 0);
+      const maxM = getMaxMarksForSubject(cls, ex, sub);
+
+      if (!t.subjects.includes(sub)) {
+        alert("Unauthorized Subject: You can only record marks for your allotted subject."); return;
+      }
+      if (val > maxM) {
+        alert(`Evaluation Rule Violation: Marks cannot exceed ${maxM} for ${sub} in ${ex}.`); return;
+      }
+      if (val < 0) {
+        alert("Marks cannot be negative."); return;
+      }
+
+      db.ref(`marks/${sId}/${ex}/${sub}`).set(val);
+      alert(`Marks for ${sub} saved live to student digital scorecard!`);
+    }
+
+    document.getElementById('form-teacher-upload').onsubmit = function(e) {
+      e.preventDefault();
+      const t = currentUser.data;
+      const sub = document.getElementById('tu-sub').value;
+      
+      if (!t.subjects.includes(sub)) {
+        alert("Unauthorized Subject: You can only publish files for your allotted curriculum subject.");
+        return;
+      }
+
+      const matId = Date.now().toString();
+      db.ref('materials/' + matId).set({
+        id: matId,
+        cls: document.getElementById('tu-class').value,
+        sub: sub,
+        tit: document.getElementById('tu-title').value.trim(),
+        url: document.getElementById('tu-url').value.trim(),
+        uploadedBy: t.name
+      });
+
+      alert(`Study document published for ${sub} successfully!`);
+      this.reset();
+    };
+        // Method 1: 1-Tap Cellular SIM SMS Substitution Dispatch
+    function dispatchSubstitutionSMS() {
+      const absentTeacher = document.getElementById('sub-absent-teacher').value;
+      const subTeacher = document.getElementById('sub-assign-teacher').value;
+      const targetClass = document.getElementById('sub-class').value;
+      const period = document.getElementById('sub-period').value;
+      const notes = document.getElementById('sub-notes').value.trim() || "Supervise study hour & maintain classroom discipline.";
+      
+      let targetNumber = teacherPhoneDirectory[subTeacher];
+      if (!targetNumber) {
+        targetNumber = prompt(`Mobile number not registered for ${subTeacher}. Enter 10-digit number:`);
+        if (!targetNumber || !/^[6-9]\d{9}$/.test(targetNumber.trim())) {
+          alert("Invalid mobile number. SMS canceled."); return;
+        }
+        targetNumber = targetNumber.trim();
+        db.ref('teacher_phones/' + subTeacher).set(targetNumber);
+      }
+
+      const smsText = `TGMS PEGADAPALLY NOTICE: Respected Sir/Madam, you are assigned substitution for ${period} in ${targetClass} in place of ${absentTeacher}. Note: ${notes} - Prabhakar Reddy Kotha, Principal`;
+
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const delimiter = isIOS ? '&' : '?';
+      window.location.href = `sms:${targetNumber}${delimiter}body=${encodeURIComponent(smsText)}`;
+    }
+
+    function dispatchSubstitutionWhatsApp() {
+      const absentTeacher = document.getElementById('sub-absent-teacher').value;
+      const subTeacher = document.getElementById('sub-assign-teacher').value;
+      const targetClass = document.getElementById('sub-class').value;
+      const period = document.getElementById('sub-period').value;
+      const notes = document.getElementById('sub-notes').value.trim() || "Supervise study hour & maintain classroom discipline.";
+      const dateStr = new Date().toLocaleDateString('en-IN');
+
+      const waText = `🏛️ *TELANGANA MODEL SCHOOL & JR. COLLEGE, PEGADAPALLY*\n📋 *OFFICIAL FACULTY SUBSTITUTION ORDER*\n📅 Date: ${dateStr}\n\nRespected *${subTeacher}* Sir/Madam,\nYou are allotted substitution duty for:\n• *Period:* ${period}\n• *Class:* ${targetClass}\n• *In place of:* ${absentTeacher}\n• *Instructions:* ${notes}\n\n👉 Campus Portal: https://123-del.github.io\n\n_— Office of Sri Prabhakar Reddy Kotha, Principal_`;
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(waText)}`, '_blank');
+    }
+
+    function renderAdminTeacherPhoneList() {
+      const el = document.getElementById('admin-teacher-phone-list');
+      if (!el) return;
+      el.innerHTML = '';
+      facultyList.forEach(t => {
+        const ph = teacherPhoneDirectory[t.name] || 'Not Set';
+        el.innerHTML += `
+          <div onclick="editTeacherPhone('${t.name}')" class="p-3 border rounded-2xl bg-slate-50/80 cursor-pointer hover:bg-amber-50 hover:border-amber-300 transition-all flex justify-between items-center text-xs">
+            <span class="font-extrabold text-slate-800">${t.name}</span>
+            <span class="font-mono text-indigo-700 font-bold bg-white px-2 py-0.5 rounded-lg border">${ph}</span>
+          </div>`;
+      });
+    }
+
+    function editTeacherPhone(teacherName) {
+      const cur = teacherPhoneDirectory[teacherName] || '';
+      const ph = prompt(`Enter 10-digit mobile number for ${teacherName}:`, cur);
+      if (!ph) return;
+      if (!/^[6-9]\d{9}$/.test(ph.trim())) {
+        alert("Invalid format: Must be a valid 10-digit Indian phone number."); return;
+      }
+      db.ref('teacher_phones/' + teacherName).set(ph.trim());
+      alert(`Mobile directory updated for ${teacherName}!`);
+    }
+
+    function initAdminUI() {
+      renderAdminStudents();
+      initAdminDropdowns();
+      initSubstitutionDesk();
+      renderAdminTeacherPhoneList();
+      renderAdminHouseReqs();
+      renderAdminQueries();
+      applyWhatsAppTemplate();
+    }
+
+    function initSubstitutionDesk() {
+      const absentSel = document.getElementById('sub-absent-teacher');
+      const assignSel = document.getElementById('sub-assign-teacher');
+      const classSel = document.getElementById('sub-class');
+
+      absentSel.innerHTML = ''; assignSel.innerHTML = ''; classSel.innerHTML = '';
+      facultyList.forEach(t => {
+        absentSel.innerHTML += `<option value="${t.name}">${t.name}</option>`;
+        assignSel.innerHTML += `<option value="${t.name}">${t.name}</option>`;
+      });
+      rawData.forEach(g => {
+        classSel.innerHTML += `<option value="${g.c}">${g.c}</option>`;
+      });
+    }
+
+    function initAdminDropdowns() {
+      const classSelect = document.getElementById('marks-select-class');
+      const uploadClassSelect = document.getElementById('m-cls');
+      const compUploadClassSelect = document.getElementById('comp-up-cls');
+      const buildClassSelect = document.getElementById('build-exam-class');
+      const waClassSelect = document.getElementById('wa-select-class');
+      classSelect.innerHTML = ''; uploadClassSelect.innerHTML = ''; compUploadClassSelect.innerHTML = ''; buildClassSelect.innerHTML = ''; waClassSelect.innerHTML = '<option value="All Classes & Parents">All Classes & Parents</option>';
+      
+      rawData.forEach(g => {
+        classSelect.innerHTML += `<option value="${g.c}">${g.c}</option>`;
+        uploadClassSelect.innerHTML += `<option value="${g.c}">${g.c}</option>`;
+        compUploadClassSelect.innerHTML += `<option value="${g.c}">${g.c}</option>`;
+        buildClassSelect.innerHTML += `<option value="${g.c}">${g.c}</option>`;
+        waClassSelect.innerHTML += `<option value="${g.c}">${g.c}</option>`;
+      });
+
+      waClassSelect.onchange = applyWhatsAppTemplate;
+      syncUploadSubjectsDropdown();
+      syncCompUploadDropdown();
+      syncExamSubjectsDropdown();
+      loadStudentsForMarks();
+    }
+
+    function syncUploadSubjectsDropdown() {
+      const cls = document.getElementById('m-cls').value;
+      const subSelect = document.getElementById('m-sub');
+      subSelect.innerHTML = '';
+      getSubjectsForClass(cls).forEach(s => subSelect.innerHTML += `<option value="${s}">${s}</option>`);
+    }
+
+    function syncCompUploadDropdown() {
+      const cls = document.getElementById('comp-up-cls').value;
+      const exSelect = document.getElementById('comp-up-exam');
+      exSelect.innerHTML = '';
+      getCompetitiveForClass(cls).forEach(e => exSelect.innerHTML += `<option value="${e}">${e}</option>`);
+    }
+
+    function syncExamSubjectsDropdown() {
+      const cls = document.getElementById('build-exam-class').value;
+      const subSelect = document.getElementById('build-exam-sub');
+      subSelect.innerHTML = '';
+      getSubjectsForClass(cls).forEach(s => subSelect.innerHTML += `<option value="${s}">${s}</option>`);
+    }
+
+    function loadStudentsForMarks() {
+      const cls = document.getElementById('marks-select-class').value;
+      const sSelect = document.getElementById('marks-select-student');
+      const exSelect = document.getElementById('marks-select-exam');
+      sSelect.innerHTML = ''; exSelect.innerHTML = '';
+
+      if (cls.includes('Inter')) {
+        ["Month-End Test 1", "Month-End Test 2", "Month-End Test 3", "Month-End Test 4", "Half-Yearly Exam", "Pre-Final"].forEach(e => exSelect.innerHTML += `<option value="${e}">${e}</option>`);
+      } else {
+        ["FA-1", "FA-2", "FA-3", "FA-4", "SA-1", "SA-2"].forEach(e => exSelect.innerHTML += `<option value="${e}">${e}</option>`);
+      }
+
+      studentsDB.filter(s => s.class === cls).forEach(s => sSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`);
+      renderMarksFields();
+    }
+
+    function renderMarksFields() {
+      const cls = document.getElementById('marks-select-class').value;
+      const ex = document.getElementById('marks-select-exam').value;
+      const c = document.getElementById('marks-subjects-container');
+      c.innerHTML = '';
+      
+      getSubjectsForClass(cls).forEach(sub => {
+        const maxM = getMaxMarksForSubject(cls, ex, sub);
+        c.innerHTML += `
+          <div class="flex justify-between items-center p-3 bg-slate-50 border rounded-2xl">
+            <span class="font-extrabold text-slate-800 text-xs">${sub}</span>
+            <div class="flex items-center space-x-2">
+              <span class="text-[10px] text-slate-500 font-bold">(Max: ${maxM}M)</span>
+              <input type="number" id="mark-${sub}" min="0" max="${maxM}" placeholder="0" 
+                class="w-20 p-2 border rounded-xl text-right font-black text-indigo-900 bg-white">
+            </div>
+          </div>`;
+      });
+      populateExistingMarks();
+    }
+
+    function populateExistingMarks() {
+      const sId = document.getElementById('marks-select-student').value;
+      const ex = document.getElementById('marks-select-exam').value;
+      const cls = document.getElementById('marks-select-class').value;
+      getSubjectsForClass(cls).forEach(sub => {
+        const inp = document.getElementById('mark-' + sub);
+        if (inp) inp.value = (marksDB[sId] && marksDB[sId][ex] && marksDB[sId][ex][sub]) ? marksDB[sId][ex][sub] : '';
+      });
+    }
+
+    function saveStudentMarks() {
+      const sId = document.getElementById('marks-select-student').value;
+      const ex = document.getElementById('marks-select-exam').value;
+      const cls = document.getElementById('marks-select-class').value;
+      const subs = getSubjectsForClass(cls);
+
+      for (let i = 0; i < subs.length; i++) {
+        const sub = subs[i];
+        const inp = document.getElementById('mark-' + sub);
+        const val = parseFloat(inp.value || 0);
+        const maxLimit = getMaxMarksForSubject(cls, ex, sub);
+
+        if (val > maxLimit) {
+          alert(`Error: Marks for ${sub} cannot exceed ${maxLimit} marks for ${ex}! Entered: ${val}`);
+          inp.focus();
+          return;
+        }
+        if (val < 0) {
+          alert(`Error: Marks for ${sub} cannot be negative.`);
+          inp.focus();
+          return;
+        }
+      }
+
+      subs.forEach(sub => {
+        const val = document.getElementById('mark-' + sub).value || '0';
+        db.ref('marks/' + sId + '/' + ex + '/' + sub).set(val);
+      });
+      alert("Student marks validated and published live to Cloud Database!");
+    }
+        function renderAdminStudents(list = null) {
+      const tbody = document.getElementById('adm-tbody');
+      tbody.innerHTML = '';
+      (list || studentsDB).forEach(s => {
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="p-3 font-extrabold text-slate-800">${s.name}</td>
+            <td class="p-3 text-slate-600">${s.class}</td>
+            <td class="p-3 font-mono text-indigo-700 font-bold">${s.username}</td>
+            <td class="p-3 text-slate-600">${s.house || 'Unassigned'}</td>
+            <td class="p-3 text-right">
+              <button onclick="editPass('${s.id}')" class="text-indigo-600 hover:text-indigo-900 font-extrabold text-xs">Edit</button>
+            </td>
+          </tr>`;
+      });
+    }
+
+    document.getElementById('adm-search').oninput = function() {
+      const q = this.value.toLowerCase();
+      renderAdminStudents(studentsDB.filter(s => s.name.toLowerCase().includes(q) || s.class.toLowerCase().includes(q) || s.username.includes(q)));
+    };
+
+    function editPass(id) {
+      const s = studentsDB.find(x => x.id === id);
+      const u = prompt("Edit Username:", s.username);
+      if (!u) return;
+      const p = prompt("Edit Password:", s.password);
+      if (!p) return;
+      db.ref('credentials/' + id).update({ username: u.trim().toLowerCase(), password: p.trim() });
+      alert("Student credentials updated live!");
+    }
+
+    function renderAdminHouseReqs() {
+      const el = document.getElementById('admin-house-requests');
+      el.innerHTML = '';
+      const reqs = studentsDB.filter(s => s.houseReq);
+      reqs.forEach(s => {
+        el.innerHTML += `
+          <div class="p-3 border rounded-2xl flex justify-between items-center bg-slate-50 text-xs">
+            <div><b>${s.name}</b> (${s.class}) requested: <span class="font-extrabold text-indigo-900">${s.houseReq}</span></div>
+            <div>
+              <button onclick="approveHouse('${s.id}', true)" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1 rounded-xl font-bold mr-1">Approve</button>
+              <button onclick="approveHouse('${s.id}', false)" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1 rounded-xl font-bold">Reject</button>
+            </div>
+          </div>`;
+      });
+      if (!reqs.length) el.innerHTML = '<p class="text-slate-400 p-2">No pending house enrollment requests.</p>';
+    }
+
+    function approveHouse(id, isApprove) {
+      const s = studentsDB.find(x => x.id === id);
+      if (isApprove) db.ref('credentials/' + id).update({ house: s.houseReq, houseReq: null });
+      else db.ref('credentials/' + id + '/houseReq').remove();
+      alert(isApprove ? "House membership approved live!" : "Request rejected.");
+    }
+
+    function renderAdminQueries() {
+      const el = document.getElementById('admin-queries-list');
+      el.innerHTML = '';
+      queriesDB.forEach(q => {
+        el.innerHTML += `
+          <div class="p-4 border rounded-2xl bg-slate-50 space-y-2 text-xs">
+            <div class="flex justify-between font-extrabold">
+              <span class="text-slate-900">${q.name} (${q.class})</span>
+              <span class="text-indigo-700 font-bold">${q.subject}</span>
+            </div>
+            <div class="p-2.5 bg-white border rounded-xl text-slate-700 leading-relaxed">${q.body}</div>
+            <div>${q.reply ? `<div class="text-emerald-700 font-bold">Principal Sir Reply: ${q.reply}</div>` : `<button onclick="replyQuery('${q.id}')" class="bg-indigo-900 hover:bg-indigo-800 text-white px-3.5 py-1.5 rounded-xl font-extrabold">Send Official Reply</button>`}</div>
+          </div>`;
+      });
+      if (!queriesDB.length) el.innerHTML = '<p class="text-slate-400 p-2">No student queries in the inbox.</p>';
+    }
+
+    function replyQuery(id) {
+      const rep = prompt("Type Sri Prabhakar Reddy Kotha's response:");
+      if (!rep) return;
+      db.ref('queries/' + id + '/reply').set(rep);
+      alert("Official reply transmitted to student dashboard!");
+    }
+
+    function renderStudentMarksView(s) {
+      const el = document.getElementById('stu-marks-table');
+      el.innerHTML = '';
+      const myMarks = marksDB[s.id] || {};
+      const exams = Object.keys(myMarks);
+      if (!exams.length) { el.innerHTML = '<p class="text-slate-400 p-2">No evaluation marks recorded yet.</p>'; return; }
+      exams.forEach(ex => {
+        let html = `
+          <div class="p-4 border rounded-2xl bg-slate-50 space-y-3">
+            <div class="font-extrabold text-indigo-950 text-xs flex justify-between">
+              <span>${ex}</span>
+              <span class="text-[10px] text-slate-500 font-bold uppercase">Official Evaluation</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">`;
+        for (let sub in myMarks[ex]) {
+          const maxM = getMaxMarksForSubject(s.class, ex, sub);
+          html += `
+            <div class="bg-white p-3 rounded-xl border text-xs flex justify-between items-center shadow-2xs">
+              <span class="font-bold text-slate-700">${sub}:</span> 
+              <span class="font-black text-indigo-950">${myMarks[ex][sub]} <span class="text-[10px] text-slate-400 font-normal">/ ${maxM}</span></span>
+            </div>`;
+        }
+        html += `</div></div>`;
+        el.innerHTML += html;
+      });
+    }
+
+    function renderStudentQueriesHistory(s) {
+      const el = document.getElementById('stu-query-history');
+      el.innerHTML = '';
+      const list = queriesDB.filter(q => q.studentId === s.id);
+      list.forEach(q => {
+        el.innerHTML += `
+          <div class="p-3 border rounded-2xl bg-slate-50 space-y-1 text-xs">
+            <div class="font-extrabold text-slate-800">Q: ${q.subject}</div>
+            <div class="text-slate-600">${q.body}</div>
+            ${q.reply ? `<div class="text-emerald-700 font-bold mt-1 bg-emerald-50 p-2 rounded-xl border border-emerald-200">Principal Sir's Reply: ${q.reply}</div>` : '<div class="text-amber-600 mt-1 italic">Status: Awaiting Principal Review</div>'}
+          </div>`;
+      });
+      if (!list.length) el.innerHTML = '<p class="text-slate-400 p-2">No queries submitted yet.</p>';
+    }
+
+    document.getElementById('form-stu-query').onsubmit = function(e) {
+      e.preventDefault();
+      const qId = Date.now().toString();
+      db.ref('queries/' + qId).set({
+        id: qId,
+        studentId: currentUser.data.id,
+        name: currentUser.data.name,
+        class: currentUser.data.class,
+        subject: document.getElementById('query-subject').value.trim(),
+        body: document.getElementById('query-body').value.trim(),
+        reply: null
+      });
+      alert("Query submitted directly to Sri Prabhakar Reddy Kotha's desk!");
+      this.reset();
+    };
+
+    document.getElementById('form-mat').onsubmit = function(e) {
+      e.preventDefault();
+      const matId = Date.now().toString();
+      db.ref('materials/' + matId).set({
+        id: matId,
+        cls: document.getElementById('m-cls').value,
+        sub: document.getElementById('m-sub').value,
+        tit: document.getElementById('m-tit').value.trim(),
+        url: document.getElementById('m-url').value.trim()
+      });
+      alert("Subject learning document published successfully!");
+      this.reset();
+      syncUploadSubjectsDropdown();
+    };
+
+    document.getElementById('form-comp-upload').onsubmit = function(e) {
+      e.preventDefault();
+      const compId = Date.now().toString();
+      db.ref('comp_materials/' + compId).set({
+        id: compId,
+        cls: document.getElementById('comp-up-cls').value,
+        exam: document.getElementById('comp-up-exam').value,
+        title: document.getElementById('comp-up-title').value.trim(),
+        url: document.getElementById('comp-up-url').value.trim()
+      });
+      alert("Competitive exam question paper published live!");
+      this.reset();
+      syncCompUploadDropdown();
+    };
+
+    document.getElementById('form-gal').onsubmit = function(e) {
+      e.preventDefault();
+      const galId = Date.now().toString();
+      db.ref('gallery/' + galId).set({
+        id: galId,
+        cap: document.getElementById('g-cap').value.trim(),
+        url: document.getElementById('g-url').value.trim()
+      });
+      alert("Clipping published to Media Wall live!");
+      this.reset();
+    };
+        function initStudentUI() {
+      const s = currentUser.data;
+      document.getElementById('stu-name').textContent = s.name;
+      document.getElementById('stu-class').textContent = s.class;
+      document.getElementById('stu-comp-badge').textContent = s.class;
+      document.getElementById('stu-materials-class-badge').textContent = s.class;
+      document.getElementById('stu-house-tag').textContent = 'House: ' + (s.house || 'Unassigned');
+      document.getElementById('btn-join-house').style.display = (s.house && s.house !== 'Unassigned') ? 'none' : 'block';
+      renderCompetitiveCorner(s);
+      renderPreloadedSubjectsGrid(s);
+      renderStudentDailyUpdates();
+      renderStudentExams(s);
+      renderStudentMarksView(s);
+      renderStudentQueriesHistory(s);
+    }
+
+    function renderCompetitiveCorner(s) {
+      const grid = document.getElementById('stu-competitive-grid');
+      grid.innerHTML = '';
+      const compList = getCompetitiveForClass(s.class);
+
+      compList.forEach(cExam => {
+        const count = compMaterials.filter(m => s.class.includes(m.cls) && m.exam === cExam).length;
+        grid.innerHTML += `
+          <div onclick="openCompFiles('${cExam}')" class="p-4 bg-white border border-amber-200 rounded-2xl cursor-pointer hover:bg-amber-50/50 shadow-xs hover:shadow-md transition-all flex flex-col justify-between">
+            <div>
+              <span class="text-[9px] font-black uppercase tracking-wider text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full">ENTRANCE WING</span>
+              <h4 class="font-black text-xs sm:text-sm text-slate-900 mt-2">${cExam}</h4>
+            </div>
+            <div class="mt-4 flex justify-between items-center text-[11px] text-slate-500 font-bold">
+              <span>${count} Paper(s) Available</span>
+              <span class="text-indigo-700 font-extrabold">Open ➔</span>
+            </div>
+          </div>`;
+      });
+    }
+
+    function openCompFiles(cExam) {
+      const s = currentUser.data;
+      const box = document.getElementById('comp-files-box');
+      const label = document.getElementById('comp-files-label');
+      const list = document.getElementById('comp-files-list');
+
+      label.textContent = `${cExam} - Official Question Papers & Syllabus`;
+      list.innerHTML = '';
+
+      const matched = compMaterials.filter(m => s.class.includes(m.cls) && m.exam === cExam);
+      if (!matched.length) {
+        list.innerHTML = `<p class="text-slate-400 p-3">No question papers uploaded yet for ${cExam}.</p>`;
+      } else {
+        matched.forEach(f => {
+          list.innerHTML += `
+            <div class="p-3 border rounded-xl bg-slate-50 flex justify-between items-center text-xs">
+              <div><b>${f.title}</b><div class="text-[10px] text-slate-500">${f.cls} • ${f.exam}</div></div>
+              <a href="${f.url}" target="_blank" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black px-3.5 py-1.5 rounded-xl shadow-xs transition-all">Open PDF</a>
+            </div>`;
+        });
+      }
+      box.classList.remove('hidden');
+    }
+
+    function renderPreloadedSubjectsGrid(s) {
+      const grid = document.getElementById('stu-subjects-grid');
+      grid.innerHTML = '';
+      const subs = getSubjectsForClass(s.class);
+
+      subs.forEach(sub => {
+        const fileCount = materials.filter(m => s.class.includes(m.cls) && m.sub === sub).length;
+        grid.innerHTML += `
+          <div onclick="openSubjectFiles('${sub}')" class="p-4 bg-slate-50 hover:bg-indigo-50/70 border border-slate-200 rounded-2xl cursor-pointer transition-all flex flex-col justify-between">
+            <div>
+              <div class="text-[10px] text-indigo-700 font-extrabold uppercase tracking-wider">Academic Subject</div>
+              <h4 class="font-black text-xs sm:text-sm text-slate-900 mt-1">${sub}</h4>
+            </div>
+            <div class="mt-3 text-[11px] text-slate-500 font-bold flex justify-between items-center">
+              <span>${fileCount} File(s)</span>
+              <span class="text-indigo-600 font-extrabold">Open ➔</span>
+            </div>
+          </div>`;
+      });
+    }
+
+    function openSubjectFiles(sub) {
+      const s = currentUser.data;
+      const box = document.getElementById('selected-subject-files-box');
+      const label = document.getElementById('current-opened-subject-label');
+      const list = document.getElementById('subject-specific-files-list');
+
+      label.textContent = `${sub} - Chapter Notes & Reference Documents`;
+      list.innerHTML = '';
+
+      const matchedFiles = materials.filter(m => s.class.includes(m.cls) && m.sub === sub);
+      if (!matchedFiles.length) {
+        list.innerHTML = `<p class="text-slate-400 p-3">No study documents uploaded yet for ${sub}.</p>`;
+      } else {
+        matchedFiles.forEach(f => {
+          list.innerHTML += `
+            <div class="p-3 border rounded-xl bg-white flex justify-between items-center text-xs shadow-2xs">
+              <div><b>${f.tit}</b><div class="text-[10px] text-slate-500">${f.cls} • ${f.sub}</div></div>
+              <a href="${f.url}" target="_blank" class="bg-indigo-900 hover:bg-indigo-800 text-white font-extrabold px-3.5 py-1.5 rounded-xl shadow-xs transition-all">Open PDF File</a>
+            </div>`;
+        });
+      }
+      box.classList.remove('hidden');
+    }
+
+    function renderStudentDailyUpdates() {
+      const el = document.getElementById('stu-daily-updates-list');
+      el.innerHTML = '';
+      if (!dailyUpdates.length) { el.innerHTML = '<p class="text-slate-400 p-2">No announcements posted today.</p>'; return; }
+      dailyUpdates.forEach(u => {
+        el.innerHTML += `
+          <div class="p-4 border rounded-2xl bg-amber-50/60 border-amber-200 space-y-1">
+            <div class="flex justify-between font-extrabold text-amber-950 text-xs">
+              <span>${u.title}</span>
+              <span class="text-[10px] text-slate-500">${u.date}</span>
+            </div>
+            <p class="text-slate-700 text-xs leading-relaxed">${u.msg}</p>
+          </div>`;
+      });
+    }
+
+    function openHouseJoinModal() {
+      if (currentUser.data.house && currentUser.data.house !== 'Unassigned') {
+        alert("You are already enrolled in: " + currentUser.data.house + " (1 Student = 1 House Limit).");
+        return;
+      }
+      document.getElementById('house-modal').classList.remove('hidden');
+    }
+
+    function submitHouseRequest() {
+      const h = document.getElementById('house-preloaded-select').value;
+      db.ref('credentials/' + currentUser.data.id + '/houseReq').set(h);
+      document.getElementById('house-modal').classList.add('hidden');
+      alert("Enrollment request for " + h + " submitted! Awaiting Principal approval.");
+    }
+
+    function renderStudentExams(s) {
+      const eEl = document.getElementById('stu-exams-list');
+      eEl.innerHTML = '';
+      const match = examsDB.filter(x => s.class.includes(x.cls));
+      match.forEach(x => {
+        eEl.innerHTML += `
+          <div class="p-3.5 border rounded-2xl flex justify-between items-center bg-slate-50 hover:bg-white transition-all text-xs">
+            <div><b>${x.sub}:</b> ${x.tit} (${x.questions ? x.questions.length : 0} Questions)</div>
+            <button onclick="startProctoredExam('${x.id}')" class="bg-indigo-900 hover:bg-indigo-800 text-white font-extrabold px-4 py-2 rounded-xl shadow-xs transition-all">Start Test (Proctored)</button>
+          </div>`;
+      });
+      if (!match.length) eEl.innerHTML = '<p class="text-slate-400 p-2">No active proctored tests configured for your section.</p>';
+    }
+
+    async function startProctoredExam(examId) {
+      activeExam = examsDB.find(x => x.id === examId);
+      if (!activeExam || !activeExam.questions || !activeExam.questions.length) {
+        alert("Exam questions are not configured."); return;
+      }
+
+      alert("CAMERA INTEGRITY PROTOCOL:\n1. Camera must stay ON at all times.\n2. Obscuring camera for 3s CANCELS test (FAILED).\n3. Switching tabs CANCELS test.");
+
+      try {
+        activeMediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        document.getElementById('proctor-video').srcObject = activeMediaStream;
+      } catch (err) {
+        alert("Camera permission denied. Cannot commence proctored exam.");
+        return;
+      }
+
+      document.getElementById('exam-catalog').classList.add('hidden');
+      document.getElementById('exam-active-panel').classList.remove('hidden');
+      document.getElementById('active-exam-title').textContent = activeExam.tit + " (" + activeExam.sub + ")";
+      
+      const qContainer = document.getElementById('active-exam-questions');
+      qContainer.innerHTML = '';
+      activeExam.questions.forEach((q, i) => {
+        qContainer.innerHTML += `
+          <div class="p-4 border rounded-2xl bg-slate-50 space-y-2 text-xs">
+            <div class="font-extrabold text-slate-900">Q${i+1}: ${q.text}</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <label class="p-2 bg-white border rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-indigo-50"><input type="radio" name="ans-${i}" value="A" class="accent-indigo-900"> <span>A) ${q.a}</span></label>
+              <label class="p-2 bg-white border rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-indigo-50"><input type="radio" name="ans-${i}" value="B" class="accent-indigo-900"> <span>B) ${q.b}</span></label>
+              <label class="p-2 bg-white border rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-indigo-50"><input type="radio" name="ans-${i}" value="C" class="accent-indigo-900"> <span>C) ${q.c}</span></label>
+              <label class="p-2 bg-white border rounded-xl flex items-center space-x-2 cursor-pointer hover:bg-indigo-50"><input type="radio" name="ans-${i}" value="D" class="accent-indigo-900"> <span>D) ${q.d}</span></label>
+            </div>
+          </div>`;
+      });
+
+      isExamOngoing = true;
+      startBlindWatchdog();
+    }
+
+    function startBlindWatchdog() {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const video = document.getElementById('proctor-video');
+      let blindSeconds = 0;
+
+      blindTimer = setInterval(() => {
+        if (!isExamOngoing) return;
+        canvas.width = 40; canvas.height = 30;
+        ctx.drawImage(video, 0, 0, 40, 30);
+        const data = ctx.getImageData(0, 0, 40, 30).data;
+        let brightness = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          brightness += (data[i] + data[i+1] + data[i+2]) / 3;
+        }
+        brightness = brightness / (data.length / 4);
+
+        if (brightness < 12) {
+          blindSeconds++;
+          if (blindSeconds >= 3) failExamAndAlert("Camera blinded / obscured for 3 continuous seconds.");
+        } else {
+          blindSeconds = 0;
+        }
+      }, 1000);
+    }
+
+    window.onblur = function() {
+      if (isExamOngoing) failExamAndAlert("Student switched tab or minimized browser window.");
+    };
+
+    function failExamAndAlert(reason) {
+      if (!isExamOngoing) return;
+      isExamOngoing = false;
+      clearInterval(blindTimer);
+      if (activeMediaStream) activeMediaStream.getTracks().forEach(t => t.stop());
+
+      const s = currentUser.data;
+      const alertId = Date.now().toString();
+      db.ref('queries/' + alertId).set({
+        id: alertId,
+        studentId: s.id,
+        name: s.name,
+        class: s.class,
+        subject: "MALPRACTICE ALERT: " + activeExam.tit,
+        body: `Integrity failure detected: ${reason}. Test disqualified.`,
+        reply: "Exam Disqualified by System (Result: FAILED)"
+      });
+
+      document.getElementById('exam-active-panel').classList.add('hidden');
+      document.getElementById('exam-result-panel').classList.remove('hidden');
+      document.getElementById('exam-result-details').innerHTML = `<span class="text-rose-600 font-extrabold text-base">DISQUALIFIED / FAILED</span><p class="text-xs text-slate-500 mt-1">Reason: ${reason}. Reported to Principal Sir.</p>`;
+    }
+
+    function submitStudentExam() {
+      isExamOngoing = false;
+      clearInterval(blindTimer);
+      if (activeMediaStream) activeMediaStream.getTracks().forEach(t => t.stop());
+
+      let score = 0;
+      activeExam.questions.forEach((q, i) => {
+        const sel = document.querySelector(`input[name="ans-${i}"]:checked`);
+        if (sel && sel.value === q.correct) score++;
+      });
+
+      const total = activeExam.questions.length;
+      document.getElementById('exam-active-panel').classList.add('hidden');
+      document.getElementById('exam-result-panel').classList.remove('hidden');
+      document.getElementById('exam-result-details').innerHTML = `
+        <div class="text-2xl font-black text-indigo-900 mt-1">Score: ${score} / ${total}</div>
+        <p class="text-xs text-slate-600 font-bold mt-0.5">Accuracy: ${Math.round((score/total)*100)}%</p>`;
+
+      window.lastExamResult = {
+        name: currentUser.data.name,
+        class: currentUser.data.class,
+        exam: activeExam.tit,
+        sub: activeExam.sub,
+        score: score,
+        total: total,
+        date: new Date().toLocaleDateString('en-IN')
+      };
+    }
+
+    function printScoreCard() {
+      const r = window.lastExamResult;
+      document.getElementById('print-content').innerHTML = `
+        <div class="text-center border-b pb-3 mb-4">
+          <h2 class="font-black text-base uppercase">Telangana Model School & Jr. College</h2>
+          <p class="text-xs text-slate-600">Pegadapally Mandal, Jagtial Dist.</p>
+          <span class="inline-block mt-2 font-black bg-indigo-950 text-white px-3 py-1 text-[10px] rounded-full">DIGITAL PROCTORED SCORE CARD</span>
+        </div>
+        <div class="space-y-2 text-xs">
+          <div><strong>Student Name:</strong> ${r.name}</div>
+          <div><strong>Class & Section:</strong> ${r.class}</div>
+          <div><strong>Examination:</strong> ${r.exam} (${r.sub})</div>
+          <div><strong>Date of Attempt:</strong> ${r.date}</div>
+          <div class="p-3 border rounded-xl bg-slate-50 font-black text-center text-base mt-2">Verified Score: ${r.score} / ${r.total}</div>
+        </div>
+        <div class="mt-12 flex justify-between text-xs text-slate-600">
+          <span>Digital Verification Hash: ${Date.now().toString(36)}</span>
+          <span class="border-t border-slate-900 pt-1 font-bold">Principal Signature</span>
+        </div>`;
+      window.print();
+    }
+
+    function printStudentId() {
+      const s = currentUser.data;
+      document.getElementById('print-content').innerHTML = `
+        <div class="text-center border-b pb-3 mb-4">
+          <h2 class="font-black text-base uppercase">Telangana Model School & Jr. College</h2>
+          <p class="text-xs text-slate-600">Pegadapally Mandal, Jagtial Dist.</p>
+          <span class="inline-block mt-2 font-black bg-slate-950 text-white px-3 py-1 text-[10px] rounded-full">EXAMINATION HALL TICKET</span>
+        </div>
+        <div class="space-y-2 text-xs">
+          <div><strong>Student Name:</strong> ${s.name}</div>
+          <div><strong>Class:</strong> ${s.class}</div>
+          <div><strong>Institutional ID:</strong> ${s.username}</div>
+          <div><strong>Science House:</strong> ${s.house || 'Unassigned'}</div>
+        </div>
+        <div class="mt-12 flex justify-between text-xs text-slate-600">
+          <span>Academic Year 2026-27</span>
+          <span class="border-t border-slate-900 pt-1 font-bold">Sri Prabhakar Reddy Kotha (Principal)</span>
+        </div>`;
+      window.print();
+    }
+
+    function stageDraftQuestion() {
+      const txt = document.getElementById('q-input-text').value.trim();
+      const a = document.getElementById('q-input-a').value.trim();
+      const b = document.getElementById('q-input-b').value.trim();
+      const c = document.getElementById('q-input-c').value.trim();
+      const d = document.getElementById('q-input-d').value.trim();
+      const correct = document.getElementById('q-input-correct').value;
+
+      if (!txt || !a || !b || !c || !d) { alert("Please complete question statement and all 4 options."); return; }
+      stagedQuestions.push({ text: txt, a, b, c, d, correct });
+
+      document.getElementById('q-input-text').value = '';
+      document.getElementById('q-input-a').value = '';
+      document.getElementById('q-input-b').value = '';
+      document.getElementById('q-input-c').value = '';
+      document.getElementById('q-input-d').value = '';
+
+      renderStagedQuestions();
+    }
+
+    function renderStagedQuestions() {
+      document.getElementById('draft-count-label').textContent = stagedQuestions.length + " Questions Staged";
+      const el = document.getElementById('staged-questions-preview');
+      el.innerHTML = '';
+      stagedQuestions.forEach((q, i) => {
+        el.innerHTML += `<div class="p-2 border rounded-xl bg-white flex justify-between items-center text-xs"><span><b>Q${i+1}:</b> ${q.text} (Correct: ${q.correct})</span><button onclick="stagedQuestions.splice(${i},1); renderStagedQuestions();" class="text-rose-600 font-extrabold">✕</button></div>`;
+      });
+    }
+
+    function deployStagedExam() {
+      const cls = document.getElementById('build-exam-class').value;
+      const sub = document.getElementById('build-exam-sub').value.trim();
+      const tit = document.getElementById('build-exam-title').value.trim();
+      if (!cls || !sub || !tit || !stagedQuestions.length) {
+        alert("Enter Class, Subject, Title, and add at least 1 question."); return;
+      }
+      const eid = Date.now().toString();
+      db.ref('mcq_exams/' + eid).set({ id: eid, cls, sub, tit, questions: stagedQuestions });
+      stagedQuestions = [];
+      renderStagedQuestions();
+      document.getElementById('build-exam-title').value = '';
+      alert("Digital Proctored Exam Deployed Live!");
+    }
+
+    function applyWhatsAppTemplate() {
+      const cls = document.getElementById('wa-select-class').value;
+      const t = document.getElementById('wa-select-template').value;
+      const siteUrl = "https://123-del.github.io";
+      const dateStr = new Date().toLocaleDateString('en-IN');
+      let msg = "";
+
+      if (t === 'marks') {
+        msg = `📢 *TELANGANA MODEL SCHOOL & JR. COLLEGE, PEGADAPALLY*\n🏛️ *Official Examination Marks Notice*\n📅 Date: ${dateStr}\n\nDear Parents & Students of *${cls}*,\nAcademic evaluation marks (FA / SA / Month-End Tests) have been updated and verified by the administration.\n\n👉 *View & Print Student Report Card:*\n${siteUrl}\n\n_— Office of Sri Prabhakar Reddy Kotha, Principal_`;
+      } else if (t === 'exam') {
+        msg = `💻 *TELANGANA MODEL SCHOOL & JR. COLLEGE, PEGADAPALLY*\n🎯 *Digital Assessment / Online Exam Alert*\n📅 Date: ${dateStr}\n\nAttention Students of *${cls}*,\nA new online proctored examination has been deployed. Please sign in with your credentials to attempt the test.\n\n👉 *Access Digital Exam Portal:*\n${siteUrl}\n\n_— Office of Sri Prabhakar Reddy Kotha, Principal_`;
+      } else if (t === 'comp') {
+        msg = `🎯 *TELANGANA MODEL SCHOOL & JR. COLLEGE, PEGADAPALLY*\n📚 *Competitive Entrance Wing Notice*\n📅 Date: ${dateStr}\n\nDear Students of *${cls}*,\nNew practice question papers, formula sheets, and study materials for *POLYCET / NMMS / JEE / NEET / EAPCET* are now published in the portal.\n\n👉 *Download Materials:*\n${siteUrl}\n\n_— Office of Sri Prabhakar Reddy Kotha, Principal_`;
+      } else {
+        msg = `📢 *TELANGANA MODEL SCHOOL & JR. COLLEGE, PEGADAPALLY*\n🏛️ *Important Campus Announcement*\n📅 Date: ${dateStr}\n\nAttention Parents & Students of *${cls}*,\nPlease review the daily institutional circular posted on our official digital campus portal.\n\n👉 *View Announcement:*\n${siteUrl}\n\n_— Office of Sri Prabhakar Reddy Kotha, Principal_`;
+      }
+      document.getElementById('wa-message-body').value = msg;
+    }
+
+    function dispatchWhatsAppBroadcast() {
+      const text = document.getElementById('wa-message-body').value;
+      if (!text.trim()) { alert("Message cannot be empty."); return; }
+      const enc = encodeURIComponent(text);
+      window.open(`https://api.whatsapp.com/send?text=${enc}`, '_blank');
+    }
+
+    function renderHouses() {
+      const g = document.getElementById('houses-grid');
+      g.innerHTML = '';
+      houses.forEach(h => {
+        g.innerHTML += `
+          <div class="p-4 rounded-2xl bg-gradient-to-br ${h.color} text-white shadow-xs flex flex-col justify-between">
+            <span class="text-[10px] font-black uppercase tracking-wider text-white/80">House Merit</span>
+            <div class="my-2">
+              <div class="text-2xl font-black">${h.pts}</div>
+              <div class="text-xs font-bold text-white/90 leading-tight mt-0.5">${h.name}</div>
+            </div>
+            <span class="text-[9px] text-white/70">Annual Science Cup</span>
+          </div>`;
+      });
+    }
+
+    function renderGallery() {
+      const g = document.getElementById('gallery-grid');
+      g.innerHTML = '';
+      gallery.forEach(i => {
+        g.innerHTML += `
+          <div class="border border-slate-200/80 rounded-2xl overflow-hidden bg-white shadow-xs hover:shadow-md transition-all">
+            <img src="${i.url}" class="h-32 w-full object-cover">
+            <div class="p-3 text-xs font-bold text-slate-800">${i.cap}</div>
+          </div>`;
+      });
+      if (!gallery.length) g.innerHTML = '<p class="text-xs text-slate-400 p-2 col-span-3">No press clippings published yet.</p>';
+    }
+
+    renderHouses();
+    renderGallery();
+  </script>
+</body>
+</html>
