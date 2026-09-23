@@ -1077,7 +1077,9 @@
       const p = document.getElementById('login-p').value.trim();
       const phone = document.getElementById('login-phone').value.trim();
       const err = document.getElementById('login-err');
+      err.classList.add('hidden');
 
+      // Admin Login Check
       if (loginRole === 'admin') {
         if (u === 'tgmspgpl' && p === 'tgms2026') {
           currentUser = { role: 'admin' };
@@ -1085,11 +1087,12 @@
           initAdminUI();
           goView('admin');
           return;
+        } else {
+          err.textContent = "Invalid Admin username or password.";
+          err.classList.remove('hidden');
+          AudioFX.error();
+          return;
         }
-        err.textContent = "Invalid Admin login credentials."; 
-        err.classList.remove('hidden'); 
-        AudioFX.error();
-        return;
       }
 
       if (loginRole === 'teacher') {
@@ -1200,6 +1203,8 @@
       document.getElementById('atab-' + t).className = 'px-3.5 py-1.5 bg-indigo-900 text-white rounded-xl font-extrabold shrink-0 shadow-xs';
     }
 <!-- ================= PART 22 OF 25: END ================= -->
+      
+
     <!-- ================= PART 23 OF 25: START ================= -->
     document.getElementById('form-admission-apply').onsubmit = function(e) {
       e.preventDefault();
