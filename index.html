@@ -1516,7 +1516,7 @@
       window.open(`https://api.whatsapp.com/send?phone=91${phone}&text=${encodeURIComponent(messageBody)}`, '_blank');
     }
 <!-- ================= PART 23 OF 25: END ================= -->
-    <!-- ================= PART 24 OF 25: START ================= -->
+                <!-- ================= REPLACEMENT CODE FOR PART 24: START ================= -->
     function initTeacherUI() {
       const t = currentUser.data;
       document.getElementById('teach-name').textContent = t.name;
@@ -1591,39 +1591,80 @@
     };
 
     function initAdminUI() {
-      renderAdminStudents(); initAdminDropdowns(); initSubstitutionDesk(); renderAdminTeacherPhoneList(); renderAdminHouseReqs(); renderAdminQueries(); renderAdminAdmissionsList(); applyWhatsAppTemplate();
+      renderAdminStudents();
+      initAdminDropdowns();
+      initSubstitutionDesk();
+      renderAdminTeacherPhoneList();
+      renderAdminHouseReqs();
+      renderAdminQueries();
+      renderAdminAdmissionsList();
+      applyWhatsAppTemplate();
     }
 
     function initSubstitutionDesk() {
-      const absentSel = document.getElementById('sub-absent-teacher'), assignSel = document.getElementById('sub-assign-teacher'), classSel = document.getElementById('sub-class');
+      const absentSel = document.getElementById('sub-absent-teacher');
+      const assignSel = document.getElementById('sub-assign-teacher');
+      const classSel = document.getElementById('sub-class');
+      if (!absentSel || !assignSel || !classSel) return;
+
       absentSel.innerHTML = ''; assignSel.innerHTML = ''; classSel.innerHTML = '';
-      facultyList.forEach(t => { absentSel.innerHTML += `<option value="${t.name}">${t.name}</option>`; assignSel.innerHTML += `<option value="${t.name}">${t.name}</option>`; });
-      rawData.forEach(g => { classSel.innerHTML += `<option value="${g.c}">${g.c}</option>`; });
+      facultyList.forEach(t => {
+        absentSel.innerHTML += `<option value="${t.name}">${t.name}</option>`;
+        assignSel.innerHTML += `<option value="${t.name}">${t.name}</option>`;
+      });
+      rawData.forEach(g => {
+        classSel.innerHTML += `<option value="${g.c}">${g.c}</option>`;
+      });
     }
 
     function initAdminDropdowns() {
-      const classSelect = document.getElementById('marks-select-class'), uploadClassSelect = document.getElementById('m-cls'), compUploadClassSelect = document.getElementById('comp-up-cls'), buildClassSelect = document.getElementById('build-exam-class'), waClassSelect = document.getElementById('wa-select-class');
-      classSelect.innerHTML = ''; uploadClassSelect.innerHTML = ''; compUploadClassSelect.innerHTML = ''; buildClassSelect.innerHTML = ''; waClassSelect.innerHTML = '<option value="All Classes & Parents">All Classes & Parents</option>';
+      const classSelect = document.getElementById('marks-select-class');
+      const uploadClassSelect = document.getElementById('m-cls');
+      const compUploadClassSelect = document.getElementById('comp-up-cls');
+      const buildClassSelect = document.getElementById('build-exam-class');
+      const waClassSelect = document.getElementById('wa-select-class');
+
+      if (classSelect) classSelect.innerHTML = '';
+      if (uploadClassSelect) uploadClassSelect.innerHTML = '';
+      if (compUploadClassSelect) compUploadClassSelect.innerHTML = '';
+      if (buildClassSelect) buildClassSelect.innerHTML = '';
+      if (waClassSelect) waClassSelect.innerHTML = '<option value="All Classes & Parents">All Classes & Parents</option>';
+      
       rawData.forEach(g => {
-        classSelect.innerHTML += `<option value="${g.c}">${g.c}</option>`; uploadClassSelect.innerHTML += `<option value="${g.c}">${g.c}</option>`; compUploadClassSelect.innerHTML += `<option value="${g.c}">${g.c}</option>`; buildClassSelect.innerHTML += `<option value="${g.c}">${g.c}</option>`; waClassSelect.innerHTML += `<option value="${g.c}">${g.c}</option>`;
+        if (classSelect) classSelect.innerHTML += `<option value="${g.c}">${g.c}</option>`;
+        if (uploadClassSelect) uploadClassSelect.innerHTML += `<option value="${g.c}">${g.c}</option>`;
+        if (compUploadClassSelect) compUploadClassSelect.innerHTML += `<option value="${g.c}">${g.c}</option>`;
+        if (buildClassSelect) buildClassSelect.innerHTML += `<option value="${g.c}">${g.c}</option>`;
+        if (waClassSelect) waClassSelect.innerHTML += `<option value="${g.c}">${g.c}</option>`;
       });
-      waClassSelect.onchange = applyWhatsAppTemplate; syncUploadSubjectsDropdown(); syncCompUploadDropdown(); syncExamSubjectsDropdown(); loadStudentsForMarks();
+
+      if (waClassSelect) waClassSelect.onchange = applyWhatsAppTemplate;
+      syncUploadSubjectsDropdown();
+      syncCompUploadDropdown();
+      syncExamSubjectsDropdown();
+      loadStudentsForMarks();
     }
 
-    function syncUploadSubjectsDropdown() { const cls = document.getElementById('m-cls').value, subSelect = document.getElementById('m-sub'); subSelect.innerHTML = ''; getSubjectsForClass(cls).forEach(s => subSelect.innerHTML += `<option value="${s}">${s}</option>`); }
-    function syncCompUploadDropdown() { const cls = document.getElementById('comp-up-cls').value, exSelect = document.getElementById('comp-up-exam'); exSelect.innerHTML = ''; getCompetitiveForClass(cls).forEach(e => exSelect.innerHTML += `<option value="${e}">${e}</option>`); }
-    function syncExamSubjectsDropdown() { const cls = document.getElementById('build-exam-class').value, subSelect = document.getElementById('build-exam-sub'); subSelect.innerHTML = ''; getSubjectsForClass(cls).forEach(s => subSelect.innerHTML += `<option value="${s}">${s}</option>`); }
+    function syncUploadSubjectsDropdown() { const cls = document.getElementById('m-cls').value, subSelect = document.getElementById('m-sub'); if (subSelect) { subSelect.innerHTML = ''; getSubjectsForClass(cls).forEach(s => subSelect.innerHTML += `<option value="${s}">${s}</option>`); } }
+    function syncCompUploadDropdown() { const cls = document.getElementById('comp-up-cls').value, exSelect = document.getElementById('comp-up-exam'); if (exSelect) { exSelect.innerHTML = ''; getCompetitiveForClass(cls).forEach(e => exSelect.innerHTML += `<option value="${e}">${e}</option>`); } }
+    function syncExamSubjectsDropdown() { const cls = document.getElementById('build-exam-class').value, subSelect = document.getElementById('build-exam-sub'); if (subSelect) { subSelect.innerHTML = ''; getSubjectsForClass(cls).forEach(s => subSelect.innerHTML += `<option value="${s}">${s}</option>`); } }
 
     function renderAdminStudents(list = null) {
-      const tbody = document.getElementById('adm-tbody'); tbody.innerHTML = '';
+      const tbody = document.getElementById('adm-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
       (list || studentsDB).forEach(s => {
         tbody.innerHTML += `<tr class="hover:bg-slate-50 transition-colors"><td class="p-3 font-extrabold text-slate-800">${s.name}</td><td class="p-3 text-slate-600">${s.class}</td><td class="p-3 font-mono text-indigo-700 font-bold">${s.username}</td><td class="p-3 text-slate-600">${s.house || 'Unassigned'}</td><td class="p-3 text-right"><button onclick="editPass('${s.id}')" class="text-indigo-600 font-extrabold text-xs">Edit</button></td></tr>`;
       });
     }
 
-    document.getElementById('adm-search').oninput = function() {
-      const q = this.value.toLowerCase(); renderAdminStudents(studentsDB.filter(s => s.name.toLowerCase().includes(q) || s.class.toLowerCase().includes(q) || s.username.includes(q)));
-    };
+    const admSearch = document.getElementById('adm-search');
+    if (admSearch) {
+      admSearch.oninput = function() {
+        const q = this.value.toLowerCase();
+        renderAdminStudents(studentsDB.filter(s => s.name.toLowerCase().includes(q) || s.class.toLowerCase().includes(q) || s.username.includes(q)));
+      };
+    }
 
     function editPass(id) {
       const s = studentsDB.find(x => x.id === id), u = prompt("Edit Username:", s.username); if (!u) return;
@@ -1632,11 +1673,14 @@
     }
 
     function renderAdminHouseReqs() {
-      const el = document.getElementById('admin-house-requests'); el.innerHTML = '';
-      studentsDB.filter(s => s.houseReq).forEach(s => {
+      const el = document.getElementById('admin-house-requests');
+      if (!el) return;
+      el.innerHTML = '';
+      const pendingReqs = studentsDB.filter(s => s.houseReq);
+      pendingReqs.forEach(s => {
         el.innerHTML += `<div class="p-3 border rounded-2xl flex justify-between items-center bg-slate-50 text-xs"><div><b>${s.name}</b> requested: <span class="font-extrabold text-indigo-900">${s.houseReq}</span></div><div><button onclick="approveHouse('${s.id}', true)" class="bg-emerald-700 text-white px-3 py-1 rounded font-bold mr-1">Approve</button><button onclick="approveHouse('${s.id}', false)" class="bg-rose-600 text-white px-3 py-1 rounded font-bold">Reject</button></div></div>`;
       });
-      if (!studentsDB.some(s => s.houseReq)) el.innerHTML = '<p class="text-slate-400 p-2">No pending house requests.</p>';
+      if (!pendingReqs.length) el.innerHTML = '<p class="text-slate-400 p-2">No pending house requests.</p>';
     }
 
     function approveHouse(id, isApprove) {
@@ -1644,7 +1688,9 @@
     }
 
     function renderAdminQueries() {
-      const el = document.getElementById('admin-queries-list'); el.innerHTML = '';
+      const el = document.getElementById('admin-queries-list');
+      if (!el) return;
+      el.innerHTML = '';
       queriesDB.forEach(q => {
         el.innerHTML += `<div class="p-4 border rounded-2xl bg-slate-50 space-y-2 text-xs"><div class="flex justify-between font-extrabold"><span class="text-slate-900">${q.name} (${q.class})</span><span class="text-indigo-700">${q.subject}</span></div><div class="p-2.5 bg-white border rounded-xl text-slate-700">${q.body}</div><div>${q.reply ? `<div class="text-emerald-700 font-bold">Reply: ${q.reply}</div>` : `<button onclick="replyQuery('${q.id}')" class="bg-indigo-900 text-white px-3 py-1 rounded font-extrabold">Send Reply</button>`}</div></div>`;
       });
@@ -1652,8 +1698,8 @@
     }
 
     function replyQuery(id) { const rep = prompt("Type response:"); if (!rep) return; db.ref('queries/' + id + '/reply').set(rep); alert("Reply transmitted!"); }
-<!-- ================= PART 24 OF 25: END ================= -->
-        <!-- ================= PART 25A OF 25: START ================= -->
+<!-- ================= REPLACEMENT CODE FOR PART 24: END ================= -->
+      <!-- ================= PART 25A OF 25: START ================= -->
     function renderStudentMarksView(s) {
       const el = document.getElementById('stu-marks-table'); el.innerHTML = '';
       const myMarks = marksDB[s.id] || {}; const exams = Object.keys(myMarks);
@@ -1776,6 +1822,7 @@
       document.getElementById('house-modal').classList.add('hidden'); alert("House request submitted for approval.");
     }
 <!-- ================= PART 25A OF 25: END ================= -->
+        
     <!-- ================= PART 25B OF 25: START ================= -->
     function renderStudentExams(s) {
       const eEl = document.getElementById('stu-exams-list'); eEl.innerHTML = '';
