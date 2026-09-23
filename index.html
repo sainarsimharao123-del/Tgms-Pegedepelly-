@@ -1791,3 +1791,27 @@
 </body>
 </html>
 <!-- ================= PART 25C OF 25: END ================= -->
+<!-- ================= PART 26 OF 26: START ================= -->
+    function completeLogin(label) {
+      AudioFX.success();
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('btn-login-open').classList.add('hidden');
+      document.getElementById('user-badge').classList.remove('hidden');
+      document.getElementById('user-label').textContent = label;
+      document.getElementById('login-err').classList.add('hidden');
+      document.getElementById('flash-marquee-container').classList.add('hidden');
+
+      // Explicitly route and initialize the correct dashboard view based on user role
+      if (currentUser && currentUser.role === 'admin') {
+        initAdminUI();
+        goView('admin');
+      } else if (currentUser && currentUser.role === 'teacher') {
+        initTeacherUI();
+        goView('teacher');
+      } else if (currentUser && currentUser.role === 'student') {
+        initStudentUI();
+        goView('student');
+      }
+    }
+<!-- ================= PART 26 OF 26: END ================= -->
+
