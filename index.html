@@ -1769,28 +1769,8 @@
     function renderHouses() {
       const g = document.getElementById('houses-grid'); if(!g) return; g.innerHTML = '';
       houses.forEach(h => { g.innerHTML += `<div class="p-4 rounded-2xl bg-gradient-to-br ${h.color} text-white shadow-xs flex flex-col justify-between"><span class="text-[10px] font-black uppercase text-white/80">House Merit</span><div class="my-2"><div class="text-2xl font-black">${h.pts}</div><div class="text-xs font-bold">${h.name}</div></div><span class="text-[9px] text-white/70">Science Cup</span></div>`; });
-    }
-
-    function renderGallery() {
-      const g = document.getElementById('gallery-grid'); if(!g) return; g.innerHTML = '';
-      gallery.forEach(i => { g.innerHTML += `<div class="border rounded-2xl overflow-hidden bg-white shadow-xs"><img src="${i.url}" class="h-32 w-full object-cover"><div class="p-3 text-xs font-bold">${i.cap}</div></div>`; });
-      if (!gallery.length) g.innerHTML = '<p class="text-xs text-slate-400 p-2 col-span-3">No press clippings published yet.</p>';
-    }
-
-    document.addEventListener('click', (e) => { if (e.target.closest('button') || e.target.closest('select')) AudioFX.click(); });
-
-    renderHouses(); renderGallery();
-  </script>
-
-  <!-- OFFICIAL INSTITUTIONAL FOOTER -->
-  <footer class="mt-12 py-8 border-t border-slate-200 text-center text-xs text-slate-500 space-y-1.5 max-w-5xl mx-auto px-4">
-    <p class="font-extrabold text-slate-800 text-sm tracking-tight">TELANGANA MODEL SCHOOL & JR. COLLEGE, PEGADAPALLY</p>
-    <p>School U-DISE Code: <span class="font-black text-indigo-900 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">36061601112</span> • Department of School Education, Govt. of Telangana</p>
-    <p class="text-[11px] text-slate-400">Institutional Head: Sri Prabhakar Reddy Kotha (M.Sc, B.Ed) • Pegadapally, Jagtial Dist., Telangana 505532</p>
-  </footer>
-</body>
-</html>
-<!-- ================= PART 25C OF 25: END ================= -->
+    } 
+    
 <!-- ================= PART 26 OF 26: START ================= -->
     function completeLogin(label) {
       AudioFX.success();
@@ -1814,4 +1794,24 @@
       }
     }
 <!-- ================= PART 26 OF 26: END ================= -->
+  
+    function renderGallery() {
+      const g = document.getElementById('gallery-grid'); if(!g) return; g.innerHTML = '';
+      gallery.forEach(i => { g.innerHTML += `<div class="border rounded-2xl overflow-hidden bg-white shadow-xs"><img src="${i.url}" class="h-32 w-full object-cover"><div class="p-3 text-xs font-bold">${i.cap}</div></div>`; });
+      if (!gallery.length) g.innerHTML = '<p class="text-xs text-slate-400 p-2 col-span-3">No press clippings published yet.</p>';
+    }
 
+    document.addEventListener('click', (e) => { if (e.target.closest('button') || e.target.closest('select')) AudioFX.click(); });
+
+    renderHouses(); renderGallery();
+  </script>
+
+  <!-- OFFICIAL INSTITUTIONAL FOOTER -->
+  <footer class="mt-12 py-8 border-t border-slate-200 text-center text-xs text-slate-500 space-y-1.5 max-w-5xl mx-auto px-4">
+    <p class="font-extrabold text-slate-800 text-sm tracking-tight">TELANGANA MODEL SCHOOL & JR. COLLEGE, PEGADAPALLY</p>
+    <p>School U-DISE Code: <span class="font-black text-indigo-900 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">36061601112</span> • Department of School Education, Govt. of Telangana</p>
+    <p class="text-[11px] text-slate-400">Institutional Head: Sri Prabhakar Reddy Kotha (M.Sc, B.Ed) • Pegadapally, Jagtial Dist., Telangana 505532</p>
+  </footer>
+</body>
+</html>
+<!-- ================= PART 25C OF 25: END ================= -->
